@@ -17,6 +17,7 @@ services:
       AI_API_KEY: ${AI_API_KEY:-}
       FOOD_EXPIRATION_WARNING_DAYS: ${FOOD_EXPIRATION_WARNING_DAYS:-7}
       AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-60}
+      NASA_API_KEY: ${NASA_API_KEY:-DEMO_KEY}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: python -m scripts.startup uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
