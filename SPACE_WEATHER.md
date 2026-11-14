@@ -107,6 +107,16 @@ Os limiares são de simulação. Há um alerta ativo por astronauta e regra lóg
 
 Variáveis opcionais: `SWPC_BASE_URL`, `SWPC_GOES_SATELLITE` (`primary` ou `secondary`) e `SWPC_TIMEOUT_SECONDS`.
 
+## Cenário de demonstração
+
+Em um banco de desenvolvimento migrado, sem acesso à internet:
+
+```sh
+docker compose exec api python -m scripts.seed_radiation_demo
+```
+
+Cria a missão "Radiation Demo" com uma cadeia fictícia flare X2.3 → CME → SEP de 10 horas atrás, a EVA de uma astronauta durante o SEP (com janela de 48 h aberta), fluxo e doses simulados e um relato de sintomas. Entre com `rivera@example.com` (médico de voo) ou `lima@example.com` (astronauta), senha `secret123`, e abra a aba Radiation da missão.
+
 ## Verificação
 
 ```sh
