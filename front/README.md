@@ -1,4 +1,4 @@
-# NASA Health Monitor · Sistema de Monitoramento
+# Project Salus · Sistema de Monitoramento
 
 Frontend React 19 e Vite para o backend FastAPI deste repositório. Interface em português, responsiva, com autenticação, missões, membros, catálogo de exames, requisitos, checklist, agendamento, resultados, correções e revisões.
 
