@@ -9,5 +9,6 @@ class User(SQLModel, table=True):
     address: str | None = None
     is_astronaut: bool = False
     is_physician: bool = False
+    is_psychologist: bool = False
     allergy_screening_completed: bool = False
     hashed_password:str

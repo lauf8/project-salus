@@ -16,6 +16,7 @@ class UserService:
             name=user_data.name,
             is_astronaut=user_data.is_astronaut,
             is_physician=user_data.is_physician,
+            is_psychologist=user_data.is_psychologist,
             email=user_data.email,
             hashed_password=hash_password(user_data.password),
             address=user_data.address,

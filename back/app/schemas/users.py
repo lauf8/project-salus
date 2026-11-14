@@ -11,11 +11,12 @@ class UserCreate(SQLModel):
     phone: str | None = None
     is_astronaut: bool = True
     is_physician: bool = False
+    is_psychologist: bool = False
 
     @model_validator(mode="after")
     def validate_password_confirmation(self):
-        if not (self.is_astronaut or self.is_physician):
-            raise ValueError("Selecione ao menos um perfil: astronauta ou médico")
+        if not (self.is_astronaut or self.is_physician or self.is_psychologist):
+            raise ValueError("Select at least one profile: astronaut, physician, or psychologist")
         if self.password != self.password_confirmation:
             raise ValueError("Password confirmation does not match")
 
@@ -25,6 +26,7 @@ class UserCreate(SQLModel):
 class UserResponse(SQLModel):
     is_astronaut: bool = False
     is_physician: bool = False
+    is_psychologist: bool = False
     id: int
     name: str
     email: str

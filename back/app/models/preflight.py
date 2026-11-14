@@ -32,7 +32,7 @@ class MissionMember(SQLModel, table=True):
     __table_args__ = (
         UniqueConstraint("mission_id", "user_id", name="uq_mission_members_mission_user"),
         UniqueConstraint("id", "mission_id", name="uq_mission_members_id_mission"),
-        CheckConstraint("role IN ('astronaut', 'flight_surgeon', 'mission_admin')", name="ck_mission_members_role"),
+        CheckConstraint("role IN ('astronaut', 'flight_surgeon', 'mission_admin', 'psychologist')", name="ck_mission_members_role"),
     )
 
     id: int | None = Field(default=None, primary_key=True)

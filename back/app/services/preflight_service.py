@@ -20,7 +20,7 @@ from app.schemas.preflight import (
 )
 
 
-ALL_ROLES = {"astronaut", "flight_surgeon", "mission_admin"}
+ALL_ROLES = {"astronaut", "flight_surgeon", "mission_admin", "psychologist"}
 
 
 def transactional(method):
@@ -329,7 +329,9 @@ class PreflightService:
     @transactional
     def create_member(self, mission_id, payload):
         mission, _ = self._access(mission_id, {"mission_admin"}, lock=True)
-        self._get(User, payload.user_id)
+        target_user = self._get(User, payload.user_id)
+        if payload.role == "psychologist" and not target_user.is_psychologist:
+            raise HTTPException(422, "A psychologist profile is required")
         existing = self.session.exec(select(MissionMember).where(
             MissionMember.mission_id == mission_id, MissionMember.user_id == payload.user_id,
         )).first()
@@ -347,6 +349,12 @@ class PreflightService:
         self._generate(mission)
         return member
 
+    def _protect_mental_health_history(self, member):
+        from app.models.mental_health import MentalHealthCheckIn, PsychologyContactRequest, PsychologyFollowUp
+        for model in (MentalHealthCheckIn, PsychologyContactRequest, PsychologyFollowUp):
+            if self.session.exec(select(model.id).where(model.mission_member_id == member.id).limit(1)).first() is not None:
+                raise HTTPException(409, "A membership with mental health history is protected")
+
     def _protect_last_admin(self, member, next_role):
         if member.role == "mission_admin" and next_role != "mission_admin":
             others = self.session.exec(select(MissionMember).where(
@@ -363,8 +371,11 @@ class PreflightService:
         if payload.role == "astronaut" and member.role != "astronaut":
             self._validate_astronaut(member.user_id)
             self._validate_crew(mission.spacecraft_id, mission.crew_size, self._crew_count(mission_id) + 1)
+        if payload.role == "psychologist" and not self._get(User, member.user_id).is_psychologist:
+            raise HTTPException(422, "A psychologist profile is required")
         self._protect_last_admin(member, payload.role)
         if member.role != payload.role:
+            self._protect_mental_health_history(member)
             if self.session.exec(select(MealLog.id).where(MealLog.mission_member_id == member.id).limit(1)).first() is not None:
                 raise HTTPException(409, "A crew membership with meal history cannot change role")
             if self.session.exec(select(ExamResultReview).where(
@@ -385,6 +396,7 @@ class PreflightService:
         self._access(mission_id, {"mission_admin"}, lock=True)
         member = self._scoped(MissionMember, member_id, mission_id)
         self._protect_last_admin(member, None)
+        self._protect_mental_health_history(member)
         if self.session.exec(select(MealLog.id).where(MealLog.mission_member_id == member.id).limit(1)).first() is not None:
             raise HTTPException(409, "A crew membership with meal history cannot be deleted")
         self._remove_empty_exams(self.session.exec(select(AstronautExam).where(

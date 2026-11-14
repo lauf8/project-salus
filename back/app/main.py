@@ -3,11 +3,14 @@ from pathlib import Path
 
 import httpx
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.responses import JSONResponse
 
 from app.core.ai_config import AiSettings
 from app.providers.ai import AiProvider
 from app.providers.openai_compatible import OpenAiCompatibleProvider
-from app.routers import nutrition, auth, demo, health, medicines, notifications, preflight, spacecraft, users
+from app.routers import mental_health, nutrition, auth, demo, health, medicines, notifications, preflight, spacecraft, users
 
 
 @asynccontextmanager
@@ -38,3 +41,12 @@ app.include_router(notifications.router, prefix="/v1")
 app.include_router(spacecraft.router, prefix="/v1")
 
 app.include_router(nutrition.router, prefix="/v1")
+
+app.include_router(mental_health.router, prefix="/v1")
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(request, exc):
+    if "/mental-health/" in request.url.path:
+        return JSONResponse(status_code=422, content={"detail": [{"loc": list(error["loc"]), "msg": "Invalid value", "type": error["type"]} for error in exc.errors()]})
+    return await request_validation_exception_handler(request, exc)

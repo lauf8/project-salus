@@ -30,3 +30,14 @@ def test_registration_rejects_empty_profiles(client):
         "is_astronaut": False, "is_physician": False,
     })
     assert response.status_code == 422
+
+
+def test_psychologist_profile_registration(client):
+    response = client.post('/v1/users/', json={
+        'name': 'Psychologist', 'email': 'psychologist@example.com',
+        'password': 'test123456', 'password_confirmation': 'test123456',
+        'is_astronaut': False, 'is_physician': False, 'is_psychologist': True,
+    })
+    assert response.status_code == 200
+    assert response.json()['is_psychologist'] is True
+    assert response.json()['is_physician'] is False
