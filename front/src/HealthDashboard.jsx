@@ -434,6 +434,7 @@ export default function HealthDashboard({
   users,
   context,
   initialSelection,
+  lockSelection = false,
 }) {
   const layoutRef = useRef(null);
   const [alerts, setAlerts] = useState([]), [alertsLoading, setAlertsLoading] = useState(false), [alertsError, setAlertsError] = useState("");
@@ -618,6 +619,7 @@ export default function HealthDashboard({
           Mission
           <select
             aria-label="Mission"
+            disabled={lockSelection}
             value={missionId}
             onChange={(event) => {
               setMissionId(event.target.value);
@@ -637,11 +639,12 @@ export default function HealthDashboard({
             ))}
           </select>
         </label>
-        {user.is_physician && missionId && (
+        {(user.is_physician || user.is_nurse) && missionId && (
           <label>
             Astronaut
             <select
               aria-label="Astronaut"
+              disabled={lockSelection}
               value={astronautId}
               onChange={(event) => {
                 setAstronautId(event.target.value);

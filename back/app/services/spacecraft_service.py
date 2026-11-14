@@ -3,13 +3,18 @@ from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
-from app.models.preflight import Mission
+from app.models.preflight import Mission, MissionMember
 from app.models.spacecraft import Spacecraft, SpacecraftModule
 from app.schemas.spacecraft import ModuleResponse, SpacecraftResponse
 from app.services.preflight_service import PreflightService, transactional
 
 
 class SpacecraftService(PreflightService):
+    def _catalog_writer(self):
+        if self.user.is_mission_admin and self.session.exec(select(MissionMember).where(MissionMember.user_id == self.user.id, MissionMember.role == 'mission_admin')).first():
+            return
+        super()._catalog_writer()
+
     def get_spacecraft(self, spacecraft_id, lock=False):
         statement = select(Spacecraft).where(Spacecraft.id == spacecraft_id)
         if lock:

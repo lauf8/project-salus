@@ -197,3 +197,8 @@ def list_reviews(mission_id: int, result_id: int, service: Service, page: PageNu
 @router.get("/missions/{mission_id}/astronauts/{member_id}/exam-types/{exam_type_id}/latest-accepted", response_model=AcceptedExamResponse)
 def latest_accepted(mission_id: int, member_id: int, exam_type_id: int, service: Service, exam_id: int | None = Query(default=None, gt=0)):
     return service.latest_accepted(mission_id, member_id, exam_type_id, exam_id)
+
+
+@router.get("/missions/{mission_id}/operations")
+def mission_operations(mission_id: int, service: Service):
+    return service.operations(mission_id)

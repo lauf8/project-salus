@@ -6,7 +6,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validato
 from app.schemas.users import PaginationMeta
 
 
-Role = Literal["astronaut", "flight_surgeon", "mission_admin", "psychologist"]
+Role = Literal["astronaut", "flight_surgeon", "mission_admin", "psychologist", "nutritionist", "nurse", "observer"]
 Decision = Literal["accepted", "repeat_requested"]
 ExamState = Literal["pending", "scheduled", "awaiting_review", "repeat_requested", "completed"]
 T = TypeVar("T")

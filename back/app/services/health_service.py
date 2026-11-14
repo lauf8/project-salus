@@ -23,18 +23,18 @@ class HealthService:
         memberships = self.session.exec(select(MissionMember).where(MissionMember.user_id == self.user.id)).all()
         is_astronaut = self.user.is_astronaut or any(member.role == 'astronaut' for member in memberships)
         supervised = []
-        if self.user.is_physician:
-            mission_ids = [member.mission_id for member in memberships if member.role == 'flight_surgeon']
+        if self.user.is_physician or self.user.is_nurse:
+            mission_ids = [member.mission_id for member in memberships if (member.role == 'flight_surgeon' and self.user.is_physician) or (member.role == 'nurse' and self.user.is_nurse)]
             if mission_ids:
                 records = self.session.exec(select(User, MissionMember, Mission).join(
                     MissionMember, MissionMember.user_id == User.id,
                 ).join(Mission, Mission.id == MissionMember.mission_id).where(
                     Mission.id.in_(mission_ids), User.id != self.user.id,
-                    (User.is_astronaut == True) | (MissionMember.role == 'astronaut'),
+                    MissionMember.role == 'astronaut',
                 ).order_by(Mission.id, User.name)).all()
                 supervised = [{'id': user.id, 'name': user.name, 'mission_id': mission.id, 'mission_name': mission.name} for user, member, mission in records]
-        can_manage_catalog = self.user.is_physician and any(member.role in ('mission_admin', 'flight_surgeon') for member in memberships)
-        return {'is_astronaut': is_astronaut, 'supervised_astronauts': supervised, 'can_manage_catalog': can_manage_catalog}
+        can_manage_catalog = self.user.is_global_admin or self.user.is_physician and any(member.role in ('mission_admin', 'flight_surgeon') for member in memberships)
+        return {'is_astronaut': is_astronaut, 'supervised_astronauts': supervised, 'can_manage_catalog': can_manage_catalog, 'can_manage_spacecraft': can_manage_catalog or self.user.is_mission_admin and any(m.role == 'mission_admin' for m in memberships), 'can_manage_food_catalog': can_manage_catalog or self.user.is_nutritionist and any(m.role == 'nutritionist' for m in memberships), 'can_create_mission': self.user.is_global_admin or self.user.is_mission_admin or self.user.is_physician, 'can_manage_users': self.user.is_global_admin}
 
     def authorize(self, astronaut_id, mission_id=None):
         target = self.session.get(User, astronaut_id)
@@ -42,19 +42,19 @@ class HealthService:
         if target is None or not (target.is_astronaut or any(m.role == 'astronaut' for m in memberships)):
             raise HTTPException(404, 'Astronauta não encontrado')
         if mission_id is not None:
-            if self.session.get(Mission, mission_id) is None or not any(m.mission_id == mission_id for m in memberships):
+            if self.session.get(Mission, mission_id) is None or not any(m.mission_id == mission_id and m.role == 'astronaut' for m in memberships):
                 raise HTTPException(404, 'Vínculo do astronauta com a missão não encontrado')
         if self.user.id == astronaut_id:
             return False
-        if not self.user.is_physician or mission_id is None:
+        if not (self.user.is_physician or self.user.is_nurse) or mission_id is None:
             raise HTTPException(403, 'Acesso não autorizado aos dados deste astronauta')
         assessor = self.session.exec(select(MissionMember).where(
             MissionMember.user_id == self.user.id, MissionMember.mission_id == mission_id,
-            MissionMember.role == 'flight_surgeon',
+            MissionMember.role.in_(['flight_surgeon', 'nurse']),
         )).first()
-        if assessor is None:
+        if assessor is None or not (assessor.role == 'flight_surgeon' and self.user.is_physician or assessor.role == 'nurse' and self.user.is_nurse):
             raise HTTPException(403, 'Somente o médico de voo desta missão pode avaliar o astronauta')
-        return True
+        return assessor.role == 'flight_surgeon' and self.user.is_physician
 
     @transactional
     def create(self, astronaut_id, payload):

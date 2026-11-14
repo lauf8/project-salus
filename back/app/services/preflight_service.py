@@ -13,6 +13,8 @@ from app.models.preflight import (
 )
 from app.models.nutrition import MealLog
 from app.models.user import User
+from app.core.roles import MISSION_ROLES, ROLE_PROFILES
+from app.models.access import AccessAuditEvent
 from app.models.spacecraft import Spacecraft
 from app.services.exam_fields import snapshot, validate_result
 from app.schemas.preflight import (
@@ -20,7 +22,7 @@ from app.schemas.preflight import (
 )
 
 
-ALL_ROLES = {"astronaut", "flight_surgeon", "mission_admin", "psychologist"}
+ALL_ROLES = MISSION_ROLES
 
 
 def transactional(method):
@@ -54,7 +56,7 @@ class PreflightService:
             raise HTTPException(404, "Record not found")
         return record
 
-    def _access(self, mission_id, roles=ALL_ROLES, lock=False):
+    def _access(self, mission_id, roles=ALL_ROLES, lock=False, allow_global_admin=True):
         statement = select(Mission).where(Mission.id == mission_id)
         if lock:
             statement = statement.with_for_update()
@@ -62,6 +64,8 @@ class PreflightService:
         member = self.session.exec(select(MissionMember).where(
             MissionMember.mission_id == mission_id, MissionMember.user_id == self.user.id,
         )).first()
+        if allow_global_admin and mission is not None and self.user.is_global_admin and "mission_admin" in roles and (member is None or member.role not in roles):
+            return mission, MissionMember(mission_id=mission_id, user_id=self.user.id, role="mission_admin")
         if mission is None or member is None:
             raise HTTPException(404, "Mission not found")
         if member.role not in roles:
@@ -75,6 +79,8 @@ class PreflightService:
         return record
 
     def _catalog_writer(self):
+        if self.user.is_global_admin:
+            return
         self._require_physician()
         member = self.session.exec(select(MissionMember).where(
             MissionMember.user_id == self.user.id, MissionMember.role.in_(["mission_admin", "flight_surgeon"]),
@@ -131,7 +137,6 @@ class PreflightService:
 
     def _recalculate_open(self, mission, exams):
         for exam in exams:
-            self._require_physician()
             if self._state(exam) != "completed":
                 requirement = self._get(MissionExamRequirement, exam.requirement_id)
                 exam.due_at = self._due(mission, requirement)
@@ -150,7 +155,6 @@ class PreflightService:
         for member in members:
             for requirement in requirements:
                 if (member.id, requirement.id) not in existing:
-                    self._require_physician()
                     self.session.add(AstronautExam(
                         mission_id=mission.id, mission_member_id=member.id,
                         requirement_id=requirement.id, due_at=self._due(mission, requirement),
@@ -224,6 +228,8 @@ class PreflightService:
 
     @transactional
     def create_mission(self, payload):
+        if not (self.user.is_mission_admin or self.user.is_global_admin or self.user.is_physician):
+            raise HTTPException(403, "A mission administrator profile is required to create missions")
         self._validate_crew(payload.spacecraft_id, payload.crew_size, len(payload.astronaut_ids))
         for user_id in payload.astronaut_ids:
             self._validate_astronaut(user_id)
@@ -245,6 +251,8 @@ class PreflightService:
         return mission
 
     def list_missions(self, page, per_page):
+        if self.user.is_global_admin:
+            return self._page(select(Mission).order_by(Mission.id), page, per_page)
         return self._page(select(Mission).join(MissionMember).where(
             MissionMember.user_id == self.user.id,
         ).order_by(Mission.id), page, per_page)
@@ -308,11 +316,11 @@ class PreflightService:
         requirements = self.session.exec(select(MissionExamRequirement).where(
             MissionExamRequirement.mission_id == mission_id,
         )).all()
-        if len(members) != 1 or actor.id != members[0].id or requirements:
+        if len(members) != 1 or (not self.user.is_global_admin and actor.id != members[0].id) or requirements:
             raise HTTPException(409, "Remove mission configuration before deleting an empty mission")
         if mission.status != "completed":
             self._release_spacecraft(mission.spacecraft_id)
-        self.session.delete(actor)
+        self.session.delete(members[0])
         self.session.flush()
         self.session.delete(mission)
 
@@ -330,8 +338,9 @@ class PreflightService:
     def create_member(self, mission_id, payload):
         mission, _ = self._access(mission_id, {"mission_admin"}, lock=True)
         target_user = self._get(User, payload.user_id)
-        if payload.role == "psychologist" and not target_user.is_psychologist:
-            raise HTTPException(422, "A psychologist profile is required")
+        required_profile = ROLE_PROFILES.get(payload.role)
+        if required_profile and not getattr(target_user, required_profile):
+            raise HTTPException(422, "The account does not have the profile required for this mission role")
         existing = self.session.exec(select(MissionMember).where(
             MissionMember.mission_id == mission_id, MissionMember.user_id == payload.user_id,
         )).first()
@@ -346,8 +355,18 @@ class PreflightService:
         member = MissionMember(mission_id=mission_id, **payload.model_dump())
         self.session.add(member)
         self.session.flush()
+        self._audit_membership(member, "create_membership")
         self._generate(mission)
         return member
+
+    def _audit_membership(self, member, action):
+        self.session.add(AccessAuditEvent(actor_user_id=self.user.id, resource_type="mission_members", resource_id=member.id, action=action, changed_fields=["role"]))
+
+    def _protect_care_history(self, member):
+        from app.models.care import NutritionPlan, NursingRecord
+        for model in (NutritionPlan, NursingRecord):
+            if self.session.exec(select(model.id).where(model.mission_member_id == member.id).limit(1)).first() is not None:
+                raise HTTPException(409, "A membership with care history is protected")
 
     def _protect_mental_health_history(self, member):
         from app.models.mental_health import MentalHealthCheckIn, PsychologyContactRequest, PsychologyFollowUp
@@ -371,11 +390,13 @@ class PreflightService:
         if payload.role == "astronaut" and member.role != "astronaut":
             self._validate_astronaut(member.user_id)
             self._validate_crew(mission.spacecraft_id, mission.crew_size, self._crew_count(mission_id) + 1)
-        if payload.role == "psychologist" and not self._get(User, member.user_id).is_psychologist:
-            raise HTTPException(422, "A psychologist profile is required")
+        required_profile = ROLE_PROFILES.get(payload.role)
+        if required_profile and not getattr(self._get(User, member.user_id), required_profile):
+            raise HTTPException(422, "The account does not have the profile required for this mission role")
         self._protect_last_admin(member, payload.role)
         if member.role != payload.role:
             self._protect_mental_health_history(member)
+            self._protect_care_history(member)
             if self.session.exec(select(MealLog.id).where(MealLog.mission_member_id == member.id).limit(1)).first() is not None:
                 raise HTTPException(409, "A crew membership with meal history cannot change role")
             if self.session.exec(select(ExamResultReview).where(
@@ -385,6 +406,7 @@ class PreflightService:
             self._remove_empty_exams(self.session.exec(select(AstronautExam).where(
                 AstronautExam.mission_member_id == member.id,
             )).all())
+        self._audit_membership(member, "update_membership")
         member.role = payload.role
         self.session.add(member)
         self.session.flush()
@@ -397,6 +419,8 @@ class PreflightService:
         member = self._scoped(MissionMember, member_id, mission_id)
         self._protect_last_admin(member, None)
         self._protect_mental_health_history(member)
+        self._protect_care_history(member)
+        self._audit_membership(member, "delete_membership")
         if self.session.exec(select(MealLog.id).where(MealLog.mission_member_id == member.id).limit(1)).first() is not None:
             raise HTTPException(409, "A crew membership with meal history cannot be deleted")
         self._remove_empty_exams(self.session.exec(select(AstronautExam).where(
@@ -569,7 +593,7 @@ class PreflightService:
         self.session.delete(requirement)
 
     def checklist(self, mission_id, member_id, page, per_page):
-        _, actor = self._access(mission_id)
+        _, actor = self._access(mission_id, {"astronaut", "flight_surgeon", "mission_admin", "nurse"}, allow_global_admin=False)
         member = self._scoped(MissionMember, member_id, mission_id)
         if member.role != "astronaut":
             raise HTTPException(422, "A checklist requires an astronaut membership")
@@ -582,7 +606,7 @@ class PreflightService:
         return result
 
     def get_astronaut_exam(self, mission_id, exam_id):
-        _, actor = self._access(mission_id)
+        _, actor = self._access(mission_id, {"astronaut", "flight_surgeon", "mission_admin", "nurse"}, allow_global_admin=False)
         exam = self._scoped(AstronautExam, exam_id, mission_id)
         if actor.role == "astronaut" and exam.mission_member_id != actor.id:
             raise HTTPException(403, "Astronauts may only access their own checklist")
@@ -705,3 +729,9 @@ class PreflightService:
             latest_result_state=state,
             newer_result_requires_review=bool(latest and (accepted is None or latest.id != accepted.id)),
         )
+
+
+    def operations(self, mission_id):
+        mission, _ = self._access(mission_id)
+        roles = dict(self.session.exec(select(MissionMember.role, func.count()).where(MissionMember.mission_id == mission_id).group_by(MissionMember.role)).all())
+        return {"mission_id": mission.id, "name": mission.name, "status": mission.status, "planned_launch_at": mission.planned_launch_at, "started_at": mission.started_at, "ended_at": mission.ended_at, "crew_size": mission.crew_size, "spacecraft_id": mission.spacecraft_id, "participants_by_role": roles}

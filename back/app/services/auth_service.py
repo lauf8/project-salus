@@ -26,6 +26,9 @@ class AuthService:
                 detail="Invalid credentials",
             )
 
+        if not user.is_active:
+            raise HTTPException(status_code=403, detail="This account is inactive")
+
         access_token = create_access_token(str(user.id))
 
         return TokenResponse(access_token=access_token)
