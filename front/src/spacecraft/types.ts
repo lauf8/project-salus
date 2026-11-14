@@ -1,0 +1,38 @@
+export type Dimensions = { length?: number | null; width?: number | null; height?: number | null; diameter?: number | null };
+export type Material = { component: string; material: string; location?: string | null; specification?: string | null; contact_environment?: string | null };
+export type TechnicalSpecifications = { dimensions_m?: Dimensions | null; dry_mass_kg?: number | null; materials?: Material[] | null; thermal_insulation?: string | null; shielding?: string | null };
+export type Spacecraft = {
+  status: 'available' | 'in_use';
+  id: number;
+  name: string;
+  maximum_crew_capacity: number | null;
+  model: string | null;
+  manufacturer: string | null;
+  serial_number: string | null;
+  manufactured_year: number | null;
+  description: string | null;
+  technical_reference_url: string | null;
+};
+export type SpacecraftModule = {
+  id: number;
+  spacecraft_id: number;
+  code: string;
+  name: string;
+  purpose: string | null;
+  manufacturer: string | null;
+  serial_number: string | null;
+  manufactured_year: number | null;
+  is_pressurized: boolean | null;
+  is_habitable: boolean | null;
+  pressurized_volume_m3: number | null;
+  technical_specifications: TechnicalSpecifications | null;
+  technical_reference_url: string | null;
+};
+export type Pagination = { page: number; per_page: number; total: number; total_pages: number; has_previous: boolean; has_next: boolean };
+export type Page<T> = { data: T[]; pagination: Pagination };
+export type RequestOptions = { method?: string; body?: unknown; signal?: AbortSignal };
+export type Request = <T = unknown>(path: string, options?: RequestOptions) => Promise<T>;
+export type ApiError = Error & { status?: number; detail?: { loc?: (string | number)[]; msg: string }[] | string };
+export type FieldErrors = Record<string, string>;
+export type SpacecraftPayload = Omit<Spacecraft, 'id' | 'status'>;
+export type ModulePayload = Omit<SpacecraftModule, 'id' | 'spacecraft_id' | 'technical_specifications'> & { technical_specifications?: TechnicalSpecifications | null };

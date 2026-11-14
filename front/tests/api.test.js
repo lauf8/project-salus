@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {api,allPages} from '../src/services/api.js';
+test('cliente envia JSON e bearer e aceita exclusão sem corpo',async()=>{const original=global.fetch;try{global.fetch=async(url,options)=>{assert.equal(url,'/api/v1/missions/1');assert.equal(options.headers.Authorization,'Bearer jwt');assert.equal(options.body,'{"name":"Aurora"}');return new Response(null,{status:204});};assert.equal(await api('/v1/missions/1',{token:'jwt',method:'PATCH',body:{name:'Aurora'}}),null);}finally{global.fetch=original;}});
+test('erros 422 preservam campos de validação',async()=>{const original=global.fetch;try{global.fetch=async()=>new Response(JSON.stringify({detail:[{loc:['body','name'],msg:'Field required'}]}),{status:422});await assert.rejects(api('/v1/missions'),e=>e.status===422&&e.message==='name: Field required');}finally{global.fetch=original;}});
+test('carrega todas as páginas sem truncar opções',async()=>{const original=global.fetch;let calls=0;try{global.fetch=async()=>new Response(JSON.stringify({data:[++calls],pagination:{has_next:calls<2}}));assert.deepEqual(await allPages('/v1/users/','jwt'),[1,2]);}finally{global.fetch=original;}});
+test('sessão expirada é identificada pelo status 401',async()=>{const original=global.fetch;try{global.fetch=async()=>new Response('{}',{status:401});await assert.rejects(api('/v1/missions'),e=>e.status===401);}finally{global.fetch=original;}});

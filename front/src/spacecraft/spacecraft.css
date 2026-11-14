@@ -1,0 +1,30 @@
+.spacecraft-section { padding: 24px; margin: 20px 0; }
+.spacecraft-section h2 { margin: 0 0 20px; }
+.spacecraft-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+.spacecraft-details dt { color: #61748c; font-size: 12px; margin-bottom: 6px; }
+.spacecraft-details dd { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.spacecraft-reference { margin-top: 24px; overflow-wrap: anywhere; }
+.spacecraft-prose { white-space: pre-wrap; overflow-wrap: anywhere; }
+.spacecraft-modal { width: min(900px, 95vw); }
+.spacecraft-modal fieldset { border: 1px solid #dbe3ee; border-radius: 10px; padding: 16px; min-width: 0; margin-bottom: 16px; }
+.spacecraft-modal legend { font-weight: 600; font-size: 13px; padding: 0 6px; }
+.spacecraft-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.spacecraft-form-grid label { min-width: 0; margin: 0 0 12px; }
+.spacecraft-material-row { border-top: 1px solid #dbe3ee; padding: 16px 0; }
+.spacecraft-material-row h3 { font-size: 14px; margin-top: 0; }
+.spacecraft-modal .field-error { display: block; color: #a51c30; font-size: 12px; }
+.spacecraft-modal [aria-invalid="true"] { border-color: #a51c30; }
+.spacecraft-catalog > .back { display: inline-block; margin-bottom: 16px; }
+.spacecraft-catalog td { overflow-wrap: anywhere; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (max-width: 650px) { .spacecraft-form-grid { grid-template-columns: 1fr; } .spacecraft-section { padding: 16px; } }
+.spacecraft-catalog { min-width: 0; }
+.spacecraft-catalog .page-heading { flex-wrap: wrap; }
+.spacecraft-catalog .page-heading > div { min-width: 0; }
+.spacecraft-catalog .page-heading h1 { overflow-wrap: anywhere; }
+.spacecraft-catalog .table-wrap { max-width: 100%; overflow-x: auto; }
+.spacecraft-catalog table { min-width: 760px; }
+.spacecraft-catalog td { min-width: 100px; }
+.spacecraft-catalog td:first-child { min-width: 150px; }
+.spacecraft-catalog .actions { position: relative; }
+.spacecraft-catalog .toolbar .secondary { font-size: 11px; }

@@ -1,0 +1,406 @@
+{
+  "default_profile": "simulation-v2",
+  "profiles": {
+    "simulation-v1": {
+      "name": "Perfil de simulação",
+      "version": "simulation-v1",
+      "timezone": "UTC",
+      "freshness_minutes": {
+        "default": 2160,
+        "heart_rate": 30,
+        "respiratory_rate": 30,
+        "oxygen_saturation": 30,
+        "body_temperature": 120,
+        "blood_pressure": 60,
+        "blood_glucose": 120,
+        "sleep_duration": 2880,
+        "sleep_quality": 2880
+      },
+      "oxygen_thresholds": {
+        "normal_min": 96,
+        "attention_min": 94,
+        "urgent_min": 92
+      },
+      "high_glucose_thresholds": {},
+      "rules": [
+        {
+          "id": "resting_heart_rate",
+          "indicator": "heart_rate",
+          "rest_only": true,
+          "bands": [
+            {
+              "severity": "attention",
+              "gt": 40,
+              "lte": 50
+            },
+            {
+              "severity": "attention",
+              "gt": 90,
+              "lte": 110
+            },
+            {
+              "severity": "urgent",
+              "gt": 110,
+              "lte": 130
+            },
+            {
+              "severity": "critical",
+              "lte": 40
+            },
+            {
+              "severity": "critical",
+              "gt": 130
+            }
+          ]
+        },
+        {
+          "id": "resting_respiratory_rate",
+          "indicator": "respiratory_rate",
+          "rest_only": true,
+          "bands": [
+            {
+              "severity": "attention",
+              "gt": 8,
+              "lt": 12
+            },
+            {
+              "severity": "attention",
+              "gt": 20,
+              "lt": 25
+            },
+            {
+              "severity": "critical",
+              "lte": 8
+            },
+            {
+              "severity": "critical",
+              "gte": 25
+            }
+          ]
+        },
+        {
+          "id": "body_temperature",
+          "indicator": "body_temperature",
+          "bands": [
+            {
+              "severity": "attention",
+              "gt": 35,
+              "lte": 36
+            },
+            {
+              "severity": "attention",
+              "gt": 38,
+              "lte": 39
+            },
+            {
+              "severity": "urgent",
+              "gt": 39
+            },
+            {
+              "severity": "critical",
+              "lte": 35
+            }
+          ]
+        },
+        {
+          "id": "low_systolic_pressure",
+          "indicator": "blood_pressure",
+          "field": "systolic",
+          "bands": [
+            {
+              "severity": "attention",
+              "gt": 100,
+              "lte": 110
+            },
+            {
+              "severity": "urgent",
+              "gt": 90,
+              "lte": 100
+            },
+            {
+              "severity": "critical",
+              "lte": 90
+            }
+          ]
+        },
+        {
+          "id": "low_blood_glucose",
+          "indicator": "blood_glucose",
+          "bands": [
+            {
+              "severity": "urgent",
+              "gte": 54,
+              "lt": 70
+            },
+            {
+              "severity": "critical",
+              "lt": 54
+            }
+          ]
+        }
+      ],
+      "high_pressure": {
+        "systolic_gt": 180,
+        "diastolic_gt": 120,
+        "symptoms": [
+          "chest_pain",
+          "shortness_of_breath",
+          "sudden_weakness",
+          "visual_changes",
+          "speech_difficulty"
+        ]
+      },
+      "consciousness": {
+        "critical_categories": [
+          "voice",
+          "pain",
+          "unresponsive"
+        ],
+        "acute_confusion_severity": "critical"
+      },
+      "trends": [
+        {
+          "id": "short_sleep",
+          "indicator": "sleep_duration",
+          "days": 2,
+          "lt": 420,
+          "night": true
+        },
+        {
+          "id": "poor_sleep_quality",
+          "indicator": "sleep_quality",
+          "days": 2,
+          "lte": 2,
+          "night": true
+        },
+        {
+          "id": "low_mood",
+          "indicator": "mood",
+          "days": 3,
+          "lte": 2
+        },
+        {
+          "id": "high_fatigue",
+          "indicator": "fatigue",
+          "days": 2,
+          "gte": 8
+        },
+        {
+          "id": "changed_attention",
+          "indicator": "attention",
+          "days": 2,
+          "categories": [
+            "better",
+            "worse"
+          ]
+        }
+      ]
+    },
+    "simulation-v2": {
+      "name": "Perfil de simulação · glicemia alta",
+      "version": "simulation-v2",
+      "timezone": "UTC",
+      "freshness_minutes": {
+        "default": 2160,
+        "heart_rate": 30,
+        "respiratory_rate": 30,
+        "oxygen_saturation": 30,
+        "body_temperature": 120,
+        "blood_pressure": 60,
+        "blood_glucose": 120,
+        "sleep_duration": 2880,
+        "sleep_quality": 2880
+      },
+      "oxygen_thresholds": {
+        "normal_min": 96,
+        "attention_min": 94,
+        "urgent_min": 92
+      },
+      "high_glucose_thresholds": {
+        "fasting": {
+          "urgent": 300
+        },
+        "after_meal": {
+          "urgent": 300
+        },
+        "unknown": {
+          "urgent": 300
+        }
+      },
+      "rules": [
+        {
+          "id": "resting_heart_rate",
+          "indicator": "heart_rate",
+          "rest_only": true,
+          "bands": [
+            {
+              "severity": "attention",
+              "gt": 40,
+              "lte": 50
+            },
+            {
+              "severity": "attention",
+              "gt": 90,
+              "lte": 110
+            },
+            {
+              "severity": "urgent",
+              "gt": 110,
+              "lte": 130
+            },
+            {
+              "severity": "critical",
+              "lte": 40
+            },
+            {
+              "severity": "critical",
+              "gt": 130
+            }
+          ]
+        },
+        {
+          "id": "resting_respiratory_rate",
+          "indicator": "respiratory_rate",
+          "rest_only": true,
+          "bands": [
+            {
+              "severity": "attention",
+              "gt": 8,
+              "lt": 12
+            },
+            {
+              "severity": "attention",
+              "gt": 20,
+              "lt": 25
+            },
+            {
+              "severity": "critical",
+              "lte": 8
+            },
+            {
+              "severity": "critical",
+              "gte": 25
+            }
+          ]
+        },
+        {
+          "id": "body_temperature",
+          "indicator": "body_temperature",
+          "bands": [
+            {
+              "severity": "attention",
+              "gt": 35,
+              "lte": 36
+            },
+            {
+              "severity": "attention",
+              "gt": 38,
+              "lte": 39
+            },
+            {
+              "severity": "urgent",
+              "gt": 39
+            },
+            {
+              "severity": "critical",
+              "lte": 35
+            }
+          ]
+        },
+        {
+          "id": "low_systolic_pressure",
+          "indicator": "blood_pressure",
+          "field": "systolic",
+          "bands": [
+            {
+              "severity": "attention",
+              "gt": 100,
+              "lte": 110
+            },
+            {
+              "severity": "urgent",
+              "gt": 90,
+              "lte": 100
+            },
+            {
+              "severity": "critical",
+              "lte": 90
+            }
+          ]
+        },
+        {
+          "id": "low_blood_glucose",
+          "indicator": "blood_glucose",
+          "bands": [
+            {
+              "severity": "urgent",
+              "gte": 54,
+              "lt": 70
+            },
+            {
+              "severity": "critical",
+              "lt": 54
+            }
+          ]
+        }
+      ],
+      "high_pressure": {
+        "systolic_gt": 180,
+        "diastolic_gt": 120,
+        "symptoms": [
+          "chest_pain",
+          "shortness_of_breath",
+          "sudden_weakness",
+          "visual_changes",
+          "speech_difficulty"
+        ]
+      },
+      "consciousness": {
+        "critical_categories": [
+          "voice",
+          "pain",
+          "unresponsive"
+        ],
+        "acute_confusion_severity": "critical"
+      },
+      "trends": [
+        {
+          "id": "short_sleep",
+          "indicator": "sleep_duration",
+          "days": 2,
+          "lt": 420,
+          "night": true
+        },
+        {
+          "id": "poor_sleep_quality",
+          "indicator": "sleep_quality",
+          "days": 2,
+          "lte": 2,
+          "night": true
+        },
+        {
+          "id": "low_mood",
+          "indicator": "mood",
+          "days": 3,
+          "lte": 2
+        },
+        {
+          "id": "high_fatigue",
+          "indicator": "fatigue",
+          "days": 2,
+          "gte": 8
+        },
+        {
+          "id": "changed_attention",
+          "indicator": "attention",
+          "days": 2,
+          "categories": [
+            "better",
+            "worse"
+          ]
+        }
+      ],
+      "high_glucose_note": "Limite operacional inicial do protótipo para verificação de glicemia elevada; não estabelece diagnóstico. Metas individualizadas devem ser configuradas pela equipe médica."
+    }
+  }
+}

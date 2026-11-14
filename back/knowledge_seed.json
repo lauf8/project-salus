@@ -1,0 +1,174 @@
+{
+  "format_version": 1,
+  "documents": [
+    {
+      "stable_id": "49e00f631c25b096fb8579d349cd5b47",
+      "title": "NASA OCHMO-TB-004 Carbon Dioxide (CO2)",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-004-carbon-dioxide.pdf",
+      "revision": "Rev D, 2026-03-10",
+      "document_type": "technical_brief",
+      "passages": [
+        {
+          "stable_id": "d8ab10b392af20cf4cfc931643f2c754",
+          "section": "Background / CO2-Induced Headaches",
+          "page_number": 5,
+          "content": "NASA reports an association between cabin CO2 levels and headaches in ISS crews. Individual CO2 retention, adaptation to microgravity, and local CO2 variations may influence symptoms. Microgravity-related fluid shifts can also produce similar symptoms. This association alone does not establish the cause of an individual's headache.",
+          "topic_codes": [
+            "headache",
+            "cabin_co2"
+          ]
+        }
+      ]
+    },
+    {
+      "stable_id": "404c2d41e1eff41ab2d79417c98e543b",
+      "title": "Human Research Roadmap: Risk of Spaceflight Associated Neuro-ocular Syndrome (SANS)",
+      "source_url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=105",
+      "revision": "Last Published 2025-05-13 12:40:12 PM (Central)",
+      "document_type": "risk_summary",
+      "passages": [
+        {
+          "stable_id": "40814faafdfe35cc7dfaf8fe8ec7318a",
+          "section": "Risk Statement / HSRB State of Knowledge",
+          "page_number": null,
+          "content": "NASA identifies spaceflight-related ocular structural changes as a risk for short- or long-term vision alterations. SANS signs include optic disc edema, chorioretinal folds, globe flattening, and hyperopic refractive shifts. Mechanisms, individual susceptibility, effective countermeasures, and long-term consequences remain research gaps. A report of blurred vision alone does not establish SANS.",
+          "topic_codes": [
+            "blurred_vision",
+            "vision_changes"
+          ]
+        }
+      ]
+    },
+    {
+      "stable_id": "82084ad073e892fbcebb2185fe32ebf4",
+      "title": "NASA-STD-3001 Volume 1: Health and Medical Care",
+      "source_url": "https://www.nasa.gov/reference/3-0-health-and-medical-care/",
+      "revision": "Volume 1, Revision C (web edition)",
+      "document_type": "technical_standard",
+      "passages": [
+        {
+          "stable_id": "211bc04fe43ad6883829d53b25494536",
+          "section": "3.2 Selection and Recertifications / V1 3001",
+          "page_number": null,
+          "content": "Crew selection and annual recertification include medical and psychological screening. Mission-specific screening considers duration, distance from Earth, exposure risks, and operational responsibilities.",
+          "topic_codes": [
+            "preflight_screening"
+          ]
+        },
+        {
+          "stable_id": "d1d720cb4a6e88894df64196a02e60a0",
+          "section": "3.3 Pre-mission Preventive Health Care / V1 3002",
+          "page_number": null,
+          "content": "Pre-mission prevention includes nutrition, fitness, periodic examinations, dental care, vaccination, and health stabilization. Preventive planning supports crew health during the mission and later life.",
+          "topic_codes": [
+            "preventive_care",
+            "preflight_screening"
+          ]
+        },
+        {
+          "stable_id": "2573f4ec16836c4902da0425c0afadcb",
+          "section": "3.5 In-Mission Medical Care / V1 3004",
+          "page_number": null,
+          "content": "Programs plan medical capabilities, training, and resources around mission risks, crew needs, clinical guidance, flight surgeon expertise, and vehicle constraints. The standard addresses medical-system capability rather than providing a treatment plan for an individual report.",
+          "topic_codes": [
+            "in_flight_medical_care"
+          ]
+        }
+      ]
+    },
+    {
+      "stable_id": "8420d722bb270ab17899dadda6decf43",
+      "title": "NASA-STD-3001 Volume 1: Appendix E Health and Medical Care Technical Requirements",
+      "source_url": "https://www.nasa.gov/reference/appendix-e-health-and-medical-care-technical-requirements/",
+      "revision": "Volume 1, Revision C (web edition)",
+      "document_type": "technical_standard",
+      "passages": [
+        {
+          "stable_id": "ea8bac05fcf47f3f9a8c1aafbcdad584",
+          "section": "Table E.2-2 / Space motion sickness",
+          "page_number": null,
+          "content": "Table E.2-2 includes space-adaptation-related motion sickness among environmental or spaceflight-induced conditions. Its asterisk marks it for consideration on every mission; the table supports capability planning and does not diagnose a reported episode.",
+          "topic_codes": [
+            "space_motion_sickness"
+          ]
+        },
+        {
+          "stable_id": "a1e2f749e446678107b7a1e5a0205385",
+          "section": "Table E.2-2 / Back pain",
+          "page_number": null,
+          "content": "Space-adaptation-related back pain appears in the environmental or spaceflight-induced category of Table E.2-2 and is marked for consideration on every mission. This listing alone does not establish why an individual has back pain.",
+          "topic_codes": [
+            "back_pain"
+          ]
+        },
+        {
+          "stable_id": "4f0ec5b31bc790101e88569aa564b0e4",
+          "section": "Table E.2-2 / EVA-related dehydration",
+          "page_number": null,
+          "content": "Table E.2-2 lists dehydration associated with extravehicular activity as a condition relevant to mission medical planning. The entry does not specify diagnostic criteria or an individual hydration or treatment prescription.",
+          "topic_codes": [
+            "eva_dehydration"
+          ]
+        }
+      ]
+    },
+    {
+      "stable_id": "3a7a107480a088a1e72d7de7bb88e150",
+      "title": "NASA OCHMO-TB-041 Sleep Accommodations",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-041-sleep-accommodations.pdf",
+      "revision": "Rev B, 2023-10-23",
+      "document_type": "technical_brief",
+      "passages": [
+        {
+          "stable_id": "b4c9ce459e27298244e0911ba2f19178",
+          "section": "Executive Summary",
+          "page_number": 1,
+          "content": "Adequate sleep duration and quality support cognitive performance. Sleep loss and circadian disruption can contribute to fatigue and task errors. Noise, lighting, temperature, and vibration can disturb sleep, so sleep accommodation is an important environmental consideration.",
+          "topic_codes": [
+            "sleep_quality",
+            "fatigue",
+            "circadian_rhythm",
+            "cabin_noise"
+          ]
+        }
+      ]
+    },
+    {
+      "stable_id": "ee5ad984248f50aa2c1287bf4ae515fe",
+      "title": "NASA OCHMO-TB-031 Exercise Overview",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-031-exercise-overview.pdf",
+      "revision": "Dated 2023-10-02; no revision label identified",
+      "document_type": "technical_brief",
+      "passages": [
+        {
+          "stable_id": "30fb16ab7d5f5936912507d4fc1a38f3",
+          "section": "Executive Summary",
+          "page_number": 1,
+          "content": "Altered gravity can reduce aerobic capacity and muscle and bone strength, affecting crew performance. Exercise is used as a countermeasure, with deconditioning varying by baseline fitness, mission duration, and gravity environment. Individual exercise prescriptions remain part of mission medical planning.",
+          "topic_codes": [
+            "exercise",
+            "physical_performance"
+          ]
+        }
+      ]
+    },
+    {
+      "stable_id": "040d00e462c33c9e41cabd1abf9df161",
+      "title": "NASA OCHMO-TB-013 Food and Nutrition",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-013-food-and-nutrition.pdf",
+      "revision": "Rev E on cover; body footers Rev D, 2023-12-07",
+      "document_type": "technical_brief",
+      "passages": [
+        {
+          "stable_id": "c238c2423897306176ba0a6cba4375d1",
+          "section": "Executive Summary",
+          "page_number": 1,
+          "content": "Space food systems support crew health and performance through safety, nutritional adequacy, and acceptability. Planning must account for storage life, mission duration, resupply, preparation capabilities, and crew preferences, as well as mass, volume, power, and time constraints.",
+          "topic_codes": [
+            "nutrition"
+          ]
+        }
+      ]
+    }
+  ]
+}
