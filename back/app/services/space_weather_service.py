@@ -200,8 +200,12 @@ class SpaceWeatherService(PreflightService):
 
             try:
                 run.fetched_count = len(items)
-                created, updated = self._store(event_type, items)
+                created, updated, rows = self._store(event_type, items)
                 run.created_count, run.updated_count = created, updated
+                if event_type == 'SEP':
+                    # Abre a janela de 48 h para quem estava em EVA (mesma transação).
+                    from app.services.radiation_service import RadiationService
+                    RadiationService(self.session, self.user).process_seps(rows)
                 run.finished_at = datetime.now(timezone.utc)
                 self.session.add(run)
                 self.session.commit()
@@ -211,7 +215,7 @@ class SpaceWeatherService(PreflightService):
             runs.append(SyncRunResponse.model_validate(run))
         return runs
 
-    def _store(self, event_type: str, items: list[dict]) -> tuple[int, int]:
+    def _store(self, event_type: str, items: list[dict]) -> tuple[int, int, list[SpaceWeatherEvent]]:
         normalized: dict[str, tuple[dict, list[str]]] = {}
         for item in items:
             result = normalize_event(event_type, item)
@@ -220,6 +224,7 @@ class SpaceWeatherService(PreflightService):
                 normalized[result[0]['activity_id']] = result
 
         created = updated = 0
+        rows = []
         now = datetime.now(timezone.utc)
         for activity_id, (fields, linked) in normalized.items():
             row = self.session.exec(select(SpaceWeatherEvent).where(SpaceWeatherEvent.activity_id == activity_id)).first()
@@ -244,7 +249,8 @@ class SpaceWeatherService(PreflightService):
             for target in linked:
                 self.session.add(SpaceWeatherEventLink(event_id=row.id, linked_activity_id=target, linked_event_type=linked_event_type(target)))
             self.session.flush()
-        return created, updated
+            rows.append(row)
+        return created, updated, rows
 
     # Consultas ------------------------------------------------------------------------------
 

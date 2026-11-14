@@ -1,4 +1,5 @@
 import { measurementFields } from './measurement-fields.js';
+import { radiationSymptomLabels } from './radiation.js';
 export const severityRank = { attention: 1, urgent: 2, critical: 3 };
 export const severityLabels = { attention: "Caution", urgent: "Urgent", critical: "Critical" };
 export const alertStatusLabels = { open: "Active", acknowledged: "Acknowledged · still active", resolved: "Resolved" };
@@ -19,6 +20,8 @@ export function observationContext(row) {
   if (row.indicator === 'blood_glucose') values.push({ fasting: "Fasting", after_meal: "After a meal", unknown: "Unknown meal context" }[row.glucose_context || 'unknown']);
   if (row.indicator === 'blood_pressure') values.push(row.symptoms_status === 'present' ? `Symptoms: ${(row.symptoms || []).map(key => symptomLabels[key]).join(', ')}` : row.symptoms_status === 'absent' ? "Warning symptoms reported as absent" : "Unknown symptoms");
   if (row.acute_confusion === true) values.push("New-onset confusion");
+  const radiation = (row.symptoms || []).filter(key => radiationSymptomLabels[key]);
+  if (radiation.length) values.push(`Radiation symptoms: ${radiation.map(key => radiationSymptomLabels[key]).join(', ')}`);
   return values.filter(Boolean).join(' · ');
 }
 

@@ -8,7 +8,7 @@ A fundamentação vem do NASA SP-2009-3405, capítulo 5 (*Risk of Acute Radiatio
 
 Defina `NASA_API_KEY` no `.env`. A chave gratuita é obtida em https://api.nasa.gov. Sem ela, usa-se `DEMO_KEY`, que tem limite baixo de requisições por hora e por dia. Variáveis opcionais: `DONKI_BASE_URL` e `DONKI_TIMEOUT_SECONDS`.
 
-Aplique a migration `f9a1b2c3d4e5`:
+Aplique as migrations `f9a1b2c3d4e5` e `0b7c1d2e3f40`:
 
 ```sh
 docker compose exec api alembic upgrade head
@@ -21,11 +21,13 @@ docker compose exec api alembic upgrade head
 | `space_weather_events` | Evento FLR/CME/SEP com o ID do DONKI (`activity_id`, único), horários, classe do flare e pico de fluxo de raios X (W/m²), dados da análise de CME marcada como mais precisa, instrumentos, versão e o JSON original em `raw`. |
 | `space_weather_event_links` | Ligações `linkedEvents`. O evento ligado pode ser de tipo não importado (IPS, GST...); o tipo é extraído do ID. |
 | `space_weather_sync_runs` | Cada consulta ao DONKI, com contagens e erro, inclusive falhas. |
-| `proton_flux_readings` | Fluxo integral de prótons (GOES/NOAA SWPC) por canal de energia, em pfu. Ainda sem importação. |
-| `crew_activities` | Onde cada tripulante estava: `iva`, `eva` ou `storm_shelter`. Ainda sem API. |
+| `proton_flux_readings` | Fluxo integral de prótons (GOES/NOAA SWPC) por canal de energia, em pfu. Fonte `noaa_swpc` ou `simulation`. |
+| `crew_activities` | Onde cada tripulante estava: `iva`, `eva` ou `storm_shelter`. |
 | `radiation_exposure_limits` | Limites por órgão e período, versionados por perfil. |
-| `radiation_dose_records` | Dose por tripulante, órgão e período, com origem `dosimeter`, `model_estimate` ou `simulation`. Ainda sem API. |
-| `radiation_follow_ups` | Janela de 48 h após um SEP relevante, com sintomas prodrômicos (náusea, vômito, anorexia, fadiga) e pele em caso de EVA. Ainda sem API. |
+| `radiation_dose_records` | Dose por tripulante, órgão e período, com origem `dosimeter`, `model_estimate` ou `simulation`. |
+| `radiation_follow_ups` | Janela de 48 h após um SEP, aberta para quem estava em EVA, com os sintomas relatados. |
+| `radiation_symptom_reports` | Cada relato de sintomas na janela, do formulário ou de uma medição de saúde. |
+| `radiation_alerts` | Alertas de radiação. Tabela própria porque `health_alerts` exige uma medição de origem. |
 
 A migration carrega o perfil `nasa-sp-2009-3405-table-5-1`, que reproduz a Tabela 5-1 do livro (2009). A NASA revisou esses limites depois (NASA-STD-3001); para valores atuais, crie um novo perfil em vez de alterar o existente.
 
@@ -60,10 +62,55 @@ docker compose exec api python -m scripts.sync_space_weather --start 2024-10-01 
 
 O script retorna código 1 se algum tipo falhar.
 
+## Fluxo de radiação
+
+Prefixo `/v1/radiation`. Tela: aba **Radiation** da missão.
+
+1. **Atividade da tripulação.** O astronauta (para si), o médico de voo ou o administrador da missão registra IVA, EVA ou abrigo. Atividades do mesmo astronauta não podem se sobrepor e devem estar dentro do período da missão.
+2. **SEP em EVA.** Ao importar um SEP pelo DONKI (API ou script), o sistema procura EVAs que cobrem o início do SEP. Uma EVA sem fim só conta se começou até 12 h antes. Para cada tripulante encontrado, abre um acompanhamento com janela de 48 h a partir do início do SEP e cria o alerta `sep_during_eva`. Uma EVA registrada depois da importação também dispara a verificação. Também há reprocessamento manual em `POST /events/{activity_id}/process`.
+3. **Sintomas.** Náusea, vômito, perda de apetite, fadiga e pele (`nausea`, `vomiting`, `anorexia`, `fatigue`, `skin_erythema`) entram na lista de sintomas das medições de saúde. Se a medição cai dentro de uma janela aberta, vira um relato do acompanhamento. Os relatos também podem ser feitos diretamente no acompanhamento.
+4. **Fluxo de prótons.** `POST /proton-flux/sync` importa o fluxo integral do GOES pela NOAA SWPC. O serviço só publica os últimos 7 dias, então agende `python -m scripts.sync_proton_flux`. Para eventos passados ou demonstrações, `POST /proton-flux/simulate` gera um perfil sintético de ≥10 MeV para um SEP.
+5. **Doses.** O médico de voo registra doses medidas ou estimadas (`POST /missions/{id}/doses`) ou gera doses simuladas (`POST /missions/{id}/doses/simulate`). A simulação integra o fluxo ≥10 MeV com a atividade de cada tripulante e é **didática**: 0,02 mGy-Eq/h por pfu na pele em EVA, blindagem de 0,15 em IVA e 0,05 no abrigo, e fatores por órgão. Não é dosimetria. `GET /missions/{id}/astronauts/{id}/dose-summary` compara a dose acumulada com o perfil de limites.
+
+### Alertas
+
+| Regra | Quando | Severidade |
+| --- | --- | --- |
+| `sep_during_eva` | Tripulante em EVA no início do SEP | urgente; crítico se o pico ≥10 MeV nas 48 h for ≥ 1000 pfu (S3) |
+| `proton_flux_during_eva` | Fluxo ≥10 MeV ≥ 10 pfu (S1) durante uma EVA | atenção (S1), urgente (S2), crítico (S3+) |
+| `prodromal_vomiting` | Vômito na janela de 48 h | crítico |
+| `prodromal_symptoms` | Náusea, perda de apetite ou fadiga na janela | urgente |
+| `skin_reaction` | Reação de pele na janela | urgente |
+| `late_symptoms` | Sintomas relatados depois da janela | atenção |
+| `dose_limit` | Dose acumulada ≥ 50%, 75% ou 100% do limite | atenção, urgente, crítico |
+
+Os limiares são de simulação. Há um alerta ativo por astronauta e regra lógica: um novo achado mais grave eleva a severidade e reabre o alerta. O astronauta pode reconhecer os próprios alertas; só o médico de voo os resolve e encerra o acompanhamento. Alertas de radiação ainda não geram notificações na central de notificações.
+
+### Endpoints
+
+| Método | Caminho | Uso |
+| --- | --- | --- |
+| GET | `/missions/{id}/timeline` | Eventos do período, cadeias flare → CME → SEP, atividades, acompanhamentos e alertas ativos (estes só para o médico de voo ou o próprio astronauta). |
+| GET, POST | `/missions/{id}/crew-activities` | Lista e registra atividades. |
+| POST | `/missions/{id}/crew-activities/{activity_id}/end` | Encerra uma atividade. |
+| GET, POST | `/missions/{id}/doses` | Lista e registra doses. |
+| POST | `/missions/{id}/doses/simulate` | Doses simuladas a partir do fluxo. |
+| GET | `/missions/{id}/astronauts/{astronaut_id}/dose-summary` | Dose acumulada × limites. |
+| GET | `/missions/{id}/follow-ups[/{follow_up_id}]` | Acompanhamentos. |
+| POST | `/missions/{id}/follow-ups/{follow_up_id}/reports` | Relato de sintomas. |
+| POST | `/missions/{id}/follow-ups/{follow_up_id}/close` | Encerramento pelo médico de voo. |
+| GET | `/missions/{id}/alerts` | Alertas (`status`: `active`, `open`, `acknowledged`, `resolved`, `all`). |
+| POST | `/missions/{id}/alerts/{alert_id}/acknowledge`, `/resolve` | Reconhecer e resolver. |
+| POST | `/events/{activity_id}/process` | Reprocessa um SEP. |
+| GET | `/proton-flux` | Leituras por canal e período. |
+| POST | `/proton-flux/sync`, `/proton-flux/simulate` | Importação da NOAA SWPC e simulação. |
+
+Variáveis opcionais: `SWPC_BASE_URL`, `SWPC_GOES_SATELLITE` (`primary` ou `secondary`) e `SWPC_TIMEOUT_SECONDS`.
+
 ## Verificação
 
 ```sh
-pytest tests/test_space_weather.py
+pytest tests/test_space_weather.py tests/test_radiation.py
 ```
 
 Os testes usam respostas simuladas no formato do DONKI (cadeia de 26/10/2024: flare X1.8, CME e SEP) e não acessam a internet.

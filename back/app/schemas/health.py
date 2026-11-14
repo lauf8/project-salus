@@ -4,11 +4,13 @@ from uuid import UUID
 
 from pydantic import AwareDatetime, Field, PrivateAttr, model_validator
 
+from app.data.symptoms import SYMPTOM_LABELS
 from app.schemas.preflight import InputModel, OutputModel
 
 
 Indicator = Literal['heart_rate', 'blood_pressure', 'respiratory_rate', 'oxygen_saturation', 'body_temperature', 'consciousness', 'sleep_duration', 'sleep_quality', 'fatigue', 'mood', 'attention', 'blood_glucose']
 Source = Literal['self_report', 'manual_measurement', 'device']
+Symptom = Literal[tuple(SYMPTOM_LABELS)]
 UNITS = {
     'heart_rate': 'bpm', 'blood_pressure': 'mmHg', 'respiratory_rate': 'respirações/min',
     'blood_glucose': 'mg/dL', 'oxygen_saturation': '%', 'body_temperature': '°C', 'consciousness': 'AVPU',
@@ -36,7 +38,7 @@ class ObservationCreate(InputModel):
     signal_quality: Literal['good', 'poor', 'unknown'] = 'unknown'
     glucose_context: Literal['fasting', 'after_meal', 'unknown'] = 'unknown'
     symptoms_status: Literal['present', 'absent', 'unknown'] = 'unknown'
-    symptoms: list[Literal['chest_pain', 'shortness_of_breath', 'sudden_weakness', 'visual_changes', 'speech_difficulty']] = Field(default_factory=list)
+    symptoms: list[Symptom] = Field(default_factory=list)
     acute_confusion: bool | None = None
     client_request_id: UUID | None = None
     _original_values: dict = PrivateAttr(default_factory=dict)

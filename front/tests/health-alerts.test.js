@@ -25,6 +25,7 @@ test('context preserves exercise, supplemental oxygen, poor quality and unknown 
   assert.doesNotMatch(context, /absent/);
   assert.match(observationContext({ indicator: 'attention', acute_confusion: true }), /New-onset confusion/);
   assert.match(observationContext({ indicator: 'blood_glucose', glucose_context: 'fasting' }), /Fasting/);
+  assert.match(observationContext({ indicator: 'fatigue', symptoms: ['nausea', 'vomiting'] }), /Radiation symptoms: Nausea, Vomiting/);
 });
 
 test('verification instructions match the alert instead of asking for unrelated symptoms', () => {
