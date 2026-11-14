@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from app.core.ai_config import AiSettings
 from app.providers.ai import AiProvider
 from app.providers.openai_compatible import OpenAiCompatibleProvider
-from app.routers import astronaut_control, care, mental_health, nutrition, auth, demo, health, medicines, notifications, preflight, space_weather, spacecraft, users
+from app.routers import astronaut_control, care, mental_health, nutrition, auth, demo, health, medicines, notifications, preflight, radiation, space_weather, spacecraft, users
 
 
 @asynccontextmanager
@@ -51,6 +51,8 @@ app.include_router(care.router, prefix="/v1")
 app.include_router(astronaut_control.router, prefix="/v1")
 
 app.include_router(space_weather.router, prefix="/v1")
+
+app.include_router(radiation.router, prefix="/v1")
 
 
 @app.exception_handler(RequestValidationError)

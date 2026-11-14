@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from app.data.symptoms import SYMPTOM_LABELS
 from app.schemas.health import UNITS
 
 
@@ -16,7 +17,6 @@ INDICATOR_NAMES = {
     'sleep_duration': 'Duração do sono', 'sleep_quality': 'Qualidade do sono',
     'mood': 'Humor', 'fatigue': 'Fadiga', 'attention': 'Mudanças de atenção', 'consciousness': 'Estado de consciência',
 }
-SYMPTOM_LABELS = {'chest_pain': 'dor no peito', 'shortness_of_breath': 'falta de ar', 'sudden_weakness': 'fraqueza súbita', 'visual_changes': 'alteração visual', 'speech_difficulty': 'dificuldade para falar'}
 
 
 @lru_cache

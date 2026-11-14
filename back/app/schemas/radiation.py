@@ -1,0 +1,313 @@
+from datetime import datetime, timedelta, timezone
+from typing import Literal
+
+from pydantic import AwareDatetime, Field, model_validator
+
+from app.data.symptoms import RADIATION_SYMPTOMS
+from app.schemas.preflight import InputModel, OutputModel
+from app.schemas.space_weather import EventResponse
+
+
+ActivityType = Literal['iva', 'eva', 'storm_shelter']
+Organ = Literal['lens', 'skin', 'bfo', 'heart', 'cns', 'cns_z_ge_10']
+DoseSource = Literal['dosimeter', 'model_estimate']
+RadiationSymptom = Literal[tuple(RADIATION_SYMPTOMS)]
+EnergyChannel = Literal['>=1 MeV', '>=5 MeV', '>=10 MeV', '>=30 MeV', '>=50 MeV', '>=60 MeV', '>=100 MeV', '>=500 MeV']
+Severity = Literal['attention', 'urgent', 'critical']
+
+MAX_SIMULATION_HOURS = 24 * 7
+
+
+def _utc(value: datetime | None) -> datetime | None:
+    return value.astimezone(timezone.utc) if value is not None else None
+
+
+def _not_future(value: datetime | None, name: str):
+    # Tolerância pequena para relógios ligeiramente adiantados.
+    if value is not None and value > datetime.now(timezone.utc) + timedelta(minutes=5):
+        raise ValueError(f'{name} não pode estar no futuro')
+
+
+# --- Atividade da tripulação -----------------------------------------------------------------
+
+class CrewActivityCreate(InputModel):
+    astronaut_id: int = Field(gt=0)
+    activity_type: ActivityType
+    started_at: AwareDatetime
+    ended_at: AwareDatetime | None = None
+    spacecraft_module_id: int | None = Field(default=None, gt=0)
+    note: str | None = Field(default=None, max_length=4000)
+
+    @model_validator(mode='after')
+    def check_times(self):
+        self.started_at, self.ended_at = _utc(self.started_at), _utc(self.ended_at)
+        _not_future(self.started_at, 'started_at')
+        _not_future(self.ended_at, 'ended_at')
+        if self.ended_at is not None and self.ended_at <= self.started_at:
+            raise ValueError('ended_at deve ser posterior a started_at')
+        return self
+
+
+class CrewActivityEnd(InputModel):
+    ended_at: AwareDatetime
+    note: str | None = Field(default=None, max_length=4000)
+
+    @model_validator(mode='after')
+    def check_time(self):
+        self.ended_at = _utc(self.ended_at)
+        _not_future(self.ended_at, 'ended_at')
+        return self
+
+
+class CrewActivityResponse(OutputModel):
+    id: int
+    mission_id: int
+    astronaut_id: int
+    activity_type: ActivityType
+    started_at: datetime
+    ended_at: datetime | None
+    spacecraft_module_id: int | None
+    note: str | None
+    recorded_by_user_id: int
+    recorded_at: datetime
+
+
+# --- Doses -------------------------------------------------------------------------------------
+
+class DoseCreate(InputModel):
+    astronaut_id: int = Field(gt=0)
+    organ: Organ
+    dose: float = Field(ge=0, allow_inf_nan=False)
+    unit: Literal['mGy-Eq', 'mGy'] = 'mGy-Eq'
+    dose_rate_per_hour: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    period_start: AwareDatetime
+    period_end: AwareDatetime
+    # 'simulation' só é gerado por POST /doses/simulate.
+    source: DoseSource
+    event_activity_id: str | None = Field(default=None, min_length=1, max_length=200)
+
+    @model_validator(mode='after')
+    def check_period(self):
+        self.period_start, self.period_end = _utc(self.period_start), _utc(self.period_end)
+        _not_future(self.period_end, 'period_end')
+        if self.period_end < self.period_start:
+            raise ValueError('period_end deve ser igual ou posterior a period_start')
+        expected = 'mGy' if self.organ == 'cns_z_ge_10' else 'mGy-Eq'
+        if self.unit != expected:
+            raise ValueError(f'A dose em {self.organ} deve ser informada em {expected}, como na tabela de limites')
+        return self
+
+
+class DoseSimulationRequest(InputModel):
+    start: AwareDatetime
+    end: AwareDatetime
+    astronaut_ids: list[int] | None = Field(default=None, min_length=1)
+    event_activity_id: str | None = Field(default=None, min_length=1, max_length=200)
+
+    @model_validator(mode='after')
+    def check_range(self):
+        self.start, self.end = _utc(self.start), _utc(self.end)
+        if self.end <= self.start:
+            raise ValueError('end deve ser posterior a start')
+        if self.end - self.start > timedelta(hours=MAX_SIMULATION_HOURS):
+            raise ValueError(f'A simulação aceita no máximo {MAX_SIMULATION_HOURS} horas')
+        return self
+
+
+class DoseResponse(OutputModel):
+    id: int
+    mission_id: int
+    astronaut_id: int
+    event_id: int | None
+    organ: Organ
+    dose: float
+    unit: str
+    dose_rate_per_hour: float | None
+    period_start: datetime
+    period_end: datetime
+    source: Literal['dosimeter', 'model_estimate', 'simulation']
+    recorded_by_user_id: int
+    recorded_at: datetime
+
+
+class DoseSummaryItem(OutputModel):
+    organ: str
+    period: Literal['30_day', '1_year', 'career']
+    total: float
+    unit: str
+    limit: float
+    fraction: float
+    severity: Severity | None
+
+
+class DoseSummary(OutputModel):
+    astronaut_id: int
+    profile_id: str
+    as_of: datetime
+    items: list[DoseSummaryItem]
+
+
+class DoseSimulationResponse(OutputModel):
+    readings_used: int
+    records: list[DoseResponse]
+    assumptions: dict
+
+
+# --- Fluxo de prótons --------------------------------------------------------------------------
+
+class ProtonFluxSyncRequest(InputModel):
+    window: Literal['6-hour', '1-day', '3-day', '7-day'] = '1-day'
+
+
+class ProtonFluxSyncResponse(OutputModel):
+    fetched_count: int
+    stored_count: int
+    skipped_count: int
+    alerts_created: int
+
+
+class ProtonFluxSimulationRequest(InputModel):
+    """Perfil sintético de ≥10 MeV: subida linear até o pico e queda exponencial."""
+
+    event_activity_id: str | None = Field(default=None, min_length=1, max_length=200)
+    onset: AwareDatetime | None = None
+    peak_pfu: float = Field(gt=10, le=1e6, allow_inf_nan=False)
+    rise_hours: float = Field(default=4, gt=0, le=48, allow_inf_nan=False)
+    decay_hours: float = Field(default=12, gt=0, le=96, allow_inf_nan=False)
+    duration_hours: float = Field(default=48, gt=0, le=MAX_SIMULATION_HOURS, allow_inf_nan=False)
+    step_minutes: int = Field(default=30, ge=5, le=120)
+
+    @model_validator(mode='after')
+    def check_anchor(self):
+        if (self.event_activity_id is None) == (self.onset is None):
+            raise ValueError('Informe event_activity_id ou onset (apenas um)')
+        self.onset = _utc(self.onset)
+        if self.rise_hours >= self.duration_hours:
+            raise ValueError('rise_hours deve ser menor que duration_hours')
+        return self
+
+
+class ProtonFluxSimulationResponse(OutputModel):
+    stored_count: int
+    onset: datetime
+    peak_at: datetime
+    peak_pfu: float
+
+
+class ProtonFluxReadingResponse(OutputModel):
+    observed_at: datetime
+    energy_channel: str
+    flux_pfu: float
+    satellite: str
+    source: Literal['noaa_swpc', 'simulation']
+
+
+# --- Acompanhamento pós-evento -----------------------------------------------------------------
+
+class SymptomReportCreate(InputModel):
+    symptoms: list[RadiationSymptom] = Field(default_factory=list)
+    reported_at: AwareDatetime | None = None
+    note: str | None = Field(default=None, max_length=4000)
+
+    @model_validator(mode='after')
+    def check_report(self):
+        if len(self.symptoms) != len(set(self.symptoms)):
+            raise ValueError('Não repita os sintomas')
+        if not self.symptoms and not self.note:
+            raise ValueError('Informe ao menos um sintoma ou uma observação')
+        self.symptoms = sorted(self.symptoms)
+        self.reported_at = _utc(self.reported_at)
+        _not_future(self.reported_at, 'reported_at')
+        return self
+
+
+class FollowUpClose(InputModel):
+    status: Literal['completed', 'cancelled']
+    notes: str = Field(min_length=1, max_length=4000)
+
+
+class SymptomReportResponse(OutputModel):
+    id: int
+    reported_at: datetime
+    symptoms: list[str]
+    note: str | None
+    observation_id: int | None
+    recorded_by_user_id: int
+    recorded_at: datetime
+
+
+class FollowUpResponse(OutputModel):
+    id: int
+    event_id: int
+    event_activity_id: str
+    mission_id: int
+    astronaut_id: int
+    status: Literal['open', 'completed', 'cancelled']
+    was_on_eva: bool | None
+    symptoms: list[str]
+    notes: str | None
+    opened_at: datetime
+    window_ends_at: datetime
+    window_active: bool
+    detected_at: datetime
+    opened_by_user_id: int | None
+    closed_at: datetime | None
+    closed_by_user_id: int | None
+    reports: list[SymptomReportResponse]
+
+
+class SepProcessResponse(OutputModel):
+    event_activity_id: str
+    follow_ups_opened: int
+    alerts_created: int
+
+
+# --- Alertas -----------------------------------------------------------------------------------
+
+class RadiationAlertResolve(InputModel):
+    note: str = Field(min_length=1, max_length=4000)
+
+
+class RadiationAlertResponse(OutputModel):
+    id: int
+    mission_id: int
+    astronaut_id: int
+    rule_id: str
+    severity: Severity
+    status: Literal['open', 'acknowledged', 'resolved']
+    reason: str
+    event_id: int | None
+    follow_up_id: int | None
+    dose_record_id: int | None
+    details: dict
+    created_at: datetime
+    updated_at: datetime
+    acknowledged_at: datetime | None
+    resolved_at: datetime | None
+    resolution_note: str | None
+    can_resolve: bool
+
+
+# --- Linha do tempo ----------------------------------------------------------------------------
+
+class EventChain(OutputModel):
+    """Cadeia flare → CME → SEP montada a partir das ligações do DONKI."""
+
+    flares: list[EventResponse]
+    cmes: list[EventResponse]
+    seps: list[EventResponse]
+    other_linked: list[str]
+    starts_at: datetime
+
+
+class TimelineResponse(OutputModel):
+    mission_id: int
+    start: datetime
+    end: datetime
+    events: list[EventResponse]
+    chains: list[EventChain]
+    activities: list[CrewActivityResponse]
+    follow_ups: list[FollowUpResponse]
+    alerts: list[RadiationAlertResponse]
+    can_view_clinical: bool
+    can_manage: bool

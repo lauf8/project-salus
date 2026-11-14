@@ -8,7 +8,7 @@ significa que um tripulante recebeu dose relevante.
 
 from datetime import date, datetime, timezone
 
-from sqlalchemy import CheckConstraint, Column, Date, DateTime, Index, Integer, JSON, ForeignKey, Text, UniqueConstraint
+from sqlalchemy import CheckConstraint, Column, Date, DateTime, Index, Integer, JSON, ForeignKey, Text, UniqueConstraint, text
 from sqlmodel import Field, SQLModel
 
 
@@ -234,8 +234,69 @@ class RadiationFollowUp(SQLModel, table=True):
     was_on_eva: bool | None = None
     symptoms: list[str] = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
     notes: str | None = Field(default=None, sa_type=Text)
+    # opened_at é o início do SEP (início da janela); detected_at é quando o sistema
+    # percebeu a exposição, que pode ser depois se o SEP chegou atrasado pelo DONKI.
     opened_at: datetime = Field(default_factory=utc_now, sa_column=Column(DateTime(timezone=True), nullable=False))
     window_ends_at: datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))
-    opened_by_user_id: int = Field(foreign_key='users.id')
+    detected_at: datetime = Field(default_factory=utc_now, sa_column=Column(DateTime(timezone=True), nullable=False))
+    # Nulo quando aberto pela sincronização agendada (sem usuário).
+    opened_by_user_id: int | None = Field(default=None, foreign_key='users.id')
     closed_at: datetime | None = Field(default=None, sa_column=Column(DateTime(timezone=True)))
     closed_by_user_id: int | None = Field(default=None, foreign_key='users.id')
+
+
+class RadiationSymptomReport(SQLModel, table=True):
+    """Relato de sintomas durante o acompanhamento pós-evento. Pode vir do próprio
+    formulário do acompanhamento ou de uma medição de saúde com sintomas de radiação."""
+
+    __tablename__ = 'radiation_symptom_reports'
+    __table_args__ = (
+        Index('ix_radiation_symptom_report_follow_up', 'follow_up_id', 'reported_at'),
+    )
+
+    id: int | None = Field(default=None, primary_key=True)
+    follow_up_id: int = Field(sa_column=Column(Integer, ForeignKey('radiation_follow_ups.id', ondelete='CASCADE'), nullable=False))
+    reported_at: datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))
+    symptoms: list[str] = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
+    note: str | None = Field(default=None, sa_type=Text)
+    observation_id: int | None = Field(default=None, foreign_key='health_observations.id')
+    recorded_by_user_id: int = Field(foreign_key='users.id')
+    recorded_at: datetime = Field(default_factory=utc_now, sa_column=Column(DateTime(timezone=True), nullable=False))
+
+
+class RadiationAlert(SQLModel, table=True):
+    """Alerta de radiação. Tabela própria porque HealthAlert exige uma medição de
+    origem; aqui a origem é um evento, um acompanhamento ou um registro de dose.
+
+    dedupe_key identifica o alerta lógico (ex.: dose_limit:bfo:30_day); só pode
+    haver um alerta ativo por astronauta e chave.
+    """
+
+    __tablename__ = 'radiation_alerts'
+    __table_args__ = (
+        CheckConstraint("severity IN ('attention', 'urgent', 'critical')", name='ck_radiation_alert_severity'),
+        CheckConstraint("status IN ('open', 'acknowledged', 'resolved')", name='ck_radiation_alert_status'),
+        CheckConstraint("rule_id IN ('sep_during_eva', 'proton_flux_during_eva', 'prodromal_vomiting', 'prodromal_symptoms', 'skin_reaction', 'late_symptoms', 'dose_limit')", name='ck_radiation_alert_rule'),
+        Index('uq_radiation_alert_active', 'astronaut_id', 'dedupe_key', unique=True, postgresql_where=text("status IN ('open', 'acknowledged')"), sqlite_where=text("status IN ('open', 'acknowledged')")),
+        Index('ix_radiation_alert_mission', 'mission_id', 'status', 'updated_at'),
+    )
+
+    id: int | None = Field(default=None, primary_key=True)
+    mission_id: int = Field(foreign_key='missions.id')
+    astronaut_id: int = Field(foreign_key='users.id', index=True)
+    rule_id: str
+    dedupe_key: str = Field(sa_type=Text)
+    severity: str
+    status: str = 'open'
+    reason: str = Field(sa_type=Text)
+    event_id: int | None = Field(default=None, foreign_key='space_weather_events.id')
+    follow_up_id: int | None = Field(default=None, sa_column=Column(Integer, ForeignKey('radiation_follow_ups.id', ondelete='SET NULL')))
+    dose_record_id: int | None = Field(default=None, sa_column=Column(Integer, ForeignKey('radiation_dose_records.id', ondelete='SET NULL')))
+    details: dict = Field(default_factory=dict, sa_column=Column(JSON, nullable=False))
+    created_at: datetime = Field(default_factory=utc_now, sa_column=Column(DateTime(timezone=True), nullable=False))
+    updated_at: datetime = Field(default_factory=utc_now, sa_column=Column(DateTime(timezone=True), nullable=False))
+    acknowledged_at: datetime | None = Field(default=None, sa_column=Column(DateTime(timezone=True)))
+    acknowledged_by_user_id: int | None = Field(default=None, foreign_key='users.id')
+    resolved_at: datetime | None = Field(default=None, sa_column=Column(DateTime(timezone=True)))
+    resolved_by_user_id: int | None = Field(default=None, foreign_key='users.id')
+    resolution_note: str | None = Field(default=None, sa_type=Text)

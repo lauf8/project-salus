@@ -92,6 +92,9 @@ class HealthService:
         self.session.flush()
         from app.services.health_alert_service import HealthAlertService
         HealthAlertService(self.session, self.user).evaluate(observation)
+        # Sintomas de radiação entram no acompanhamento pós-SEP aberto, se houver.
+        from app.services.radiation_service import RadiationService
+        RadiationService(self.session, self.user).report_from_observation(observation)
         return observation
 
     def statement(self, astronaut_id, mission_id=None):

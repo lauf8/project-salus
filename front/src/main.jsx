@@ -13,6 +13,7 @@ const AstronautControl = lazy(()=>import('./AstronautControl'));
 const MissionOperations = lazy(()=>import('./MissionOperations'));
 const MentalHealth = lazy(()=>import('./MentalHealth'));
 const Nutrition = lazy(()=>import('./Nutrition'));
+const Radiation = lazy(()=>import('./Radiation'));
 const SpacecraftCatalog = lazy(()=>import('./spacecraft/SpacecraftCatalog'));
 const MedicineCatalog = lazy(()=>import('./MedicineCatalog'));
 import ExamResultForm, { StructuredResult, ExamReference } from './ExamResultForm';
