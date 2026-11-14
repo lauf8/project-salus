@@ -1,3 +1,5 @@
+> Acesso público: a interface abre sem login. Os seletores **Perfil** e **Usuário** no topo permitem escolher uma identidade ativa sem senha, inclusive administrador global. A escolha é salva neste navegador. A API aceita `X-Public-Profile` e, opcionalmente, `X-Public-User`; sem cabeçalhos, seleciona um administrador global. Quando não há usuário para um perfil, cria uma identidade pública para ele. As regras funcionais de cada perfil e vínculo de missão continuam valendo. As rotas antigas de autenticação permanecem por compatibilidade, mas não protegem o acesso ao sistema.
+
 # Account profiles and mission responsibilities
 
 Project Salus supports eight account profiles. Profiles can be combined. A mission membership retains one responsibility per user and mission; the same user can have a different responsibility in another mission.
