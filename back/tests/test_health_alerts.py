@@ -198,7 +198,8 @@ def test_distinct_consecutive_days_for_all_trends(records, indicator, value, day
 
 @pytest.mark.parametrize('indicator,value,category', [('sleep_duration', 400, None), ('sleep_quality', 1, None), ('fatigue', 9, None), ('attention', None, 'better')])
 def test_missing_day_interrupts_trends(records, indicator, value, category):
-    base = datetime.now(timezone.utc) - timedelta(days=5)
+    # Fixa o horário de manhã: as duas primeiras medições precisam cair no mesmo dia UTC.
+    base = (datetime.now(timezone.utc) - timedelta(days=5)).replace(hour=8, minute=0, second=0, microsecond=0)
     kwargs = {'category': category} if category else {}
     create(records, indicator, value, collected_at=base, **kwargs)
     create(records, indicator, value, collected_at=base + timedelta(hours=2), **kwargs)

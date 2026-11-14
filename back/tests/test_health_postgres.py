@@ -151,8 +151,9 @@ def test_physician_astronaut_cannot_self_assess_avpu(case):
     session.add(doctor)
     session.commit()
     path = f"/health/astronauts/{doctor.id}"
-    call('doctor', 'POST', path + '/observations', observation(value=70, mission_id=case['mid']), 201)
-    call('doctor', 'POST', path + '/observations', observation('consciousness', category='alert', mission_id=case['mid']), 403)
+    # O médico é flight_surgeon na missão, não astronauta: registra para si sem vínculo de missão.
+    call('doctor', 'POST', path + '/observations', observation(value=70), 201)
+    call('doctor', 'POST', path + '/observations', observation('consciousness', category='alert'), 403)
 
 
 def test_context_uses_mission_authorization_and_legacy_astronaut_membership(case):
@@ -161,8 +162,10 @@ def test_context_uses_mission_authorization_and_legacy_astronaut_membership(case
     astronaut.is_astronaut = False
     session.add(astronaut)
     session.commit()
-    assert call('astronaut', 'GET', '/health/context')['is_astronaut']
-    assert not call('astronaut', 'GET', '/health/context')['supervised_astronauts']
+    # Sem nenhum perfil, o usuário não pode ser escolhido no acesso público (USER_ACCESS.md),
+    # mas o vínculo legado de astronauta continua valendo para a supervisão médica.
+    response = case['client'].get('/v1/health/context', headers={'X-Public-User': str(astronaut.id), 'X-Public-Profile': 'is_astronaut'})
+    assert response.status_code == 422
     supervised = call('doctor', 'GET', '/health/context')['supervised_astronauts']
     assert [record['id'] for record in supervised] == [astronaut.id]
     assert not call('outsider', 'GET', '/health/context')['supervised_astronauts']
@@ -171,6 +174,7 @@ def test_context_uses_mission_authorization_and_legacy_astronaut_membership(case
 
 def test_summary_requires_authentication_and_invalid_history_period_is_rejected(case):
     path = health_path(case)
-    case['call'](None, 'GET', path + '/summary', expected=401)
+    # Sem cabeçalhos, a API usa um administrador global, que não acessa dados clínicos.
+    case['call'](None, 'GET', path + '/summary', expected=403)
     case['call']('astronaut', 'GET', path + '/history?indicator=unknown', expected=422)
     case['call']('astronaut', 'GET', path + '/history?indicator=heart_rate&start=2026-01-02T00:00:00Z&end=2026-01-01T00:00:00Z', expected=422)

@@ -6,12 +6,12 @@ from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine, select
 
 from app.core.roles import PROFILE_FIELDS
-from app.core.security import create_access_token
 from app.database import get_session
 from app.main import app
 from app.models.access import AccessAuditEvent
 from app.models.preflight import Mission, MissionMember
 from app.models.user import User
+from tests.public_identity import public_headers
 
 
 @pytest.fixture
@@ -46,7 +46,7 @@ def access_api(tmp_path):
     try:
         with TestClient(app) as client:
             def call(method,path,body=None,actor='admin',expected=200):
-                response=client.request(method,'/v1'+path,json=body,headers={'Authorization':f'Bearer {create_access_token(str(users[actor]))}'})
+                response=client.request(method,'/v1'+path,json=body,headers=public_headers(engine,users[actor]))
                 assert response.status_code==expected,response.text
                 return response.json() if response.content else None
             yield call,engine,users,members,mission_id,other_id,client
@@ -103,7 +103,7 @@ def test_profile_admin_guards_and_inactive_accounts(access_api):
     nurse_body={name:nurse[name] for name in (*PROFILE_FIELDS,'is_active')}
     call('PUT',f'/users/{users["nurse"]}/profiles',{**nurse_body,'is_nurse':False,'is_observer':True},actor='observer',expected=409)
     call('PUT',f'/users/{users["nurse"]}/profiles',{**nurse_body,'is_active':False},actor='observer')
-    call('GET','/users/me',actor='nurse',expected=403)
+    call('GET','/users/me',actor='nurse',expected=404)  # conta inativa não pode ser selecionada
     audit=call('GET','/users/access-audit',actor='observer')
     assert audit['data'] and all('hashed_password' not in item for item in audit['data'])
     call('GET','/users/access-audit',actor='admin',expected=403)

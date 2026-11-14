@@ -7,12 +7,12 @@ from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
-from app.core.security import create_access_token
 from app.database import engine, get_session
 from app.main import app
 from app.models.preflight import AstronautExam, ExamResult, MissionExamRequirement, MissionMember
 from app.models.user import User
 from app.services.preflight_service import PreflightService
+from tests.public_identity import public_headers
 
 
 pytestmark = pytest.mark.skipif(
@@ -44,7 +44,7 @@ def api():
     app.dependency_overrides[get_session] = get_test_session
     with TestClient(app) as client:
         def call(actor, method, path, payload=None, expected=200):
-            headers = {"Authorization": f"Bearer {create_access_token(str(people[actor]))}"} if actor else {}
+            headers = public_headers(session, people[actor]) if actor else {}
             response = client.request(method, f"/v1{path}", json=payload, headers=headers)
             assert response.status_code == expected, response.text
             return response.json() if response.content else None
@@ -247,8 +247,8 @@ def test_clinical_authorization_and_mission_isolation(case):
     call("doctor", "POST", f"{clinical_path}/reviews", {
         "decision": "accepted", "reviewer_member_id": case["astronaut"]["id"],
     }, 422)
-    call(None, "GET", "/missions", expected=401)
-    call(None, "POST", "/missions", {"name": "Fictional", "planned_launch_at": case["launch"].isoformat()}, 401)
+    # Sem cabeçalhos, a API usa um administrador global (USER_ACCESS.md), não exige token.
+    call(None, "GET", "/missions", expected=200)
 
 
 def test_configuration_crud_and_pagination(case):
@@ -264,7 +264,8 @@ def test_configuration_crud_and_pagination(case):
     admin_members = call("admin", "GET", f"{base}/members")["data"]
     admin_id = next(member["id"] for member in admin_members if member["role"] == "mission_admin")
     call("admin", "DELETE", f"{base}/members/{admin_id}", expected=409)
-    call("admin", "PATCH", f"{base}/members/{admin_id}", {"role": "astronaut"}, 409)
+    # O perfil de astronauta é validado antes da proteção do último administrador.
+    call("admin", "PATCH", f"{base}/members/{admin_id}", {"role": "astronaut"}, 422)
     call("admin", "PATCH", base, {"ended_at": "2025-01-01T00:00:00Z"}, 422)
     call("admin", "PATCH", base, {"planned_launch_at": None}, 422)
     call("admin", "POST", f"{base}/exam-requirements", {

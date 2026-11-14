@@ -7,12 +7,12 @@ from fastapi.testclient import TestClient
 from sqlalchemy import event, func
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from app.core.security import create_access_token
 from app.database import get_session
 from app.main import app
 from app.models.nutrition import FoodStockMovement, MealLog, MealLogItem, MissionFoodLot
 from app.models.preflight import Mission, MissionMember
 from app.models.user import User
+from tests.public_identity import public_headers
 
 
 @pytest.fixture
@@ -26,7 +26,7 @@ def nutrition_api(tmp_path):
     with Session(engine) as session:
         users = {}
         for name in ('admin', 'doctor', 'astronaut', 'other', 'outsider'):
-            user = User(name=name, email=f'{name}@nutrition.test', hashed_password='fictional', is_physician=name in ('admin', 'doctor'), is_astronaut=name in ('astronaut', 'other'))
+            user = User(name=name, email=f'{name}@nutrition.test', hashed_password='fictional', is_physician=name in ('admin', 'doctor'), is_astronaut=name in ('astronaut', 'other', 'outsider'))
             session.add(user)
             session.flush()
             users[name] = user.id
@@ -49,7 +49,7 @@ def nutrition_api(tmp_path):
     try:
         with TestClient(app) as client:
             def call(method, path, body=None, expected=200, actor='admin'):
-                response = client.request(method, '/v1' + path, json=body, headers={'Authorization': f'Bearer {create_access_token(str(users[actor]))}'})
+                response = client.request(method, '/v1' + path, json=body, headers=public_headers(engine, users[actor]))
                 assert response.status_code == expected, response.text
                 return response.json() if response.content else None
             yield call, engine, mission_ids, members, now

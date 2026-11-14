@@ -99,10 +99,11 @@ def test_login_with_wrong_password(client):
     assert response.json()["detail"] == "Invalid credentials"
 
 
-def test_list_users_requires_token(client):
+def test_list_users_without_token_uses_public_identity(client):
+    # Acesso público (USER_ACCESS.md): sem cabeçalhos, a API usa um administrador global.
     response = client.get("/v1/users/")
 
-    assert response.status_code == 401
+    assert response.status_code == 200
 
 
 def test_list_users_with_valid_token(client):
