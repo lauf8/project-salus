@@ -7,7 +7,7 @@ from sqlalchemy.engine import URL
 from sqlmodel import SQLModel
 
 from app.models.knowledge import KnowledgeDocument, KnowledgePassage
-from app.models import mental_health, nutrition, health, health_alerts, medicines, notifications, preflight, space_weather, spacecraft
+from app.models import access, care, mental_health, nutrition, health, health_alerts, medicines, notifications, preflight, space_weather, spacecraft
 from app.models.user import User
 from app.models.revoked_token import RevokedToken
 

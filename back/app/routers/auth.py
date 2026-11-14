@@ -4,6 +4,9 @@ from sqlmodel import Session
 from app.database import get_session
 from app.schemas.auth import TokenResponse, UserLogin
 from app.services.auth_service import AuthService
+from app.dependencies.auth import get_current_user
+from app.models.user import User
+from app.schemas.users import UserResponse
 from fastapi.security import OAuth2PasswordBearer
 
 
@@ -22,3 +25,7 @@ def logout(token: str = Depends(oauth2_scheme), session: Session = Depends(get_s
     auth_service.logout(token)
 
     return {"message": "Logged out successfully"}
+
+@router.get("/public-user", response_model=UserResponse)
+def public_identity(user: User = Depends(get_current_user)):
+    return user

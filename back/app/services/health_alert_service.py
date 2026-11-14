@@ -181,6 +181,8 @@ class HealthAlertService(PreflightService):
     def list_alerts(self, astronaut_id, mission_id, status, page, per_page, indicator=None):
         can_resolve = self.authorize(astronaut_id, mission_id)
         statement = select(HealthAlert).where(HealthAlert.astronaut_id == astronaut_id)
+        if mission_id is not None:
+            statement = statement.where(HealthAlert.mission_id == mission_id)
         if indicator is not None:
             statement = statement.where(HealthAlert.indicator == indicator)
         if status == 'active':
@@ -196,7 +198,7 @@ class HealthAlertService(PreflightService):
     def get_alert(self, astronaut_id, mission_id, alert_id):
         can_resolve = self.authorize(astronaut_id, mission_id)
         alert = self._get(HealthAlert, alert_id)
-        if alert.astronaut_id != astronaut_id:
+        if alert.astronaut_id != astronaut_id or (mission_id is not None and alert.mission_id != mission_id):
             raise HTTPException(404, 'Alerta não encontrado neste prontuário')
         return alert, can_resolve
 

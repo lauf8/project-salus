@@ -13,7 +13,8 @@
     "test:health:e2e": "node scripts/verify-health.mjs",
     "typecheck": "tsc --noEmit",
     "test:spacecraft:e2e": "node scripts/verify-spacecraft.mjs",
-    "test:mental-health:e2e": "node scripts/verify-mental-health.mjs"
+    "test:mental-health:e2e": "node scripts/verify-mental-health.mjs",
+    "test:profiles:e2e": "node scripts/verify-user-profiles.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

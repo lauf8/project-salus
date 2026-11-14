@@ -86,9 +86,14 @@ class NutritionService(PreflightService):
             statement = statement.where(FoodProduct.category == category)
         return self._page(statement.order_by(FoodProduct.name, FoodProduct.id), page, per_page)
 
+    def _food_catalog_writer(self):
+        if self.user.is_nutritionist and self.session.exec(select(MissionMember).where(MissionMember.user_id == self.user.id, MissionMember.role == 'nutritionist')).first():
+            return
+        self._catalog_writer()
+
     @transactional
     def save_product(self, payload, product_id=None):
-        self._catalog_writer()
+        self._food_catalog_writer()
         values = payload.model_dump()
         values['unit_equivalences'] = payload.model_dump(mode='json')['unit_equivalences']
         product = self.get_product(product_id, lock=True) if product_id else FoodProduct(**values)
@@ -104,14 +109,17 @@ class NutritionService(PreflightService):
             self._require_physician()
         return mission
 
-    def _meal_access(self, mission_id, member_id, lock=False):
-        mission, actor = self._access(mission_id, {'astronaut', 'flight_surgeon'}, lock=lock)
+    def _meal_access(self, mission_id, member_id, lock=False, write=False):
+        mission, actor = self._access(mission_id, {'astronaut', 'flight_surgeon', 'nutritionist'}, lock=lock)
+        if actor.role == 'nutritionist':
+            if not self.user.is_nutritionist or write:
+                raise HTTPException(403, 'Nutritionists may consult meal records but cannot change the astronaut journal')
         target = self.session.get(MissionMember, member_id)
         if target is None or target.mission_id != mission_id or target.role != 'astronaut':
             raise HTTPException(404, 'Astronaut membership not found in this mission')
         if actor.role == 'flight_surgeon':
             self._require_physician()
-        elif target.user_id != self.user.id:
+        elif actor.role == 'astronaut' and target.user_id != self.user.id:
             raise HTTPException(403, 'Astronauts may only access their own meal records')
         return mission
 
@@ -279,7 +287,7 @@ class NutritionService(PreflightService):
 
     @transactional
     def create_meal(self, mission_id, payload):
-        self._meal_access(mission_id, payload.mission_member_id, lock=True)
+        self._meal_access(mission_id, payload.mission_member_id, lock=True, write=True)
         request_id = str(payload.client_request_id) if payload.client_request_id else None
         fingerprint = sha256(json.dumps(payload.model_dump(mode='json', exclude={'client_request_id'}), sort_keys=True).encode()).hexdigest()
         if request_id:
@@ -297,11 +305,11 @@ class NutritionService(PreflightService):
         self._apply_items(mission_id, meal, prepared, [])
         return self._meal_response(meal)
 
-    def _meal(self, mission_id, meal_id):
+    def _meal(self, mission_id, meal_id, write=False):
         meal = self.session.exec(select(MealLog).where(MealLog.id == meal_id, MealLog.mission_id == mission_id).with_for_update()).first()
         if meal is None:
             raise HTTPException(404, 'Meal not found in this mission')
-        self._meal_access(mission_id, meal.mission_member_id)
+        self._meal_access(mission_id, meal.mission_member_id, write=write)
         return meal
 
     def get_meal(self, mission_id, meal_id):
@@ -313,8 +321,8 @@ class NutritionService(PreflightService):
 
     @transactional
     def update_meal(self, mission_id, meal_id, payload):
-        self._meal_access(mission_id, payload.mission_member_id, lock=True)
-        meal = self._meal(mission_id, meal_id)
+        self._meal_access(mission_id, payload.mission_member_id, lock=True, write=True)
+        meal = self._meal(mission_id, meal_id, write=True)
         if meal.is_deleted or payload.expected_revision != meal.revision:
             raise HTTPException(409, 'The meal has changed. Reload it before editing.')
         old_items = self._active_items(meal.id)
@@ -331,7 +339,7 @@ class NutritionService(PreflightService):
     @transactional
     def delete_meal(self, mission_id, meal_id, expected_revision):
         self._access(mission_id, lock=True)
-        meal = self._meal(mission_id, meal_id)
+        meal = self._meal(mission_id, meal_id, write=True)
         if meal.is_deleted:
             return
         if meal.revision != expected_revision:
@@ -342,7 +350,9 @@ class NutritionService(PreflightService):
         self.session.add(meal)
 
     def list_meals(self, mission_id, member_id, day, page, per_page):
-        _, actor = self._access(mission_id, {'astronaut', 'flight_surgeon'})
+        _, actor = self._access(mission_id, {'astronaut', 'flight_surgeon', 'nutritionist'})
+        if actor.role == 'nutritionist' and not self.user.is_nutritionist:
+            raise HTTPException(403, 'A nutritionist profile is required')
         if actor.role == 'flight_surgeon':
             self._require_physician()
         if member_id is not None:

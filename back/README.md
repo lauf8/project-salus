@@ -2,6 +2,11 @@
 
 FastAPI backend using Python 3.13, PostgreSQL 17, SQLModel, and Alembic.
 
+The Compose project name is fixed to `nasa`, so running `docker compose up` from
+this directory uses `nasa_postgres_data`. The default directory name `back`
+can select an unrelated older volume (`back_postgres_data`, PostgreSQL 13).
+Do not delete that volume to resolve a version mismatch.
+
 ## Banco do monitoramento nesta instalação
 
 A variável `NASA_DATABASE` em `.env` seleciona o banco usado pela API; quando
