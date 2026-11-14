@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from app.core.ai_config import AiSettings
 from app.providers.ai import AiProvider
 from app.providers.openai_compatible import OpenAiCompatibleProvider
-from app.routers import mental_health, nutrition, auth, demo, health, medicines, notifications, preflight, spacecraft, users
+from app.routers import mental_health, nutrition, auth, demo, health, medicines, notifications, preflight, space_weather, spacecraft, users
 
 
 @asynccontextmanager
@@ -22,7 +22,10 @@ async def lifespan(app: FastAPI):
     async with httpx.AsyncClient() as client:
         provider: AiProvider = OpenAiCompatibleProvider(client, settings)
         app.state.ai_provider = provider
-        yield
+        # Cliente síncrono do NASA DONKI (as rotas da API são síncronas).
+        with httpx.Client() as donki_http_client:
+            app.state.donki_http_client = donki_http_client
+            yield
 
 
 app = FastAPI(title="Nasa Health Monitor", lifespan=lifespan)
@@ -43,6 +46,8 @@ app.include_router(spacecraft.router, prefix="/v1")
 app.include_router(nutrition.router, prefix="/v1")
 
 app.include_router(mental_health.router, prefix="/v1")
+
+app.include_router(space_weather.router, prefix="/v1")
 
 
 @app.exception_handler(RequestValidationError)
