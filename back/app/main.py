@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
             yield
 
 
-app = FastAPI(title="Nasa Health Monitor", lifespan=lifespan)
+app = FastAPI(title="Project Salus", lifespan=lifespan)
 
 app.include_router(users.router, prefix="/v1")
 app.include_router(auth.router, prefix="/v1")

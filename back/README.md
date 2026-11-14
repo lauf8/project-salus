@@ -1,4 +1,4 @@
-# Nasa Health Monitor
+# Project Salus
 
 FastAPI backend using Python 3.13, PostgreSQL 17, SQLModel, and Alembic.
 
