@@ -4,7 +4,7 @@ Uso (dentro do container, depois de `alembic upgrade head`):
     python -m scripts.seed_radiation_demo
 
 Cria:
-- 4 usuários (senha "secret123"):
+- 4 usuários (escolha-os nos seletores Perfil e Usuário no topo da tela):
     okafor@example.com  médico, administrador da missão
     rivera@example.com  médico de voo
     lima@example.com    astronauta (estava em EVA durante o SEP)
@@ -36,7 +36,7 @@ from app.services.space_weather_service import SpaceWeatherService
 
 PASSWORD = 'secret123'
 PEOPLE = [
-    ('Cmdr. Okafor', 'okafor@example.com', True, False),
+    ('Cmdr. Okafor', 'okafor@example.com', True, False),  # também com perfil de administrador de missão
     ('Dr. Rivera', 'rivera@example.com', True, False),
     ('Ada Lima', 'lima@example.com', False, True),
     ('Kenji Sato', 'sato@example.com', False, True),
@@ -64,7 +64,7 @@ def main() -> int:
 
         users = {}
         for name, email, physician, astronaut in PEOPLE:
-            user = User(name=name, email=email, hashed_password=hash_password(PASSWORD), is_physician=physician, is_astronaut=astronaut)
+            user = User(name=name, email=email, hashed_password=hash_password(PASSWORD), is_physician=physician, is_astronaut=astronaut, is_mission_admin=email.startswith('okafor'))
             session.add(user)
             session.flush()
             users[email.split('@')[0]] = user
@@ -119,8 +119,8 @@ def main() -> int:
         alerts = surgeon.list_alerts(mission.id, 'active', None, 1, 50)['data']
         print(f'Missão "{mission.name}" (id {mission.id}) criada. SEP: {sep_id}')
         print('Alertas ativos: ' + ', '.join(f'{alert.rule_id} ({alert.severity})' for alert in alerts))
-        print(f'Entre com rivera@example.com / {PASSWORD} (médico de voo) ou lima@example.com / {PASSWORD} (astronauta),')
-        print('abra Missions → Radiation Demo → aba Radiation.')
+        print('No topo da tela, escolha Perfil "Physician" + Usuário "Dr. Rivera" (médico de voo)')
+        print('ou Perfil "Astronaut" + Usuário "Ada Lima"; depois Missions → Radiation Demo → aba Radiation.')
     return 0
 
 

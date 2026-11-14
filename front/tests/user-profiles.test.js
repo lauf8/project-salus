@@ -18,6 +18,7 @@ test('professional workspaces expose the appropriate care modules',()=>{
   assert(nurse.includes('nursing'));
   assert(!nurse.includes('mental-health')&&!nurse.includes('nutrition-plans'));
   assert(nutritionist.includes('nutrition-plans'));
+  assert(nurse.includes('radiation')&&admin.includes('radiation')&&missionTabs('astronaut').some(([id])=>id==='radiation'));
   assert(!nutritionist.includes('nursing')&&!nutritionist.includes('mental-health'));
   assert(!admin.includes('nursing')&&!admin.includes('mental-health')&&!admin.includes('checklist'));
   assert.equal(initialMissionTab('nurse'),'nursing');

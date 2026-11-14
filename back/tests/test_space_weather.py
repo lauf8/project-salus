@@ -8,7 +8,6 @@ from sqlalchemy import event
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from app.core.security import create_access_token
 from app.database import get_session
 from app.dependencies.donki import get_donki_client
 from app.main import app
@@ -71,6 +70,9 @@ class FakeDonki:
         return httpx.Response(200, content=json.dumps(items) if items else b'')
 
 
+PROFILES = {'doctor': 'is_physician', 'astronaut': 'is_astronaut', 'outsider_doctor': 'is_physician'}
+
+
 @pytest.fixture
 def space_weather_api():
     engine = create_engine('sqlite://', connect_args={'check_same_thread': False}, poolclass=StaticPool)
@@ -114,7 +116,8 @@ def space_weather_api():
     try:
         with TestClient(app) as client:
             def call(method, path, payload=None, expected=200, actor='doctor', params=None):
-                headers = {'Authorization': f'Bearer {create_access_token(str(people[actor]))}'}
+                # Acesso público: a identidade é escolhida pelos cabeçalhos, sem token.
+                headers = {'X-Public-User': str(people[actor]), 'X-Public-Profile': PROFILES[actor]}
                 response = client.request(method, '/v1/space-weather' + path, json=payload, params=params, headers=headers)
                 assert response.status_code == expected, response.text
                 return response.json() if response.content else None

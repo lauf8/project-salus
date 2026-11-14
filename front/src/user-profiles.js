@@ -14,6 +14,7 @@ export function missionTabs(role, physician=false) {
   const tabs=[['operations','Operations'],['members','Crew']];
   if(['astronaut','flight_surgeon'].includes(role))tabs.push(['checklist','Monitoring checklist']);
   if(role!=='observer')tabs.push(['nutrition','Food and hydration']);
+  if(role!=='observer')tabs.push(['radiation','Radiation']);
   if(['astronaut','psychologist'].includes(role))tabs.push(['mental-health','Mental health']);
   if(['astronaut','flight_surgeon','nutritionist'].includes(role))tabs.push(['nutrition-plans','Nutrition plans']);
   if(['astronaut','flight_surgeon','nurse'].includes(role))tabs.push(['nursing','Nursing care']);

@@ -115,7 +115,7 @@ Em um banco de desenvolvimento migrado, sem acesso à internet:
 docker compose exec api python -m scripts.seed_radiation_demo
 ```
 
-Cria a missão "Radiation Demo" com uma cadeia fictícia flare X2.3 → CME → SEP de 10 horas atrás, a EVA de uma astronauta durante o SEP (com janela de 48 h aberta), fluxo e doses simulados e um relato de sintomas. Entre com `rivera@example.com` (médico de voo) ou `lima@example.com` (astronauta), senha `secret123`, e abra a aba Radiation da missão.
+Cria a missão "Radiation Demo" com uma cadeia fictícia flare X2.3 → CME → SEP de 10 horas atrás, a EVA de uma astronauta durante o SEP (com janela de 48 h aberta), fluxo e doses simulados e um relato de sintomas. No topo da tela, escolha o Perfil **Physician** e o Usuário **Dr. Rivera** (médico de voo), ou o Perfil **Astronaut** e a Usuária **Ada Lima**. Depois abra Missions → Radiation Demo → aba Radiation.
 
 ## Verificação
 
