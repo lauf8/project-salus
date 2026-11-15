@@ -10,6 +10,8 @@ from app.core.security import create_access_token
 from app.database import get_session
 from app.main import app
 from app.models.notifications import HealthNotification
+from app.models.mission_risks import MissionRiskPlan, MissionRiskEvaluation, MissionRiskAlert, MissionRiskAction, MissionOccurrence
+from app.models.nutrition import FoodProduct
 from app.models.health import HealthObservation
 from app.models.health_alerts import HealthAlert, HealthAlertEvent, HealthAlertObservation, HealthAlertSettings
 from app.models.medicines import ActiveIngredient, CrewMemberAllergy, Medicine, MedicineActiveIngredient
@@ -27,7 +29,7 @@ def catalog_api():
     def enable_foreign_keys(connection, record):
         connection.execute('PRAGMA foreign_keys=ON')
 
-    models = [Spacecraft, User, RevokedToken, Mission, MissionMember, ActiveIngredient, Medicine, MedicineActiveIngredient, CrewMemberAllergy, HealthObservation, HealthAlertSettings, HealthAlert, HealthAlertObservation, HealthAlertEvent, HealthNotification]
+    models = [Spacecraft, User, RevokedToken, Mission, MissionMember, ActiveIngredient, Medicine, MedicineActiveIngredient, CrewMemberAllergy, HealthObservation, HealthAlertSettings, HealthAlert, HealthAlertObservation, HealthAlertEvent, FoodProduct, MissionRiskPlan, MissionRiskEvaluation, MissionRiskAlert, MissionRiskAction, MissionOccurrence, HealthNotification]
     SQLModel.metadata.create_all(engine, tables=[model.__table__ for model in models])
     with Session(engine) as session:
         people = {}
@@ -147,7 +149,7 @@ def test_catalog_and_clinical_permissions(catalog_api):
         call(actor, 'POST', '/active-ingredients', {'name': 'Denied'}, 403)
         call(actor, 'PATCH', f"/medicines/{medicine['id']}", {'name': 'Denied'}, 403)
         call(actor, 'DELETE', f'/active-ingredients/{first}', expected=403)
-    call(None, 'GET', '/active-ingredients', expected=401)
+    call(None, 'GET', '/active-ingredients', expected=200)
     path = f"/health/astronauts/{people['astronaut']}/allergies"
     payload = {'allergy_screening_completed': True, 'active_ingredient_ids': []}
     for actor in ('outsider', 'admin'):

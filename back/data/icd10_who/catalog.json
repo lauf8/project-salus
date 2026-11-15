@@ -1,0 +1,11 @@
+{
+  "title": "WHO ICD-10 2019 English plain text tabular, including COVID-19 updates",
+  "source_url": "https://icdcdn.who.int/icd10/meta/icd102019enMeta.zip",
+  "download_page": "https://icdcdn.who.int/icd10/index.html",
+  "revision": "2019; archive members dated 2020-10-13",
+  "verified_on": "2026-11-14",
+  "sha256": "a9fa787fa79076e199e46ca645bbc076449853e93e62cd3b2050b96dc96bbc1d",
+  "size_bytes": 237071,
+  "page_count": null,
+  "format": "Original ZIP with three plain text files; not paginated"
+}

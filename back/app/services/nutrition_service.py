@@ -69,6 +69,33 @@ def total_items(items):
 
 
 class NutritionService(PreflightService):
+    def after_transactional_change(self, method_name, args, kwargs):
+        if method_name not in {'create_lot', 'create_meal', 'update_meal', 'delete_meal'}:
+            return
+        from app.services.mission_risk_service import MissionRiskService
+        service = MissionRiskService(self.session, self.user)
+        mission_id = args[0] if args else kwargs['mission_id']
+        if service.plan_at(mission_id, datetime.now(timezone.utc)) is not None:
+            service.evaluate_internal(mission_id)
+
+    def _movement(self, **values):
+        lot = self.session.get(MissionFoodLot, values['lot_id'])
+        product = self.get_product(lot.food_product_id)
+        occurred_at = datetime.now(timezone.utc)
+        if values.get('meal_log_item_id'):
+            item = self.session.get(MealLogItem, values['meal_log_item_id'])
+            occurred_at = self.session.get(MealLog, item.meal_log_id).consumed_at
+        reference_delta = Decimal(str(values['quantity'])) / reference_amount(product, lot.stock_unit, lot.stock_basis)
+        if values.get('reverses_movement_id'):
+            original = self.session.get(FoodStockMovement, values['reverses_movement_id'])
+            if original.risk_snapshot:
+                occurred_at = datetime.fromisoformat(original.risk_snapshot['event_at'])
+                reference_delta = -Decimal(original.risk_snapshot['reference_delta'])
+        snapshot = {'reference_delta': str(reference_delta), 'event_at': as_utc(occurred_at).isoformat(),
+                    'food_name': product.name, 'expiration_date': lot.expiration_date.isoformat(),
+                    'unit': product.reference_unit, 'quantity_per_reference': str(product.reference_quantity)}
+        return FoodStockMovement(**values, risk_snapshot=snapshot)
+
     def get_product(self, product_id, lock=False):
         statement = select(FoodProduct).where(FoodProduct.id == product_id)
         if lock:
@@ -173,7 +200,7 @@ class NutritionService(PreflightService):
             self.session.flush()
         except IntegrityError as exc:
             raise HTTPException(409, 'A lot with this code already exists for this product in this mission') from exc
-        self.session.add(FoodStockMovement(lot_id=lot.id, quantity=lot.initial_quantity, stock_unit=lot.stock_unit,
+        self.session.add(self._movement(lot_id=lot.id, quantity=lot.initial_quantity, stock_unit=lot.stock_unit,
                                           movement_type='initial', purpose='receipt', recorded_by_user_id=self.user.id))
         self.session.flush()
         return self._lot_response(lot)
@@ -266,7 +293,7 @@ class NutritionService(PreflightService):
             if result.rowcount != 1:
                 raise HTTPException(409, f'Insufficient stock or concurrent stock conflict for lot {lot.lot_code}. Refresh the available lots.')
         for movement in old_movements:
-            self.session.add(FoodStockMovement(lot_id=movement.lot_id, meal_log_item_id=movement.meal_log_item_id,
+            self.session.add(self._movement(lot_id=movement.lot_id, meal_log_item_id=movement.meal_log_item_id,
                                               quantity=-movement.quantity, stock_unit=movement.stock_unit, movement_type='reversal',
                                               purpose=movement.purpose, reverses_movement_id=movement.id, recorded_by_user_id=self.user.id))
         for item in old_items:
@@ -278,10 +305,10 @@ class NutritionService(PreflightService):
             self.session.add(item)
             self.session.flush()
             lot = self._lot(mission_id, item.lot_id)
-            self.session.add(FoodStockMovement(lot_id=lot.id, meal_log_item_id=item.id, quantity=-item.stock_quantity_used,
+            self.session.add(self._movement(lot_id=lot.id, meal_log_item_id=item.id, quantity=-item.stock_quantity_used,
                                               stock_unit=lot.stock_unit, movement_type='consumption', purpose='meal', recorded_by_user_id=self.user.id))
             if water_lot:
-                self.session.add(FoodStockMovement(lot_id=water_lot.id, meal_log_item_id=item.id, quantity=-water_stock,
+                self.session.add(self._movement(lot_id=water_lot.id, meal_log_item_id=item.id, quantity=-water_stock,
                                                   stock_unit=water_lot.stock_unit, movement_type='consumption', purpose='preparation_water', recorded_by_user_id=self.user.id))
         self.session.flush()
 

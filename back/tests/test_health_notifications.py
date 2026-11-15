@@ -187,7 +187,7 @@ def test_notification_http_pagination_visibility_and_read_actions(catalog_api):
     assert call('outsider', 'GET', '/notifications')['data'] == []
     call('outsider', 'POST', f'/notifications/{notification_id}/read', expected=404)
     call('astronaut', 'GET', '/notifications', expected=403)
-    call(None, 'GET', '/notifications', expected=401)
+    call(None, 'GET', '/notifications', expected=403)
     call('doctor', 'POST', f'/notifications/{notification_id}/read')
     assert call('doctor', 'GET', '/notifications/summary')['pending_count'] == 0
     assert call('doctor', 'POST', '/notifications/read-all')['marked_count'] == 2

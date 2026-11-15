@@ -130,6 +130,7 @@ class FoodStockMovement(SQLModel, table=True):
     stock_unit: str
     movement_type: str
     purpose: str
+    risk_snapshot: dict | None = Field(default=None, sa_column=Column(JSON))
     reverses_movement_id: int | None = Field(default=None, foreign_key='food_stock_movements.id')
     recorded_by_user_id: int = Field(foreign_key='users.id')
     recorded_at: datetime = Field(default_factory=utc_now, sa_column=Column(DateTime(timezone=True), nullable=False))

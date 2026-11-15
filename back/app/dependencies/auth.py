@@ -1,6 +1,9 @@
 """Public workspace identity: selecting a user does not require authentication."""
 from fastapi import Depends, Header, HTTPException
 from sqlalchemy.exc import IntegrityError
+from jose import JWTError
+from app.core.security import decode_access_token
+from app.models.revoked_token import RevokedToken
 from sqlmodel import Session, select
 
 from app.database import get_session
@@ -11,9 +14,27 @@ from app.core.roles import PROFILE_FIELDS
 
 def get_current_user(
     public_user: int | None = Header(default=None, alias="X-Public-User"),
-    public_profile: str = Header(default="is_global_admin", alias="X-Public-Profile"),
+    public_profile: str | None = Header(default=None, alias="X-Public-Profile"),
+    authorization: str | None = Header(default=None),
     session: Session = Depends(get_session),
 ) -> User:
+    if authorization and public_user is None and public_profile is None:
+        try:
+            scheme, token = authorization.split(' ', 1)
+            if scheme.lower() != 'bearer':
+                raise ValueError('Invalid authorization scheme')
+            payload = decode_access_token(token)
+            if not payload.get('jti') or session.exec(select(RevokedToken).where(RevokedToken.jti == payload['jti'])).first():
+                raise ValueError('Invalid or revoked token')
+            user = session.get(User, int(payload['sub']))
+        except (JWTError, ValueError, KeyError, TypeError):
+            raise HTTPException(401, 'Invalid token')
+        if user is None:
+            raise HTTPException(401, 'User not found')
+        if not user.is_active:
+            raise HTTPException(403, 'This account is inactive')
+        return user
+    public_profile = public_profile or 'is_global_admin'
     if public_profile not in PROFILE_FIELDS:
         raise HTTPException(422, "Unknown profile")
     if public_user is not None:

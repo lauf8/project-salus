@@ -1,0 +1,187 @@
+{
+  "format_version": 1,
+  "documents": [
+    {
+      "file": "ochmo-tb-031-exercise-overview.pdf",
+      "title": "NASA OCHMO-TB-031 Exercise Overview",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-031-exercise-overview.pdf",
+      "topics": [
+        "physical_fitness",
+        "exercise"
+      ],
+      "query": "physiological deconditioning aerobic capacity muscle strength exercise countermeasures",
+      "revision": "Dated 2023-10-02; no revision label identified",
+      "sha256": "3bf5e2cd008761da166d00c8fe1b8c2698f82cc8c60112509f7f4eb5e00d898d",
+      "page_count": 26,
+      "size_bytes": 1282311,
+      "downloaded_at": "2026-11-15T00:04:43.617375+00:00"
+    },
+    {
+      "file": "ochmo-tb-041-sleep-accommodations.pdf",
+      "title": "NASA OCHMO-TB-041 Sleep Accommodations",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-041-sleep-accommodations.pdf",
+      "topics": [
+        "sleep_fatigue",
+        "sleep"
+      ],
+      "query": "sleep accommodations crew sleep environment fatigue circadian disturbances",
+      "revision": "Rev B, 2023-10-23",
+      "sha256": "1d1951ca9560297f65288a65eb249c4f05dcfc80d3989b09ed0724fdec1ab5d7",
+      "page_count": 16,
+      "size_bytes": 1276504,
+      "downloaded_at": "2026-11-15T00:04:43.643378+00:00"
+    },
+    {
+      "file": "ochmo-tb-004-carbon-dioxide.pdf",
+      "title": "NASA OCHMO-TB-004 Carbon Dioxide (CO2)",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-004-carbon-dioxide.pdf",
+      "topics": [
+        "spacecraft",
+        "carbon_dioxide"
+      ],
+      "query": "carbon dioxide exposure spacecraft atmosphere crew health ventilation",
+      "revision": "Rev D, 2026-03-10",
+      "sha256": "cc4820a859ae50ce701c56055b00a2deca625371368b98ecf6758704fe435e92",
+      "page_count": 19,
+      "size_bytes": 2597842,
+      "downloaded_at": "2026-11-15T00:04:43.687418+00:00"
+    },
+    {
+      "file": "ochmo-tb-016-behavioral-health.pdf",
+      "title": "NASA OCHMO-TB-016 Behavioral Health and Performance",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-016-behavioral-health.pdf",
+      "topics": [
+        "well_being",
+        "behavioral_health"
+      ],
+      "query": "behavioral health performance isolation confinement crew support",
+      "revision": "Rev B, 2023-10-24",
+      "sha256": "47e7f45e5b7693d0f4f3b704d72fca272bf58008128d6d364bf28cbbc70d29b7",
+      "page_count": 18,
+      "size_bytes": 1078235,
+      "downloaded_at": "2026-11-15T00:04:43.714702+00:00"
+    },
+    {
+      "file": "ochmo-mtb-003-urinary-health.pdf",
+      "title": "NASA OCHMO-MTB-003 Urinary Health",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2025/01/ochmo-mtb-003-urinary-health.pdf",
+      "topics": [
+        "clinical_reference",
+        "urinary_health"
+      ],
+      "query": "urinary health renal stones urinary retention urinary tract infection spaceflight",
+      "revision": "Rev A, 2026-03-10",
+      "sha256": "a9a3ffc87eeabec2c6b731fd68766d608de7a7f03cb35f71b65b96a0570179e3",
+      "page_count": 20,
+      "size_bytes": 1248970,
+      "downloaded_at": "2026-11-15T00:04:43.756348+00:00"
+    },
+    {
+      "file": "ochmo-mtb-007-venous-thrombosis-in-spaceflight.pdf",
+      "title": "NASA OCHMO-MTB-007 Venous Thrombosis in Spaceflight",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2026/01/ochmo-mtb-007-venous-thrombosis-in-spaceflight.pdf",
+      "topics": [
+        "clinical_reference",
+        "venous_thrombosis"
+      ],
+      "query": "venous thrombosis spaceflight jugular vein risk factors ultrasound assessment",
+      "revision": "Dated 2026-01-08; no revision label identified",
+      "sha256": "d68f5c57ad22b940bd4209e8f9f116cc0ac62d7db64c54c6bd106973a1473c94",
+      "page_count": 18,
+      "size_bytes": 1480454,
+      "downloaded_at": "2026-11-15T00:04:43.786283+00:00"
+    },
+    {
+      "file": "ochmo-mtb-009-circadian-desynchrony.pdf",
+      "title": "NASA OCHMO-MTB-009 Circadian Desynchrony",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2026/03/ochmo-mtb-009-circadian-desynchrony.pdf",
+      "topics": [
+        "sleep_fatigue",
+        "circadian_rhythm"
+      ],
+      "query": "circadian desynchrony sleep wake cycles fatigue cognitive performance",
+      "revision": "Dated 2026-03-04; no revision label identified",
+      "sha256": "4db8bfcf8bd62731e593708c6ea529f9d9bdf68c8e74cc37b8b7cef15d34d189",
+      "page_count": 11,
+      "size_bytes": 999862,
+      "downloaded_at": "2026-11-15T00:04:43.816730+00:00"
+    },
+    {
+      "file": "ochmo-tb-006-health-stabilization-program.pdf",
+      "title": "NASA OCHMO-TB-006 Health Stabilization Program",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-006-health-stabilization-program.pdf",
+      "topics": [
+        "clinical_reference",
+        "infection_prevention"
+      ],
+      "query": "health stabilization program preflight infectious disease prevention quarantine immunizations",
+      "revision": "Rev F, 2025-05-19",
+      "sha256": "7c1dc28c234678bc4d60d225eb6993cc54c64770d5509da3454509aefd73478a",
+      "page_count": 10,
+      "size_bytes": 664619,
+      "downloaded_at": "2026-11-15T00:04:43.837862+00:00"
+    },
+    {
+      "file": "nasa-std-3001-vol-1-rev-c.pdf",
+      "title": "NASA-STD-3001 Volume 1 — Crew Health, Revision C",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/11/nasa-std-3001-vol-1-rev-c-with-signature.pdf",
+      "revision": "Revision C; cover approved 2023-09-15, history lists 2023-09-13",
+      "topics": [
+        "mission_health",
+        "medical_reference"
+      ],
+      "query": "mission health medical care likely medical conditions probability sample IMM",
+      "sha256": "e65882af9c9a9861b520268f739baadba08f6225feb14489ff7c46442de26ce9",
+      "page_count": 86,
+      "size_bytes": 1660855,
+      "downloaded_at": "2026-11-15T00:32:01.530133+00:00"
+    },
+    {
+      "file": "ochmo-tb-033-spaceflight-experience-medical-care.pdf",
+      "title": "NASA OCHMO-TB-033 Spaceflight Experience and Medical Care",
+      "source_url": "https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-033-spaceflight-experience-medical-care.pdf",
+      "revision": "Revision D (cover)",
+      "topics": [
+        "medical_reference",
+        "medical_conditions"
+      ],
+      "query": "medical conditions spaceflight medical care historical experience",
+      "sha256": "6e7d912015fd3af3eb2055ff17ba1f3db434ba14f7da78d61844d1642e48c0c0",
+      "page_count": 20,
+      "size_bytes": 1437983,
+      "downloaded_at": "2026-11-15T00:32:01.564071+00:00"
+    },
+    {
+      "file": "hrp-evidence-behavioral-health-20250210.pdf",
+      "title": "NASA HRP Evidence Report — Behavioral Health, 2025",
+      "source_url": "https://humanresearchroadmap.nasa.gov/evidence/reports/HRP-ER-BMED-HFBP-20250210.pdf",
+      "revision": "2025-02-10 release filename",
+      "topics": [
+        "well_being",
+        "family_contact",
+        "behavioral_health"
+      ],
+      "query": "family communication homesickness third quarter mental health evidence",
+      "sha256": "ca547719c1e3b33b4123febb5a78423f3b215b2734bededa1acd6b791069fc68",
+      "page_count": 222,
+      "size_bytes": 2887362,
+      "downloaded_at": "2026-11-15T00:32:01.735744+00:00"
+    },
+    {
+      "file": "hrp-evidence-team-2022.pdf",
+      "title": "NASA HRP Evidence Report — Team Cooperation and Psychosocial Adaptation, 2022",
+      "source_url": "https://ntrs.nasa.gov/api/citations/20220007465/downloads/Evidence%20Report%20-%20Team%202022%20FINAL4PUB%20rev%201.docx.pdf",
+      "revision": "2022 evidence report, revision 1 release filename",
+      "topics": [
+        "well_being",
+        "family_contact",
+        "team_cohesion"
+      ],
+      "query": "third quarter phenomenon not typical spaceflight psychosocial adaptation team",
+      "sha256": "8f64862bba68c275f8ff9b11acdce75a77cbdf892b7a2983799e334a1308db60",
+      "page_count": 117,
+      "size_bytes": 1291477,
+      "downloaded_at": "2026-11-15T00:32:01.774516+00:00"
+    }
+  ]
+}

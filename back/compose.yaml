@@ -7,7 +7,7 @@ services:
       - "127.0.0.1:8000:8000"
     volumes:
       - .:/app
-    environment:
+    environment: &salus_environment
       PGHOST: db
       PGPORT: "5432"
       PGDATABASE: ${NASA_DATABASE:-${POSTGRES_DB}}
@@ -19,6 +19,13 @@ services:
       AI_API_KEY: ${AI_API_KEY:-}
       FOOD_EXPIRATION_WARNING_DAYS: ${FOOD_EXPIRATION_WARNING_DAYS:-7}
       AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-60}
+      OLLAMA_BASE_URL: ${OLLAMA_DOCKER_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-all-minilm}
+      OLLAMA_GENERATION_MODEL: ${OLLAMA_GENERATION_MODEL:-qwen2.5:3b}
+      OLLAMA_TIMEOUT_SECONDS: ${OLLAMA_TIMEOUT_SECONDS:-60}
+      RAG_CHUNK_SIZE: ${RAG_CHUNK_SIZE:-500}
+      RAG_CHUNK_OVERLAP: ${RAG_CHUNK_OVERLAP:-150}
+      RAG_MINIMUM_SIMILARITY: ${RAG_MINIMUM_SIMILARITY:-0.3}
       NASA_API_KEY: ${NASA_API_KEY:-DEMO_KEY}
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -26,6 +33,19 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  risk-worker:
+    build: .
+    volumes:
+      - .:/app
+    environment: *salus_environment
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: python -m scripts.risk_worker
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
   db:
     image: postgres:17

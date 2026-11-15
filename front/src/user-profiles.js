@@ -11,7 +11,7 @@ export const accountProfiles = [
 export const missionRoles = {mission_admin:'Mission administrator', flight_surgeon:'Flight surgeon', astronaut:'Astronaut', psychologist:'Psychologist', nutritionist:'Nutritionist', nurse:'Nurse', observer:'Observer'};
 export function profileLabel(user) {return accountProfiles.filter(([field])=>user?.[field]).map(([,label])=>label).join(' · ') || 'Not provided';}
 export function missionTabs(role, physician=false) {
-  const tabs=[['operations','Operations'],['members','Crew']];
+  const tabs=[['operations','Operations'],['members','Crew'],['risks','Risks']];
   if(['astronaut','flight_surgeon'].includes(role))tabs.push(['checklist','Monitoring checklist']);
   if(role!=='observer')tabs.push(['nutrition','Food and hydration']);
   if(['astronaut','psychologist'].includes(role))tabs.push(['mental-health','Mental health']);

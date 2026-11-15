@@ -1,6 +1,7 @@
 export async function api(path, { token, body, ...options } = {}) {
+  const multipart = typeof FormData !== 'undefined' && body instanceof FormData;
   let response;
-  try { response = await fetch(`/api${path}`, {...options, headers:{...(body !== undefined ? {'Content-Type':'application/json'} : {}), 'X-Public-Profile':globalThis.localStorage?.getItem('orbital-profile')||'is_global_admin', ...(globalThis.localStorage?.getItem('orbital-public-user') ? {'X-Public-User':globalThis.localStorage?.getItem('orbital-public-user')} : {}), ...options.headers}, ...(body !== undefined ? {body:JSON.stringify(body)} : {})}); }
+  try { response = await fetch(`/api${path}`, {...options, headers:{...(body !== undefined && !multipart ? {'Content-Type':'application/json'} : {}), 'X-Public-Profile':globalThis.localStorage?.getItem('orbital-profile')||'is_global_admin', ...(globalThis.localStorage?.getItem('orbital-public-user') ? {'X-Public-User':globalThis.localStorage?.getItem('orbital-public-user')} : {}), ...options.headers}, ...(body !== undefined ? {body:multipart ? body : JSON.stringify(body)} : {})}); }
   catch { throw new Error("Unable to connect to the API. Check that the backend is running."); }
   if (response.status === 204) return null;
   const data = await response.json().catch(()=>null);

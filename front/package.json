@@ -14,7 +14,9 @@
     "typecheck": "tsc --noEmit",
     "test:spacecraft:e2e": "node scripts/verify-spacecraft.mjs",
     "test:mental-health:e2e": "node scripts/verify-mental-health.mjs",
-    "test:profiles:e2e": "node scripts/verify-user-profiles.mjs"
+    "test:profiles:e2e": "node scripts/verify-user-profiles.mjs",
+    "test:risks:e2e": "node scripts/verify-mission-risks.mjs",
+    "test:clinical:e2e": "node scripts/verify-clinical-records.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

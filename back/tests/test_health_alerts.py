@@ -198,7 +198,7 @@ def test_distinct_consecutive_days_for_all_trends(records, indicator, value, day
 
 @pytest.mark.parametrize('indicator,value,category', [('sleep_duration', 400, None), ('sleep_quality', 1, None), ('fatigue', 9, None), ('attention', None, 'better')])
 def test_missing_day_interrupts_trends(records, indicator, value, category):
-    base = datetime.now(timezone.utc) - timedelta(days=5)
+    base = (datetime.now(timezone.utc) - timedelta(days=5)).replace(hour=12, minute=0, second=0, microsecond=0)
     kwargs = {'category': category} if category else {}
     create(records, indicator, value, collected_at=base, **kwargs)
     create(records, indicator, value, collected_at=base + timedelta(hours=2), **kwargs)
@@ -207,7 +207,7 @@ def test_missing_day_interrupts_trends(records, indicator, value, category):
 
 
 def test_mood_gap_latest_daily_value_and_poor_signal(records):
-    base = datetime.now(timezone.utc) - timedelta(days=8)
+    base = (datetime.now(timezone.utc) - timedelta(days=8)).replace(hour=12, minute=0, second=0, microsecond=0)
     create(records, 'mood', 1, collected_at=base)
     create(records, 'mood', 1, collected_at=base + timedelta(days=1))
     create(records, 'mood', 1, collected_at=base + timedelta(days=3))
@@ -294,7 +294,7 @@ def test_settings_validation(values):
 
 def test_resolved_trend_does_not_reopen_for_unrelated_backdated_reading(records):
     session, doctor, astronaut, outsider, mission = records
-    base = datetime.now(timezone.utc) - timedelta(days=5)
+    base = (datetime.now(timezone.utc) - timedelta(days=5)).replace(hour=12, minute=0, second=0, microsecond=0)
     create(records, 'sleep_quality', 1, collected_at=base)
     create(records, 'sleep_quality', 1, collected_at=base + timedelta(days=1))
     alert = active(records)[0]

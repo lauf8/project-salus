@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from app.core.ai_config import AiSettings
 from app.providers.ai import AiProvider
 from app.providers.openai_compatible import OpenAiCompatibleProvider
-from app.routers import astronaut_control, care, mental_health, nutrition, auth, demo, health, medicines, notifications, preflight, radiation, space_weather, spacecraft, users
+from app.routers import clinical_records, mission_risks, astronaut_control, care, mental_health, nutrition, auth, demo, health, medicines, notifications, preflight, radiation, space_weather, spacecraft, users
 
 
 @asynccontextmanager
@@ -30,6 +30,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Project Salus", lifespan=lifespan)
 
+app.include_router(clinical_records.router, prefix="/v1")
+app.include_router(mission_risks.router, prefix="/v1")
 app.include_router(users.router, prefix="/v1")
 app.include_router(auth.router, prefix="/v1")
 app.include_router(demo.router)

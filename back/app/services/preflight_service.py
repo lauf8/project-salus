@@ -9,7 +9,7 @@ from sqlmodel import Session, select
 
 from app.models.preflight import (
     AstronautExam, ExamDefinition, ExamResult, ExamResultReview, ExamType, Mission,
-    MissionExamRequirement, MissionMember,
+    MissionExamRequirement, MissionMember, utc_now,
 )
 from app.models.nutrition import MealLog
 from app.models.user import User
@@ -30,7 +30,12 @@ def transactional(method):
     def wrapped(self, *args, **kwargs):
         try:
             result = method(self, *args, **kwargs)
+            after_change = getattr(self, 'after_transactional_change', None)
+            if after_change is not None:
+                after_change(method.__name__, args, kwargs)
             self.session.commit()
+            if hasattr(result, '_sa_instance_state'):
+                self.session.refresh(result)
             return result
         except IntegrityError as exc:
             self.session.rollback()
@@ -45,6 +50,15 @@ class PreflightService:
     def __init__(self, session: Session, user: User):
         self.session = session
         self.user = user
+
+    def after_transactional_change(self, method_name, args, kwargs):
+        if method_name not in {'update_mission', 'create_member', 'update_member', 'delete_member'}:
+            return
+        from app.services.mission_risk_service import MissionRiskService
+        service = MissionRiskService(self.session, self.user)
+        mission_id = args[0] if args else kwargs['mission_id']
+        if service.plan_at(mission_id, utc_now()) is not None:
+            service.evaluate_internal(mission_id)
 
     def _require_physician(self):
         if not self.user.is_physician:

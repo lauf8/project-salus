@@ -1,0 +1,10 @@
+.clinical-records { padding: 20px; margin: 16px 0; }
+.clinical-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 12px 0; }
+.clinical-active-banner, .clinical-active-record { border: 2px solid #bb6510; background: #fff8ed; border-radius: 10px; padding: 16px; margin: 12px 0; color: #56320c; }
+.clinical-active-banner { position: sticky; top: 0; z-index: 20; max-height: 35vh; overflow: auto; }
+.clinical-history-record { padding: 12px; border-bottom: 1px solid #d9e2ef; }
+.clinical-records details { padding: 12px 0; }
+.clinical-records summary { cursor: pointer; font-weight: 600; }
+.clinical-records .modal { max-height: 90vh; overflow: auto; }
+.clinical-report p, .clinical-history-record p, .clinical-active-record p { overflow-wrap: anywhere; white-space: pre-wrap; }
+@media (max-width: 600px) { .clinical-records { padding: 12px; } .clinical-actions > button { width: 100%; } }

@@ -1,3 +1,4 @@
+import ClinicalRecords from './ClinicalRecords';
 import BodyMap from "./HumanBodyMap";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -681,6 +682,7 @@ export default function HealthDashboard({
           </button>
         </div>
       )}
+      {astronautId && <ClinicalRecords key={`clinical-${astronautId}-${missionId}`} request={request} astronautId={astronautId} missionId={missionId} canResolve={Boolean(summary?.can_record_consciousness)} users={users}/>}
       <AlertSettings key={missionId} request={request} missionId={missionId} onSaved={() => setRevision(value => value + 1)}/>
 
       {astronautId && <AllergySection key={`${astronautId}-${missionId}`} request={request} crewMemberId={astronautId} missionId={missionId} />}

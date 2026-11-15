@@ -7,6 +7,8 @@ from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine
 
 from app.models.notifications import HealthNotification
+from app.models.mission_risks import MissionRiskPlan, MissionRiskEvaluation, MissionRiskAlert, MissionRiskAction, MissionOccurrence
+from app.models.nutrition import FoodProduct
 from app.models.health import HealthObservation
 from app.models.health_alerts import HealthAlert, HealthAlertEvent, HealthAlertObservation, HealthAlertSettings
 from app.models.medicines import ActiveIngredient, CrewMemberAllergy, Medicine, MedicineActiveIngredient
@@ -25,7 +27,7 @@ def records():
     def enable_foreign_keys(connection, record):
         connection.execute('PRAGMA foreign_keys=ON')
 
-    models = [Spacecraft, User, Mission, MissionMember, ActiveIngredient, Medicine, MedicineActiveIngredient, CrewMemberAllergy, HealthObservation, HealthAlertSettings, HealthAlert, HealthAlertObservation, HealthAlertEvent, HealthNotification]
+    models = [Spacecraft, User, Mission, MissionMember, ActiveIngredient, Medicine, MedicineActiveIngredient, CrewMemberAllergy, HealthObservation, HealthAlertSettings, HealthAlert, HealthAlertObservation, HealthAlertEvent, FoodProduct, MissionRiskPlan, MissionRiskEvaluation, MissionRiskAlert, MissionRiskAction, MissionOccurrence, HealthNotification]
     SQLModel.metadata.create_all(engine, tables=[model.__table__ for model in models])
     with Session(engine) as session:
         doctor = User(name='Doctor', email='doctor@fictional.test', hashed_password='fictional', is_physician=True)

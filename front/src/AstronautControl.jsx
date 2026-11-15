@@ -1,3 +1,4 @@
+import ClinicalRecords from './ClinicalRecords';
 import React,{lazy,Suspense,useEffect,useState} from 'react';
 import {Activity,ArrowUpRight,ClipboardList,HeartPulse,Orbit,Radiation,RefreshCw,Users} from 'lucide-react';
 import {missionRoles} from './user-profiles';
@@ -77,6 +78,7 @@ export default function AstronautControl({request,user,missions,users,context,sp
  <Suspense fallback={<p role="status">Loading workspace…</p>}><div key={`${mission.id}-${target.id}-${section}`}>
  {section==='overview'&&<Snapshot data={data} errors={errors} open={open} day={day} setDay={setDay}/>}
  {section==='overview'&&!clinical&&!nutrition&&!mental&&<p className="ac-note panel">Your role provides operational access. Use Mission & crew for assignments, requirements and vehicle information.</p>}
+ {section==='overview'&&clinical&&<ClinicalRecords key={`clinical-${mission.id}-${target.user_id}`} request={request} astronautId={target.user_id} missionId={mission.id} canResolve={role==='flight_surgeon'&&user.is_physician&&target.user_id!==user.id} users={users}/>}
  {section==='health'&&clinical&&<HealthDashboard lockSelection request={request} user={user} missions={[mission]} users={users} context={{...context,supervised_astronauts:(context?.supervised_astronauts||[]).filter(row=>row.id===target.user_id&&row.mission_id===mission.id)}} initialSelection={{missionId:String(mission.id),astronautId:String(target.user_id)}}/>}
  {section==='nutrition'&&nutrition&&<Nutrition {...shared} physician={Boolean(user.is_physician)} canManageCatalog={Boolean(context?.can_manage_food_catalog)}/>}
  {section==='mental'&&mental&&<MentalHealth {...shared}/>}

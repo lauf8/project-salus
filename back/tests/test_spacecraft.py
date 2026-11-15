@@ -128,7 +128,7 @@ def test_search_pagination_and_permissions(spacecraft_api):
         call('POST', base, {'code': 'denied', 'name': 'Denied'}, 403, actor=actor)
         call('PATCH', f"{base}/{module['id']}", {'name': 'Denied'}, 403, actor=actor)
         call('DELETE', f"{base}/{module['id']}", expected=403, actor=actor)
-    call('GET', '', expected=401, actor=None)
+    call('GET', '', expected=200, actor=None)
     call('GET', '/999999999/modules', expected=404)
     call('POST', '/999999999/modules', {'code': 'missing', 'name': 'Missing'}, 404)
 

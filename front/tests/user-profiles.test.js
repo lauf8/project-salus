@@ -9,7 +9,7 @@ test('all eight account profiles have distinct labels',()=>{
 });
 
 test('observer receives operational tabs without individual care records',()=>{
-  assert.deepEqual(missionTabs('observer').map(([id])=>id),['operations','members']);
+  assert.deepEqual(missionTabs('observer').map(([id])=>id),['operations','members','risks']);
   assert.equal(initialMissionTab('observer'),'operations');
 });
 
