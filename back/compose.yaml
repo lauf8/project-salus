@@ -27,6 +27,7 @@ services:
       RAG_CHUNK_OVERLAP: ${RAG_CHUNK_OVERLAP:-150}
       RAG_MINIMUM_SIMILARITY: ${RAG_MINIMUM_SIMILARITY:-0.3}
       NASA_API_KEY: ${NASA_API_KEY:-DEMO_KEY}
+      PREDICTION_MANUAL_COOLDOWN_SECONDS: ${PREDICTION_MANUAL_COOLDOWN_SECONDS:-300}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: python -m scripts.startup uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
@@ -42,6 +43,23 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: python -m scripts.risk_worker
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  predictive-worker:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      <<: *salus_environment
+      PREDICTION_SCHEDULE_HOURS: ${PREDICTION_SCHEDULE_HOURS:-6}
+      PREDICTION_WORKER_INTERVAL_SECONDS: ${PREDICTION_WORKER_INTERVAL_SECONDS:-300}
+      PREDICTION_MAX_ATTEMPTS: ${PREDICTION_MAX_ATTEMPTS:-3}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: python -m scripts.predictive_worker_service
     depends_on:
       db:
         condition: service_healthy
