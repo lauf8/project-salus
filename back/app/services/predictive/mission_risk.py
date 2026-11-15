@@ -8,12 +8,13 @@ import os
 from sqlmodel import select
 
 from app.models.mission_risks import MissionOccurrence
-from app.models.nutrition import MissionFoodLot
+from app.models.nutrition import FoodStockMovement, MissionFoodLot
 from app.models.predictive import FeatureSnapshot, PredictionRun, RiskPrediction
 from app.models.preflight import Mission, MissionMember
 from app.models.spacecraft import Spacecraft, SpacecraftModule
 from app.services.predictive.config import rules_config
 from app.services.predictive.features import aware, rounded
+from app.services.predictive.data_collection import mission_status_at
 
 
 def insufficient(domain, risk_type, title, missing, note):
@@ -51,22 +52,32 @@ class MissionRiskPredictionService:
         self.session = session
         self.config = config or rules_config()
 
-    def latest_astronaut_runs(self, mission_id):
+    def latest_astronaut_runs(self, mission_id, as_of=None):
         members = self.session.exec(select(MissionMember).where(MissionMember.mission_id == mission_id, MissionMember.role == 'astronaut')).all()
         runs = {}
         for member in members:
             run = self.session.exec(select(PredictionRun).where(PredictionRun.subject_type == 'astronaut', PredictionRun.subject_id == member.user_id,
-                                                                PredictionRun.mission_id == mission_id, PredictionRun.status == 'completed').order_by(PredictionRun.as_of.desc(), PredictionRun.id.desc())).first()
+                                                                PredictionRun.mission_id == mission_id, PredictionRun.status == 'completed',
+                                                                PredictionRun.as_of <= (as_of or datetime.now().astimezone())).order_by(PredictionRun.as_of.desc(), PredictionRun.id.desc())).first()
             runs[member.user_id] = run
         return members, runs
 
     def collect(self, mission_id, as_of):
         from app.services.mission_risk_service import MissionRiskService
         mission = self.session.get(Mission, mission_id)
-        food = MissionRiskService(self.session, None).calculate(mission_id, as_of)
+        food_service = MissionRiskService(self.session, None)
+        food = food_service.calculate(mission_id, as_of, replay=True)
         lots = self.session.exec(select(MissionFoodLot).where(MissionFoodLot.mission_id == mission_id)).all()
-        occurrences = self.session.exec(select(MissionOccurrence).where(MissionOccurrence.mission_id == mission_id, MissionOccurrence.recorded_at <= as_of)).all()
-        members, runs = self.latest_astronaut_runs(mission_id)
+        stock, _, _, _ = food_service.stock_at(mission_id, as_of, strict=True)
+        balances = {row['id']: row for row in stock}
+        movements = self.session.exec(select(FoodStockMovement).where(FoodStockMovement.lot_id.in_(list(balances)), FoodStockMovement.recorded_at <= as_of)).all() if balances else []
+        quantities = defaultdict(Decimal)
+        for movement in movements:
+            if movement.risk_snapshot and aware(datetime.fromisoformat(movement.risk_snapshot['event_at'])) <= aware(as_of):
+                quantities[movement.lot_id] += movement.quantity
+        lots = [lot.model_copy(update={'remaining_quantity': quantities[lot.id], 'expiration_date': date.fromisoformat(balances[lot.id]['expiration_date'])}) for lot in lots if lot.id in balances]
+        occurrences = self.session.exec(select(MissionOccurrence).where(MissionOccurrence.mission_id == mission_id, MissionOccurrence.recorded_at <= as_of, MissionOccurrence.event_at <= as_of, MissionOccurrence.confirmed_at <= as_of)).all()
+        members, runs = self.latest_astronaut_runs(mission_id, as_of)
         astronaut_predictions = {}
         astronaut_features = {}
         for user_id, run in runs.items():
@@ -79,7 +90,7 @@ class MissionRiskPredictionService:
         if mission.spacecraft_id:
             similar = self.session.exec(select(MissionOccurrence).join(Mission, Mission.id == MissionOccurrence.mission_id).where(
                 Mission.spacecraft_id == mission.spacecraft_id, Mission.id != mission_id, MissionOccurrence.confirmed_at.is_not(None),
-                MissionOccurrence.recorded_at <= as_of)).all()
+                MissionOccurrence.recorded_at <= as_of, MissionOccurrence.event_at <= as_of, MissionOccurrence.confirmed_at <= as_of)).all()
         data = {'mission': mission, 'food': food, 'lots': lots, 'occurrences': occurrences, 'members': members, 'runs': runs,
                 'astronaut_predictions': astronaut_predictions, 'astronaut_features': astronaut_features, 'similar_occurrences': similar}
         key = json.dumps({'food': food.get('input_references'), 'food_state': [(item['food_product_id'], item['state'], item.get('first_shortage_date')) for item in food['items']],
@@ -116,7 +127,7 @@ class MissionRiskPredictionService:
                                         'Medication uses are recorded, but no mission medicine stock exists. No shortage is estimated.'))
         predictions.extend(self.collective(data))
         predictions.extend(self.recurrence(data['occurrences'], 'recurring_occurrence', 'mission'))
-        context = {'mission_status': mission.status, 'crew_size': mission.crew_size, 'astronauts': len(data['members']),
+        context = {'mission_status': mission_status_at(mission, as_of), 'crew_size': mission.crew_size, 'astronauts': len(data['members']),
                    'duration': self.duration(mission, food, as_of), 'supplies': supplies,
                    'occurrences': self.occurrence_summary(data['occurrences']), 'similar_mission_occurrences': self.occurrence_summary(data['similar_occurrences']),
                    'astronauts_analyzed': sum(1 for run in data['runs'].values() if run is not None)}
@@ -125,7 +136,7 @@ class MissionRiskPredictionService:
     def duration(self, mission, food, as_of):
         started = aware(mission.started_at) if mission.started_at else None
         planned_end = food.get('horizon')
-        result = {'started_at': started.isoformat() if started else None, 'ended_at': aware(mission.ended_at).isoformat() if mission.ended_at else None, 'planned_end_at': planned_end}
+        result = {'started_at': started.isoformat() if started else None, 'ended_at': aware(mission.ended_at).isoformat() if mission.ended_at and aware(mission.ended_at) <= aware(as_of) else None, 'planned_end_at': planned_end}
         if started:
             result['elapsed_days'] = rounded((as_of - started).total_seconds() / 86400, 1)
         if started and planned_end:
@@ -208,8 +219,8 @@ class SpacecraftRiskPredictionService(MissionRiskPredictionService):
     def collect_spacecraft(self, spacecraft_id, as_of):
         spacecraft = self.session.get(Spacecraft, spacecraft_id)
         modules = self.session.exec(select(SpacecraftModule).where(SpacecraftModule.spacecraft_id == spacecraft_id)).all()
-        missions = self.session.exec(select(Mission).where(Mission.spacecraft_id == spacecraft_id).order_by(Mission.planned_launch_at)).all()
-        occurrences = self.session.exec(select(MissionOccurrence).where(MissionOccurrence.mission_id.in_([mission.id for mission in missions]), MissionOccurrence.recorded_at <= as_of)).all() if missions else []
+        missions = self.session.exec(select(Mission).where(Mission.spacecraft_id == spacecraft_id, Mission.planned_launch_at <= as_of).order_by(Mission.planned_launch_at)).all()
+        occurrences = self.session.exec(select(MissionOccurrence).where(MissionOccurrence.mission_id.in_([mission.id for mission in missions]), MissionOccurrence.recorded_at <= as_of, MissionOccurrence.event_at <= as_of, MissionOccurrence.confirmed_at <= as_of)).all() if missions else []
         key = json.dumps({'modules': sorted(module.id for module in modules), 'missions': sorted((m.id, m.status) for m in missions), 'occurrences': sorted((o.id, bool(o.confirmed_at)) for o in occurrences)})
         return {'spacecraft': spacecraft, 'modules': modules, 'missions': missions, 'occurrences': occurrences}, sha256(key.encode()).hexdigest()
 
@@ -223,13 +234,13 @@ class SpacecraftRiskPredictionService(MissionRiskPredictionService):
         usage_days = 0.0
         for mission in missions:
             if mission.started_at:
-                end = aware(mission.ended_at) if mission.ended_at else aware(as_of)
+                end = min(aware(mission.ended_at), aware(as_of)) if mission.ended_at else aware(as_of)
                 usage_days += max(0.0, (end - aware(mission.started_at)).total_seconds() / 86400)
         context = {'spacecraft': {'id': spacecraft.id, 'name': spacecraft.name, 'manufacturer': spacecraft.manufacturer, 'model': spacecraft.model,
-                                  'manufactured_year': spacecraft.manufactured_year, 'status': spacecraft.status, 'maximum_crew_capacity': spacecraft.maximum_crew_capacity},
+                                  'manufactured_year': spacecraft.manufactured_year, 'status': 'in_use' if any(mission_status_at(mission, as_of) == 'in_progress' for mission in missions) else 'available', 'maximum_crew_capacity': spacecraft.maximum_crew_capacity},
                    'modules': [{'id': module.id, 'code': module.code, 'name': module.name, 'is_pressurized': module.is_pressurized, 'is_habitable': module.is_habitable,
                                 'technical_specifications': module.technical_specifications} for module in data['modules']],
-                   'usage': {'missions': len(missions), 'completed_missions': sum(1 for m in missions if m.status == 'completed'), 'usage_days': rounded(usage_days, 1),
+                   'usage': {'missions': len(missions), 'completed_missions': sum(1 for m in missions if mission_status_at(m, as_of) == 'completed'), 'usage_days': rounded(usage_days, 1),
                              'mission_ids': [mission.id for mission in missions]},
                    'occurrences': self.occurrence_summary(data['occurrences'])}
         return predictions, context

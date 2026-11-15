@@ -1,0 +1,691 @@
+{
+  "configuration": {
+    "version": "salus-synthetic-50-v1",
+    "seed": 50,
+    "reference": "2026-11-15T12:00:00+00:00"
+  },
+  "schema": "salus_synthetic_50",
+  "totals": {
+    "missions": {
+      "completed": 35,
+      "planned": 5,
+      "in_progress": 10
+    },
+    "evidence_states": {
+      "pending": 99,
+      "no_documentary_evidence": 37,
+      "documented": 11
+    },
+    "tables": {
+      "users": 155,
+      "mission_members": 449,
+      "health_observations": 102132,
+      "mental_health_check_ins": 7319,
+      "psychology_follow_ups": 997,
+      "meal_logs": 21672,
+      "meal_log_items": 21672,
+      "food_stock_movements": 21722,
+      "health_occurrences": 51,
+      "mission_occurrences": 35,
+      "knowledge_documents": 16,
+      "prediction_runs": 291,
+      "recommendation_events": 147,
+      "mission_risk_alerts": 2,
+      "health_notifications": 2
+    }
+  },
+  "evaluation": {
+    "counts": {
+      "true_positive": 23,
+      "true_negative": 14,
+      "false_positive": 0,
+      "false_negative": 0,
+      "not_evaluated": 13
+    },
+    "expected_actions_missing": [],
+    "cases": [
+      {
+        "case_id": "S50-C001",
+        "run_id": 1,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C002",
+        "run_id": 4,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C003",
+        "run_id": 9,
+        "verdict": "true_positive",
+        "signals": [
+          "anomaly_resting_heart_rate",
+          "cardiovascular_resting_heart_rate_shift"
+        ],
+        "actions": [
+          "additional_vital_sign_monitoring",
+          "flight_surgeon_cardiovascular_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C004",
+        "run_id": 15,
+        "verdict": "true_positive",
+        "signals": [
+          "fatigue_increase",
+          "sleep_deficit",
+          "sleep_fatigue_combined"
+        ],
+        "actions": [
+          "fatigue_monitoring",
+          "rest_period_review",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C005",
+        "run_id": 19,
+        "verdict": "true_positive",
+        "signals": [
+          "psychological_stress_persistent"
+        ],
+        "actions": [
+          "psychological_support_referral",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C006",
+        "run_id": 24,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "No longitudinal body composition schema",
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C007",
+        "run_id": 248,
+        "verdict": "true_positive",
+        "signals": [
+          "food_expiration"
+        ],
+        "actions": [
+          "food_inventory_verification"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C008",
+        "run_id": 34,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "No telemetry or maintenance schema",
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C009",
+        "run_id": 38,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C010",
+        "run_id": 44,
+        "verdict": "true_positive",
+        "signals": [
+          "anomaly_resting_heart_rate",
+          "cardiovascular_resting_heart_rate_shift"
+        ],
+        "actions": [
+          "additional_vital_sign_monitoring",
+          "flight_surgeon_cardiovascular_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C011",
+        "run_id": 48,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C012",
+        "run_id": 53,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C013",
+        "run_id": 59,
+        "verdict": "true_positive",
+        "signals": [
+          "anomaly_resting_heart_rate",
+          "cardiovascular_resting_heart_rate_shift"
+        ],
+        "actions": [
+          "additional_vital_sign_monitoring",
+          "flight_surgeon_cardiovascular_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C014",
+        "run_id": 63,
+        "verdict": "true_positive",
+        "signals": [
+          "fatigue_increase",
+          "sleep_deficit",
+          "sleep_fatigue_combined"
+        ],
+        "actions": [
+          "fatigue_monitoring",
+          "rest_period_review",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C015",
+        "run_id": 68,
+        "verdict": "true_positive",
+        "signals": [
+          "psychological_stress_persistent"
+        ],
+        "actions": [
+          "psychological_support_referral",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C016",
+        "run_id": 73,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "No longitudinal body composition schema",
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C017",
+        "run_id": 258,
+        "verdict": "true_positive",
+        "signals": [
+          "food_expiration"
+        ],
+        "actions": [
+          "food_inventory_verification"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C018",
+        "run_id": 82,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "No telemetry or maintenance schema",
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C019",
+        "run_id": 88,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C020",
+        "run_id": 92,
+        "verdict": "true_positive",
+        "signals": [
+          "anomaly_resting_heart_rate",
+          "cardiovascular_resting_heart_rate_shift"
+        ],
+        "actions": [
+          "additional_vital_sign_monitoring",
+          "flight_surgeon_cardiovascular_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C021",
+        "run_id": 97,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C022",
+        "run_id": 103,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C023",
+        "run_id": 106,
+        "verdict": "true_positive",
+        "signals": [
+          "anomaly_resting_heart_rate",
+          "cardiovascular_resting_heart_rate_shift"
+        ],
+        "actions": [
+          "additional_vital_sign_monitoring",
+          "flight_surgeon_cardiovascular_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C024",
+        "run_id": 111,
+        "verdict": "true_positive",
+        "signals": [
+          "fatigue_increase",
+          "sleep_deficit",
+          "sleep_fatigue_combined"
+        ],
+        "actions": [
+          "fatigue_monitoring",
+          "rest_period_review",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C025",
+        "run_id": 117,
+        "verdict": "true_positive",
+        "signals": [
+          "psychological_stress_persistent"
+        ],
+        "actions": [
+          "psychological_support_referral",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C026",
+        "run_id": 121,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "No longitudinal body composition schema",
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C027",
+        "run_id": 268,
+        "verdict": "true_positive",
+        "signals": [
+          "food_expiration"
+        ],
+        "actions": [
+          "food_inventory_verification"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C028",
+        "run_id": 132,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "No telemetry or maintenance schema",
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C029",
+        "run_id": 136,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C030",
+        "run_id": 140,
+        "verdict": "true_positive",
+        "signals": [
+          "anomaly_resting_heart_rate",
+          "cardiovascular_resting_heart_rate_shift"
+        ],
+        "actions": [
+          "additional_vital_sign_monitoring",
+          "flight_surgeon_cardiovascular_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C031",
+        "run_id": 146,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C032",
+        "run_id": 150,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "no_recorded_event"
+      },
+      {
+        "case_id": "S50-C033",
+        "run_id": 155,
+        "verdict": "true_positive",
+        "signals": [
+          "anomaly_resting_heart_rate",
+          "cardiovascular_resting_heart_rate_shift"
+        ],
+        "actions": [
+          "additional_vital_sign_monitoring",
+          "flight_surgeon_cardiovascular_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C034",
+        "run_id": 161,
+        "verdict": "true_positive",
+        "signals": [
+          "fatigue_increase",
+          "sleep_deficit",
+          "sleep_fatigue_combined"
+        ],
+        "actions": [
+          "fatigue_monitoring",
+          "rest_period_review",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C035",
+        "run_id": 165,
+        "verdict": "true_positive",
+        "signals": [
+          "psychological_stress_persistent"
+        ],
+        "actions": [
+          "psychological_support_referral",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "confirmed"
+      },
+      {
+        "case_id": "S50-C036",
+        "run_id": 170,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "No longitudinal body composition schema",
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C037",
+        "run_id": 278,
+        "verdict": "true_positive",
+        "signals": [
+          "food_expiration",
+          "food_shortage"
+        ],
+        "actions": [
+          "food_inventory_verification"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C038",
+        "run_id": 179,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "No telemetry or maintenance schema",
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C039",
+        "run_id": 184,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C040",
+        "run_id": 190,
+        "verdict": "true_positive",
+        "signals": [
+          "anomaly_resting_heart_rate",
+          "cardiovascular_resting_heart_rate_shift"
+        ],
+        "actions": [
+          "additional_vital_sign_monitoring",
+          "flight_surgeon_cardiovascular_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C041",
+        "run_id": 194,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C042",
+        "run_id": 199,
+        "verdict": "true_negative",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": null,
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C043",
+        "run_id": 205,
+        "verdict": "true_positive",
+        "signals": [
+          "anomaly_resting_heart_rate",
+          "cardiovascular_resting_heart_rate_shift"
+        ],
+        "actions": [
+          "additional_vital_sign_monitoring",
+          "flight_surgeon_cardiovascular_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C044",
+        "run_id": 208,
+        "verdict": "true_positive",
+        "signals": [
+          "fatigue_increase",
+          "sleep_deficit",
+          "sleep_fatigue_combined"
+        ],
+        "actions": [
+          "fatigue_monitoring",
+          "rest_period_review",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C045",
+        "run_id": 213,
+        "verdict": "true_positive",
+        "signals": [
+          "psychological_stress_persistent"
+        ],
+        "actions": [
+          "psychological_support_referral",
+          "workload_review"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": null,
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C046",
+        "run_id": 219,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "Preflight only; no in-flight follow-up at reference",
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C047",
+        "run_id": 288,
+        "verdict": "not_evaluated",
+        "signals": [
+          "food_expiration",
+          "food_shortage"
+        ],
+        "actions": [
+          "food_inventory_verification"
+        ],
+        "expected_action_found": true,
+        "coverage_gap": "Preflight only; no in-flight follow-up at reference",
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C048",
+        "run_id": 228,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "Preflight only; no in-flight follow-up at reference",
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C049",
+        "run_id": 234,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": null,
+        "coverage_gap": "Preflight only; no in-flight follow-up at reference",
+        "outcome_status": "follow_up_incomplete"
+      },
+      {
+        "case_id": "S50-C050",
+        "run_id": 238,
+        "verdict": "not_evaluated",
+        "signals": [],
+        "actions": [],
+        "expected_action_found": false,
+        "coverage_gap": "Preflight only; no in-flight follow-up at reference",
+        "outcome_status": "follow_up_incomplete"
+      }
+    ],
+    "interpretation": "Rule-contract confusion matrix, not clinical outcome accuracy. No recorded event does not establish a clinical negative."
+  }
+}

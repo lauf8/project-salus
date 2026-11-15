@@ -4,6 +4,7 @@ from sqlmodel import select
 
 from app.models.predictive import RecommendationAction, RecommendationEvent, RecommendationOutcome
 from app.services.predictive.config import recommendation_catalog
+from app.services.predictive.features import aware
 
 
 LEVEL_RANK = {'undetermined': -1, 'none': 0, 'low': 1, 'moderate': 2, 'high': 3}
@@ -76,11 +77,11 @@ class RecommendationEngine:
     def approved_actions(self):
         return self.session.exec(select(RecommendationAction).where(RecommendationAction.approval_status == 'approved')).all()
 
-    def outcome_history(self):
+    def outcome_history(self, as_of=None):
         rows = self.session.exec(select(RecommendationOutcome, RecommendationEvent, RecommendationAction).join(RecommendationEvent, RecommendationEvent.id == RecommendationOutcome.recommendation_id).join(RecommendationAction, RecommendationAction.id == RecommendationEvent.action_id)).all()
         history = defaultdict(lambda: {'improved': 0, 'total': 0})
         for outcome, _, action in rows:
-            if outcome.result == 'inconclusive':
+            if outcome.result == 'inconclusive' or as_of is not None and aware(outcome.evaluated_at) > aware(as_of):
                 continue
             history[action.code]['total'] += 1
             history[action.code]['improved'] += outcome.result == 'improved'

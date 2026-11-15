@@ -13,7 +13,7 @@ from app.models.preflight import Mission, MissionMember, utc_now
 from app.models.spacecraft import Spacecraft
 from app.models.user import User
 from app.services.predictive.config import ENGINE_VERSION, manual_cooldown_seconds, maximum_attempts, rules_config, schedule_hours
-from app.services.predictive.data_collection import AstronautDataCollector
+from app.services.predictive.data_collection import AstronautDataCollector, mission_status_at
 from app.services.predictive.features import aware
 from app.services.predictive.health_risk import HealthRiskPredictionService
 from app.services.predictive.knowledge import PredictiveKnowledgeService
@@ -150,7 +150,7 @@ class PredictiveService:
     def store_predictions(self, run, predictions, context, subject_type, subject_id, mission_id):
         engine = RecommendationEngine(self.session)
         actions = engine.approved_actions()
-        history = engine.outcome_history()
+        history = engine.outcome_history(run.as_of)
         suggested = set()
         for payload in predictions:
             payload = jsonable(payload)
@@ -213,7 +213,7 @@ class PredictiveService:
         service = MissionRiskPredictionService(self.session)
         data, fingerprint = service.collect(mission_id, as_of)
         predictions, context = service.predict(data, as_of)
-        engine_context = {'mission_status': mission.status, 'mission_id': mission_id, 'active_clinical_alerts': []}
+        engine_context = {'mission_status': mission_status_at(mission, as_of), 'mission_id': mission_id, 'active_clinical_alerts': []}
         run, created = self.execute('mission', mission_id, mission_id, as_of, fingerprint, {'mission': context}, {}, predictions, engine_context, trigger, self.user.id if self.user else None)
         if created and trigger == 'manual':
             self.audit('prediction_runs', run.id, 'analyze_mission')

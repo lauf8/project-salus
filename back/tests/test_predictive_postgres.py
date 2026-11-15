@@ -19,7 +19,7 @@ from app.models.health import HealthObservation
 from app.models.health_alerts import HealthAlert
 from app.models.knowledge import KnowledgeDocument, KnowledgePassage
 from app.models.mental_health import MentalHealthCheckIn
-from app.models.nutrition import FoodProduct, MissionFoodLot
+from app.models.nutrition import FoodProduct, FoodStockMovement, MissionFoodLot
 from app.models.predictive import PredictionModel, PredictionRun, RecommendationEvent, RecommendationFeedback, RiskPrediction
 from app.models.preflight import Mission, MissionMember
 from app.models.spacecraft import Spacecraft
@@ -153,8 +153,14 @@ def crew(session):
                        reference_unit='g', reference_basis='stored', preparation_method='ready_to_consume')
     session.add(food)
     session.flush()
-    session.add(MissionFoodLot(mission_id=mission.id, food_product_id=food.id, lot_code='LOT-1', expiration_date=now.date() + timedelta(days=2),
-                               initial_quantity=1000, remaining_quantity=800, stock_unit='g'))
+    lot = MissionFoodLot(mission_id=mission.id, food_product_id=food.id, lot_code='LOT-1', expiration_date=now.date() + timedelta(days=2),
+                         initial_quantity=1000, remaining_quantity=1000, stock_unit='g')
+    session.add(lot)
+    session.flush()
+    session.add(FoodStockMovement(lot_id=lot.id, quantity=1000, stock_unit='g', movement_type='initial', purpose='receipt',
+        recorded_by_user_id=people['admin'].id, recorded_at=now - timedelta(days=1),
+        risk_snapshot={'reference_delta': '10', 'event_at': (now - timedelta(days=1)).isoformat(), 'food_name': food.name,
+                       'expiration_date': lot.expiration_date.isoformat(), 'unit': 'g', 'quantity_per_reference': '100'}))
     session.commit()
     return SimpleCrew(mission, vehicle, people, members)
 

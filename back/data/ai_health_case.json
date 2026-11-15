@@ -1,0 +1,76 @@
+{
+  "origin": "fictional development case with real application services and real Ollama generation",
+  "reference": "2026-11-15T13:11:37+00:00",
+  "astronaut_id": 1129,
+  "astronaut_name": "Matheus Valença",
+  "mission_id": 258,
+  "mission_name": "Atlântico 03",
+  "physician_id": 974,
+  "physician_name": "Helena Monteiro",
+  "prediction_run_id": 262,
+  "alerts": [
+    {
+      "id": 11,
+      "indicator": "sleep_duration",
+      "severity": "attention"
+    },
+    {
+      "id": 12,
+      "indicator": "heart_rate",
+      "severity": "urgent"
+    },
+    {
+      "id": 13,
+      "indicator": "respiratory_rate",
+      "severity": "critical"
+    },
+    {
+      "id": 10,
+      "indicator": "oxygen_saturation",
+      "severity": "critical"
+    },
+    {
+      "id": 14,
+      "indicator": "body_temperature",
+      "severity": "attention"
+    }
+  ],
+  "notification_ids": [
+    11,
+    12
+  ],
+  "assessment_id": 2,
+  "assessment_status": "pending",
+  "ai_generation_status": "completed",
+  "ai_hypotheses": [],
+  "recommendations": [
+    {
+      "id": 151,
+      "generated": false,
+      "state": "documented",
+      "generation_state": "unavailable_or_rejected",
+      "source_count": 4
+    },
+    {
+      "id": 154,
+      "generated": true,
+      "state": "documented",
+      "generation_state": "validated",
+      "source_count": 4
+    },
+    {
+      "id": 152,
+      "generated": true,
+      "state": "documented",
+      "generation_state": "validated",
+      "source_count": 4
+    },
+    {
+      "id": 153,
+      "generated": true,
+      "state": "documented",
+      "generation_state": "validated",
+      "source_count": 4
+    }
+  ]
+}

@@ -130,7 +130,7 @@ class AstronautDataCollector:
         return {
             'symptoms_reported_7d': symptoms, 'active_clinical_alerts': active_alerts,
             'active_health_occurrences': len(active_occurrences), 'medication_uses_7d': len(medications),
-            'mission_id': mission_id, 'mission_status': mission.status if mission else None,
+            'mission_id': mission_id, 'mission_status': mission_status_at(mission, as_of),
             'pending_psychology_request': pending_psychology,
             'nutrition_plan': self.nutrition_context(member, meals, as_of) if member else None,
         }
@@ -155,3 +155,13 @@ def fingerprint(records, context):
     stable_context = {key: value for key, value in context.items() if key != 'nutrition_plan'}
     stable_context['nutrition_plan'] = context.get('nutrition_plan')
     return sha256(json.dumps([payload, stable_context], sort_keys=True, default=str).encode()).hexdigest()
+
+
+def mission_status_at(mission, as_of):
+    if mission is None:
+        return None
+    if mission.started_at is None or aware(mission.started_at) > aware(as_of):
+        return 'planned'
+    if mission.ended_at is not None and aware(mission.ended_at) <= aware(as_of):
+        return 'completed'
+    return 'in_progress'

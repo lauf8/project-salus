@@ -72,7 +72,7 @@ class PredictiveKnowledgeService:
         })
         return validate_explanation(json.loads(response['response']), sources, payload)
 
-    def evidence(self, prediction, action):
+    def evidence(self, prediction, action, as_of=None):
         payload = minimal_payload(prediction, action)
         result = {'state': 'no_documentary_evidence', 'sources': [], 'catalog_references': action.source_references,
                   'summary': template_summary(prediction, action), 'generated': False, 'data_sent_to_llm': sorted(payload)}
@@ -80,7 +80,8 @@ class PredictiveKnowledgeService:
         if not query:
             return result
         try:
-            sources = applicable(self.rag_service.search(query, limit=4), query)
+            options = {'as_of': as_of} if as_of is not None else {}
+            sources = applicable(self.rag_service.search(query, limit=4, **options), query)
         except Exception:
             result['state'] = 'rag_unavailable'
             return result

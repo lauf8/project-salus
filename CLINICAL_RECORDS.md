@@ -77,3 +77,17 @@ Backend HTTP tests use synthetic isolated SQLite records with foreign keys enabl
 - NASA corpus import: all 12 retained PDFs passed hash/page verification, real embedding and page-aware retrieval (583 pages; 5,358 passages). Original files and source catalog remain local.
 
 Remaining toolchain messages are the existing large Three.js bundle warning and the Starlette/httpx deprecation warning. Neither prevented these checks.
+
+## Individual case with live AI generation
+
+Run `docker compose exec -T -e SALUS_SYNTHETIC_ENV=development api python -m scripts.create_ai_health_case` from `back/` to create Matheus Valença in the existing Atlântico 03 mission. This adds one fictional astronaut, without adding a mission or overwriting another astronaut. The service adjusts the declared crew size and appends a corresponding food-planning version. The case provenance and identifiers are stored outside recommendation inputs in `back/data/ai_health_case.json`.
+
+The script creates individual preflight references, twelve days of related observations and two recent measurements through `HealthService.create`, with activity, quality and accepted symptom codes. It uses the real clinical alert and internal notification flow, then `PredictiveService` and the existing NASA/Ollama clinical assessment service. It does not replace generation with a prepared answer, activate a model, change thresholds or approve its own AI hypotheses. Recommendations are counted as AI-generated only when their persisted explanation has `generated=true`; clinical hypotheses retain the existing citation validation and pending medical review.
+
+The current readings are 90% oxygen saturation, 38.7 °C temperature, 118 bpm resting heart rate and 28 breaths/min, with reported breathlessness and fatigue. These are fictional development inputs, not observations of a real patient. Clinical alerts follow configured rules; generative AI explains preventive recommendations and produces screening hypotheses from the indexed evidence. No disease probability is invented.
+
+Open **Physician → Helena Monteiro → Health monitoring**, choose **Atlântico 03 / Matheus Valença**, and inspect the alerts and the **NASA health assessment** under the health record. **Predictive Intelligence** also shows his pending suggestions and their documentary explanations. Approval for astronaut delivery remains an explicit physician action. Repeating the script does not refresh observations silently or create another account; it reuses the case and can retry unavailable generation.
+
+Verification: `docker compose exec -T api python -m pytest -q tests/test_ai_health_case.py tests/test_clinical_records.py`. The focused run passed 16 tests, with one optional integration test skipped; the creation command separately exercises the real local Ollama instance.
+
+Local execution confirmed Matheus Valença (user 1129), Atlântico 03 (mission 258): five active clinical alerts, two physician notifications and three persisted recommendations with validated Ollama generation and NASA citations. The separate clinical assessment completed without screening hypotheses; it was not manually populated or approved. The current AI content is available in the Predictive Intelligence recommendation evidence panels.

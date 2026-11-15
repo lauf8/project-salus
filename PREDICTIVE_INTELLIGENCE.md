@@ -203,3 +203,7 @@ Results recorded for this change are in the pull request or commit description. 
 - Workload risk would improve with scheduled task or duty-period data.
 - Supervised models need real longitudinal data that meets the gate. Until then only rules and anomalies are active.
 - Disease-specific classifiers are intentionally absent: there are no labeled outcomes, clinical outcome definitions or validation.
+
+## Reproducible 50-mission functional validation
+
+The isolated historical cohort, chronological recommendation evaluation, expected-result manifest, production guards and execution results are documented in [SYNTHETIC_MISSIONS.md](SYNTHETIC_MISSIONS.md). The generator preserves existing public records and uses the real predictive and operational-risk services. Use `--publish` to add the 50 synthetic missions to the application database; the default isolated schema is intended for backend validation.

@@ -36,7 +36,7 @@ Administradores gerenciam missão, membros, requisitos e agendamentos. Médicos 
 
 Fontes do Google Fonts são opcionais, com fallback para fontes do sistema. A aplicação não depende de serviços externos para acessar os dados.
 
-O logotipo da NASA em `public/nasa-logo.svg` foi obtido em https://www.nasa.gov/wp-content/themes/nasa/assets/images/nasa-logo.svg.
+A identidade visual usa a logo do Project Salus em `public/salus.png`, exibida na barra lateral e como ícone da aba. A imagem mantém sua proporção original.
 
 No cadastro, selecione Astronauta, Médico ou ambos. Os perfis são salvos na conta e exibidos no diretório. O login usa e-mail e senha. Os perfis cadastrais não concedem acesso clínico: o administrador continua atribuindo o papel de cada pessoa na missão.
 
