@@ -3,12 +3,13 @@ from datetime import datetime, time, timedelta, timezone
 from hashlib import sha256
 from io import BytesIO
 import math
+import warnings
 
 from app.services.predictive.features import aware, build_features, model_vector
 
 
 FEATURE_METRICS = ('mean_24h', 'mean_7d', 'z_7d', 'slope_per_day', 'hours_since_last')
-FEATURE_SERIES = ('sleep_duration', 'sleep_quality', 'fatigue', 'resting_heart_rate', 'mental_stress', 'mental_workload', 'mental_energy')
+FEATURE_SERIES = ('sleep_duration', 'fatigue', 'resting_heart_rate', 'mental_stress', 'sleep_quality')
 FEATURE_NAMES = tuple(f'{series}.{metric}' for series in FEATURE_SERIES for metric in FEATURE_METRICS)
 MINIMUM_TRAINING_SAMPLES = 200
 MINIMUM_TRAINING_POSITIVES = 20
@@ -190,8 +191,12 @@ def train_outcome_model(records_by_subject, config, outcome=ELEVATED_FATIGUE_24H
     result['baselines'] = baselines
     best_name, best_estimator, best_metrics = None, None, None
     for name, estimator in candidate_estimators().items():
-        estimator.fit(x_train, y_train)
-        probabilities = [float(value) for value in estimator.predict_proba(x_test)[:, 1]]
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', message='Skipping features without any observed values')
+            estimator.fit(x_train, y_train)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', message='Skipping features without any observed values')
+            probabilities = [float(value) for value in estimator.predict_proba(x_test)[:, 1]]
         metrics = classification_metrics(y_test, probabilities)
         result['candidates'][name] = metrics
         if best_metrics is None or (metrics['pr_auc'] or 0) > (best_metrics['pr_auc'] or 0):
@@ -218,7 +223,9 @@ def infer(model, features):
     missing = sum(1 for value in vector if math.isnan(value)) / len(vector)
     if missing > MAXIMUM_MISSING_FEATURE_RATIO:
         return None, missing
-    probability = float(payload['estimator'].predict_proba([vector])[0][1])
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', message='Skipping features without any observed values')
+        probability = float(payload['estimator'].predict_proba([vector])[0][1])
     return probability, missing
 
 
@@ -228,3 +235,24 @@ def probability_level(probability, prevalence):
     if probability >= max(0.25, 1.5 * prevalence):
         return 'moderate'
     return 'low'
+
+
+def live_performance(model, pairs, outcome):
+    labels, probabilities = [], []
+    for prediction, run, records in pairs:
+        snapshot_baseline = prediction.evidence.get('outcome_baseline')
+        if not snapshot_baseline:
+            continue
+        label = outcome_label(records, aware(run.as_of), (snapshot_baseline['mean'], snapshot_baseline['std']), outcome)
+        if label is None:
+            continue
+        labels.append(label)
+        probabilities.append(prediction.calibrated_probability)
+    report = {'evaluated': len(labels), 'checked_at': datetime.now(timezone.utc).isoformat()}
+    if len(labels) < MINIMUM_TEST_POSITIVES or len(set(labels)) < 2:
+        return {**report, 'state': 'insufficient_matured_predictions'}
+    metrics = classification_metrics(labels, probabilities)
+    validation = (model.validation_metrics or {}).get('metrics', {})
+    degraded = metrics['brier'] > (validation.get('brier') or 1) + 0.05 or metrics['expected_calibration_error'] > MAXIMUM_CALIBRATION_ERROR
+    return {**report, 'state': 'degraded' if degraded else 'stable', 'metrics': metrics,
+            'action': 'Review the model and consider rollback to a previous version' if degraded else None}

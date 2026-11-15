@@ -166,8 +166,10 @@ def data_quality(features, stats):
 
 def deviation(values, direction, threshold, minimum_points):
     z = values.get('z_7d')
-    if z is None or values.get('n_7d', 0) < minimum_points:
+    if values.get('n_7d', 0) < minimum_points:
         return None
+    if z is None:
+        return False if values.get('baseline_std') == 0 and values.get('diff_from_baseline') == 0 else None
     if direction == 'increase' and z >= threshold:
         return z
     if direction == 'decrease' and z <= -threshold:

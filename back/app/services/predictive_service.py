@@ -12,7 +12,7 @@ from app.models.predictive import FeatureSnapshot, PredictionModel, PredictionRu
 from app.models.preflight import Mission, MissionMember, utc_now
 from app.models.spacecraft import Spacecraft
 from app.models.user import User
-from app.services.predictive.config import ENGINE_VERSION, manual_cooldown_seconds, maximum_attempts, rules_config
+from app.services.predictive.config import ENGINE_VERSION, manual_cooldown_seconds, maximum_attempts, rules_config, schedule_hours
 from app.services.predictive.data_collection import AstronautDataCollector
 from app.services.predictive.features import aware
 from app.services.predictive.health_risk import HealthRiskPredictionService
@@ -100,12 +100,18 @@ class PredictiveService:
 
     def execute(self, subject_type, subject_id, mission_id, as_of, fingerprint, features, quality, predictions, context, trigger, actor_id):
         versions = self.model_versions()
-        key = sha256(json.dumps([subject_type, subject_id, mission_id, fingerprint, versions, ENGINE_VERSION, as_of.date().isoformat()], sort_keys=True).encode()).hexdigest()
+        bucket = int(as_of.timestamp() // (schedule_hours() * 3600))
+        key = sha256(json.dumps([subject_type, subject_id, mission_id, fingerprint, versions, ENGINE_VERSION, bucket], sort_keys=True).encode()).hexdigest()
         existing = self.session.exec(select(PredictionRun).where(PredictionRun.idempotency_key == key)).first()
         if existing is not None and existing.status in ('completed', 'running'):
             return existing, False
         if existing is not None and existing.attempts >= maximum_attempts():
             return existing, False
+        if existing is None and trigger == 'scheduled':
+            previous = self.latest_run(subject_type, subject_id, mission_id)
+            snapshot = self.session.get(FeatureSnapshot, previous.feature_snapshot_id) if previous and previous.feature_snapshot_id else None
+            if snapshot is not None and snapshot.input_fingerprint != fingerprint:
+                trigger = 'new_data'
         run = existing or PredictionRun(subject_type=subject_type, subject_id=subject_id, mission_id=mission_id, as_of=as_of, engine_version=ENGINE_VERSION,
                                         model_versions=versions, trigger=trigger, idempotency_key=key, attempts=0, requested_by_user_id=actor_id)
         run.attempts += 1

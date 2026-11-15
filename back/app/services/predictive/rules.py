@@ -58,7 +58,7 @@ def evaluate_rules(features, quality, context, config):
         for condition in rule['conditions']:
             result, values = evaluate_condition(condition, features, context, statistics)
             outcomes.append((condition, result, values))
-        evaluable = [item for item in outcomes if item[1] is not None]
+        evaluable = [item for item in outcomes if item[1] is not None and 'indicator' in item[0] and config['indicators'][item[0]['indicator']]['domain'] == rule['domain']]
         met = [item for item in outcomes if item[1] not in (None, False)]
         matched = len(met) == len(outcomes) if rule.get('match', 'all') == 'all' else bool(met)
         state = domain_state.setdefault(rule['domain'], {'evaluable': False, 'signal': False, 'missing': set()})

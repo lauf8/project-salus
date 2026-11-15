@@ -28,7 +28,10 @@ class HealthRiskPredictionService:
         features, quality = build_features(records, as_of, self.config)
         predictions, domain_state = evaluate_rules(features, quality, context, self.config)
         predictions.extend(evaluate_anomalies(features, quality, self.config))
-        predictions.extend(evaluate_plan_targets(context, self.config))
+        plan_signals = evaluate_plan_targets(context, self.config)
+        for prediction in plan_signals:
+            domain_state.setdefault(prediction['domain'], {'evaluable': True, 'signal': True, 'missing': set()})['signal'] = True
+        predictions.extend(plan_signals)
         predictions.extend(self.model_predictions(features))
         predictions.extend(insufficient_predictions(domain_state, self.config))
         self.attach_clinical_context(predictions, context)
@@ -61,7 +64,8 @@ class HealthRiskPredictionService:
                 'data_quality': {'missing_feature_ratio': rounded(missing, 3)},
                 'uncertainty': {'level': 'moderate', 'calibration_error': selected.get('expected_calibration_error'), 'brier': selected.get('brier'),
                                 'note': 'Validated on historical data from this system only. Synthetic data is never used as clinical validation.'},
-                'evidence': {'model_name': model.name, 'model_version': model.version, 'validation': {key: selected.get(key) for key in ('precision', 'recall', 'f1', 'pr_auc', 'brier')}},
+                'evidence': {'model_name': model.name, 'model_version': model.version, 'validation': {key: selected.get(key) for key in ('precision', 'recall', 'f1', 'pr_auc', 'brier')},
+                             'outcome_baseline': {'mean': features.get(outcome.series, {}).get('baseline_mean'), 'std': features.get(outcome.series, {}).get('baseline_std')}},
             })
         return results
 
