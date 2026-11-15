@@ -255,7 +255,13 @@ class MissionRagService:
             self.session.commit()
         return self.document_response(document)
 
-    def search(self, query, document_id=None, origin='NASA', limit=4):
+    def search(self, query, document_id=None, origin='NASA', limit=4, as_of=None):
+        if as_of is not None:
+            available = self.session.exec(select(KnowledgeDocument.id).where(
+                KnowledgeDocument.is_public == True, KnowledgeDocument.indexing_status == 'completed',
+                KnowledgeDocument.imported_at <= as_of, KnowledgeDocument.indexed_at <= as_of)).first()
+            if available is None:
+                return []
         vector = self.rag.embed([query])[0]
         score = func.salus_cosine_similarity(KnowledgePassage.embedding, bindparam('query_vector', value=vector, type_=ARRAY(Float)))
         statement = select(KnowledgePassage, KnowledgeDocument, score.label('score')).join(KnowledgeDocument).where(
@@ -264,6 +270,8 @@ class MissionRagService:
             KnowledgeDocument.embedding_dimension == len(vector), KnowledgePassage.embedding.is_not(None),
             KnowledgeDocument.source_origin == origin, score >= self.rag.settings.minimum_similarity,
         )
+        if as_of is not None:
+            statement = statement.where(KnowledgeDocument.imported_at <= as_of, KnowledgeDocument.indexed_at <= as_of)
         if document_id is not None:
             statement = statement.where(KnowledgeDocument.id == document_id)
         rows = self.session.exec(statement.order_by(score.desc(), KnowledgePassage.id).limit(limit)).all()

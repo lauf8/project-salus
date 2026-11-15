@@ -1,0 +1,56 @@
+.predictive{display:grid;gap:8px}
+.predictive-stats{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.predictive-panel{padding:22px;margin:14px 0}
+.predictive-panel h2,.predictive-panel h3{margin:6px 0 12px}
+.predictive-toolbar{display:flex;flex-wrap:wrap;gap:16px;align-items:end;margin:6px 0 16px}
+.predictive-toolbar label{min-width:260px}
+.predictive-notice{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border:1px solid #f0d9a8;background:#fff8e8;border-radius:8px;color:#7a5410;font-size:12px}
+.predictive-notice svg{flex-shrink:0;margin-top:2px}
+.predictive-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:14px}
+.predictive-card{display:grid;gap:8px;align-content:start;padding:18px;border:1px solid #dfe3ea;border-left-width:4px;border-radius:10px;background:#fff}
+.predictive-card.rule{border-left-color:#0b3d91}
+.predictive-card.anomaly{border-left-color:#7c3aed}
+.predictive-card.ml{border-left-color:#047857}
+.predictive-card.insufficient_data{border-left-color:#9aa3b2;background:#f7f8fa}
+.predictive-card header,.predictive-recommendation header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.predictive-card header div,.predictive-recommendation header div{display:grid;gap:6px}
+.predictive-card h3{font-size:15px;letter-spacing:-.3px}
+.predictive-kind,.predictive-level,.predictive-status,.predictive-chip{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.predictive-kind.rule{background:#e7eefb;color:#0b3d91}
+.predictive-kind.anomaly{background:#f1eafe;color:#5b21b6}
+.predictive-kind.ml{background:#e3f6ee;color:#065f46}
+.predictive-kind.insufficient_data{background:#eceef2;color:#4b5563}
+.predictive-level.high{background:#fdecea;color:#a1271b}
+.predictive-level.moderate{background:#fff3df;color:#9a5b00}
+.predictive-level.low{background:#eef4ff;color:#2f4f86}
+.predictive-level.none,.predictive-level.undetermined{background:#eceef2;color:#4b5563}
+.predictive-status.pending{background:#fff3df;color:#9a5b00}
+.predictive-status.accepted{background:#e7eefb;color:#0b3d91}
+.predictive-status.executed{background:#e3f6ee;color:#065f46}
+.predictive-status.rejected,.predictive-status.superseded{background:#eceef2;color:#4b5563}
+.predictive-chip{background:#f1f5fa;color:#1f2e47}
+.predictive-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.predictive-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:4px 0}
+.predictive-facts div{background:#f4f6f9;border-radius:7px;padding:8px 10px}
+.predictive-facts dt{font-size:10px;color:#78808e;text-transform:uppercase;letter-spacing:.4px}
+.predictive-facts dd{margin:4px 0 0;font-size:12px;font-weight:600;color:#1f2e47}
+.predictive-missing{font-size:12px;color:#4b5563}
+.predictive-table{width:100%;border-collapse:collapse;font-size:12px}
+.predictive-table th,.predictive-table td{padding:9px 10px;border-bottom:1px solid #e6e9ee;text-align:left;vertical-align:top}
+.predictive-table th{font-size:10px;color:#7b828e;text-transform:uppercase;letter-spacing:.4px}
+.predictive-table tr.selected td{background:#f1f5fd}
+.predictive-table small{display:block}
+.predictive-chart{width:100%;min-height:180px;margin:12px 0}
+.predictive-recommendation{display:grid;gap:6px;padding:16px 0;border-bottom:1px solid #e6e9ee}
+.predictive-recommendation:last-child{border-bottom:0}
+.predictive-recommendation .secondary{justify-self:start}
+.predictive-recommendation summary{cursor:pointer;font-weight:600;font-size:12px;display:inline-flex;gap:6px;align-items:center}
+.predictive-sources{padding-left:20px}
+.predictive-sources li{margin:10px 0;font-size:12px;line-height:1.5}
+.predictive-sources blockquote{margin:6px 0 0;padding:8px 12px;border-left:3px solid #cfd8e5;color:#4b5563;background:#f7f9fb}
+.predictive-history{margin:4px 0;padding-left:18px;font-size:12px;color:#4b5563}
+.predictive-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;align-items:end;margin:8px 0}
+.predictive-form textarea{min-height:70px}
+.predictive-actions{display:flex;gap:8px;flex-wrap:wrap}
+.predictive-actions button{padding:7px 10px;font-size:11px}
+@media (max-width:700px){.predictive-facts{grid-template-columns:1fr}.predictive-grid{grid-template-columns:1fr}.predictive-toolbar label{min-width:0;width:100%}}
