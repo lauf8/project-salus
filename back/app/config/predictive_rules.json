@@ -1,0 +1,70 @@
+{
+  "version": "predictive-rules-v1",
+  "feature_set_version": "astronaut-features-v1",
+  "statistics": {
+    "deviation_z": 2.0,
+    "anomaly_robust_z": 3.5,
+    "minimum_window_points": 3,
+    "minimum_baseline_points": 5,
+    "minimum_preflight_points": 3,
+    "baseline_window_days": [60, 14],
+    "trend_window_days": 14,
+    "staleness_hours": 72
+  },
+  "indicators": {
+    "resting_heart_rate": {"unit": "bpm", "domain": "cardiovascular", "anomaly": true},
+    "systolic_pressure": {"unit": "mmHg", "domain": "cardiovascular", "anomaly": true},
+    "diastolic_pressure": {"unit": "mmHg", "domain": "cardiovascular", "anomaly": true},
+    "respiratory_rate": {"unit": "breaths/min", "domain": "cardiovascular", "anomaly": true},
+    "oxygen_saturation": {"unit": "%", "domain": "cardiovascular", "anomaly": true},
+    "body_temperature": {"unit": "°C", "domain": "cardiovascular", "anomaly": true},
+    "blood_glucose": {"unit": "mg/dL", "domain": "nutrition", "anomaly": true},
+    "sleep_duration": {"unit": "min", "domain": "sleep", "anomaly": false},
+    "sleep_quality": {"unit": "1-5", "domain": "sleep", "anomaly": false},
+    "fatigue": {"unit": "0-10", "domain": "sleep", "anomaly": false},
+    "mood": {"unit": "1-5", "domain": "psychological", "anomaly": false},
+    "mental_stress": {"unit": "1-5", "domain": "psychological", "anomaly": false},
+    "mental_happiness": {"unit": "1-5", "domain": "psychological", "anomaly": false},
+    "mental_satisfaction": {"unit": "1-5", "domain": "psychological", "anomaly": false},
+    "mental_energy": {"unit": "1-5", "domain": "psychological", "anomaly": false},
+    "mental_isolation": {"unit": "1-5", "domain": "psychological", "anomaly": false},
+    "mental_workload": {"unit": "1-5", "domain": "psychological", "anomaly": false},
+    "mental_crew_connection": {"unit": "1-5", "domain": "psychological", "anomaly": false},
+    "energy_intake": {"unit": "kcal/day", "domain": "nutrition", "anomaly": false},
+    "protein_intake": {"unit": "g/day", "domain": "nutrition", "anomaly": false}
+  },
+  "collective": {
+    "minimum_affected_astronauts": 2,
+    "minimum_affected_fraction": 0.5,
+    "fatigue_risk_types": ["sleep_deficit", "sleep_fatigue_combined", "fatigue_increase", "elevated_fatigue_24h"],
+    "workload_indicator": "mental_workload",
+    "wellbeing_risk_types": ["psychological_stress_persistent", "psychological_mood_with_stress", "psychological_wellbeing_decline"]
+  },
+  "occurrences": {
+    "minimum_recurrences": 2
+  },
+  "nutrition": {
+    "plan_shortfall_fraction": 0.1,
+    "minimum_covered_days": 4
+  },
+  "rules": [
+    {"risk_type": "cardiovascular_resting_heart_rate_shift", "domain": "cardiovascular", "title": "Persistent resting heart rate shift from individual baseline", "conditions": [{"indicator": "resting_heart_rate", "direction": "increase"}], "horizon_hours": 72},
+    {"risk_type": "cardiovascular_blood_pressure_shift", "domain": "cardiovascular", "title": "Persistent blood pressure shift from individual baseline", "conditions": [{"indicator": "systolic_pressure", "direction": "any"}, {"indicator": "diastolic_pressure", "direction": "any"}], "match": "any", "horizon_hours": 72},
+    {"risk_type": "cardiovascular_heart_rate_with_sleep_change", "domain": "cardiovascular", "title": "Resting heart rate increase with reduced sleep", "conditions": [{"indicator": "resting_heart_rate", "direction": "increase"}, {"indicator": "sleep_duration", "direction": "decrease"}], "match": "all", "combined": true, "horizon_hours": 72},
+    {"risk_type": "cardiovascular_pressure_with_symptoms", "domain": "cardiovascular", "title": "Blood pressure shift with reported symptoms", "conditions": [{"indicator": "systolic_pressure", "direction": "any"}, {"context": "symptoms_reported_7d"}], "match": "all", "combined": true, "horizon_hours": 48},
+    {"risk_type": "sleep_deficit", "domain": "sleep", "title": "Sleep below individual baseline", "conditions": [{"indicator": "sleep_duration", "direction": "decrease"}, {"indicator": "sleep_quality", "direction": "decrease"}], "match": "any", "horizon_hours": 48},
+    {"risk_type": "sleep_fatigue_combined", "domain": "sleep", "title": "Reduced sleep with increasing fatigue", "conditions": [{"indicator": "sleep_duration", "direction": "decrease"}, {"indicator": "fatigue", "direction": "increase"}], "match": "all", "combined": true, "horizon_hours": 24},
+    {"risk_type": "fatigue_increase", "domain": "sleep", "title": "Fatigue above individual baseline", "conditions": [{"indicator": "fatigue", "direction": "increase"}], "horizon_hours": 24},
+    {"risk_type": "psychological_stress_persistent", "domain": "psychological", "title": "Persistent stress above individual pattern", "conditions": [{"indicator": "mental_stress", "direction": "increase"}], "horizon_hours": 72},
+    {"risk_type": "psychological_mood_with_stress", "domain": "psychological", "title": "Mood change with persistent stress", "conditions": [{"indicator": "mood", "direction": "decrease"}, {"indicator": "mental_stress", "direction": "increase"}], "match": "all", "combined": true, "horizon_hours": 72},
+    {"risk_type": "psychological_wellbeing_decline", "domain": "psychological", "title": "Decline in satisfaction, happiness or crew connection", "conditions": [{"indicator": "mental_happiness", "direction": "decrease"}, {"indicator": "mental_satisfaction", "direction": "decrease"}, {"indicator": "mental_crew_connection", "direction": "decrease"}, {"indicator": "mental_isolation", "direction": "increase"}], "match": "any", "horizon_hours": 72},
+    {"risk_type": "nutrition_energy_intake_low", "domain": "nutrition", "title": "Energy intake below individual baseline", "conditions": [{"indicator": "energy_intake", "direction": "decrease"}], "horizon_hours": 72},
+    {"risk_type": "nutrition_protein_intake_low", "domain": "nutrition", "title": "Protein intake below individual baseline", "conditions": [{"indicator": "protein_intake", "direction": "decrease"}], "horizon_hours": 72}
+  ],
+  "unavailable_domains": {
+    "musculoskeletal": {
+      "title": "Musculoskeletal deconditioning",
+      "missing": ["Longitudinal body weight and composition records", "Muscle mass or lean mass measurements", "Bone mineral density measurements", "Strength assessments"]
+    }
+  }
+}
