@@ -8,13 +8,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
 
-from app.core.security import create_access_token
 from app.database import engine as postgres_engine, get_session
 from app.main import app
 from app.models.preflight import Mission, MissionMember
 from app.models.revoked_token import RevokedToken
 from app.models.spacecraft import Spacecraft, SpacecraftModule
 from app.models.user import User
+from tests.public_identity import public_headers
 
 
 @pytest.fixture
@@ -49,7 +49,7 @@ def spacecraft_api():
     try:
         with TestClient(app) as client:
             def call(method, path, payload=None, expected=200, actor='doctor'):
-                headers = {'Authorization': f'Bearer {create_access_token(str(people[actor]))}'} if actor else {}
+                headers = public_headers(session, people[actor]) if actor else {}
                 response = client.request(method, '/v1/spacecraft' + path, json=payload, headers=headers)
                 assert response.status_code == expected, response.text
                 return response.json() if response.content else None

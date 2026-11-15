@@ -5,10 +5,10 @@ from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine
 from app.main import app
 from app.database import get_session
-from app.core.security import create_access_token
 from app.models.user import User
 from app.models.preflight import Mission, MissionMember
 from app.models.space_weather import RadiationDoseRecord
+from tests.public_identity import public_headers
 
 @pytest.fixture
 def radiation_api(tmp_path):
@@ -33,7 +33,7 @@ def radiation_api(tmp_path):
     try:
         with TestClient(app) as client:
             def call(method='GET',path='',actor='astronaut',body=None):
-                return client.request(method,f"/v1/missions/{mid}/astronauts/{ids['astronaut']}/radiation{path}",headers={'Authorization':f'Bearer {create_access_token(str(ids[actor]))}'},json=body)
+                return client.request(method,f"/v1/missions/{mid}/astronauts/{ids['astronaut']}/radiation{path}",headers=public_headers(engine,ids[actor]),json=body)
             yield call,now
     finally:app.dependency_overrides.clear();engine.dispose()
 

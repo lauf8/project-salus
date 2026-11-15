@@ -8,7 +8,6 @@ from fastapi import HTTPException
 from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from app.core.security import create_access_token
 from app.database import get_session
 from app.main import app
 from app.models.preflight import Mission
@@ -17,6 +16,7 @@ from app.models.user import User
 from app.schemas.preflight import MissionCreate, MissionPatch, MissionResponse
 from app.schemas.spacecraft import SpacecraftResponse
 from app.services.preflight_service import PreflightService
+from tests.public_identity import public_headers
 
 
 @pytest.fixture(params=["service", "api"])
@@ -59,7 +59,7 @@ def mission_api(tmp_path, request):
     app.dependency_overrides[get_session] = get_test_session
     with TestClient(app) as client:
         def call(method, path, body=None, expected=200):
-            response = client.request(method, '/v1' + path, json=body, headers={'Authorization': f'Bearer {create_access_token(str(user_id))}'})
+            response = client.request(method, '/v1' + path, json=body, headers=public_headers(engine, user_id))
             assert response.status_code == expected, response.text
             return response.json() if response.content else None
         yield call, engine, user_id

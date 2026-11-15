@@ -17,8 +17,8 @@ def test_profiles_persist_through_registration_and_login(client, astronaut, phys
     assert response.json()["is_physician"] is physician
     login = client.post("/v1/auth/login", json={"email": payload["email"], "password": payload["password"]})
     assert login.status_code == 200
-    headers = {"Authorization": f"Bearer {login.json()['access_token']}"}
-    user = client.get("/v1/users/", headers=headers).json()["data"][0]
+    # A listagem é pública e pode conter a identidade pública criada pela API.
+    user = next(row for row in client.get("/v1/users/").json()["data"] if row["email"] == payload["email"])
     assert user["is_astronaut"] is astronaut
     assert user["is_physician"] is physician
 

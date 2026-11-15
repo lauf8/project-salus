@@ -5,7 +5,6 @@ from fastapi.testclient import TestClient
 from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from app.core.security import create_access_token
 from app.database import get_session
 from app.main import app
 from app.models.health import HealthObservation
@@ -13,6 +12,7 @@ from app.models.health_alerts import HealthAlertSettings
 from app.models.mental_health import MentalHealthAuditEvent, MentalHealthCheckIn, PsychologyContactRequest
 from app.models.preflight import Mission, MissionMember
 from app.models.user import User
+from tests.public_identity import public_headers
 
 
 @pytest.fixture
@@ -42,7 +42,7 @@ def mental_api(tmp_path):
             members[name] = member.id
         session.add(MissionMember(mission_id=other_mission.id, user_id=users['outsider'], role="psychologist"))
         session.add(HealthAlertSettings(mission_id=mission.id, timezone="America/Bahia"))
-        session.add(HealthObservation(astronaut_id=users['astronaut'], mission_id=mission.id, indicator="sleep_duration", value=420, unit="min", source="self_report", recorded_by_user_id=users['astronaut'], collected_at=now, note="private sleep note"))
+        session.add(HealthObservation(astronaut_id=users['astronaut'], mission_id=mission.id, indicator="sleep_duration", value=420, unit="min", source="self_report", recorded_by_user_id=users['astronaut'], collected_at=now-timedelta(days=1), note="private sleep note"))
         session.commit()
     def get_test_session():
         with Session(engine) as session:
@@ -52,7 +52,7 @@ def mental_api(tmp_path):
         with TestClient(app) as client:
             def call(method, path="", body=None, actor="astronaut", expected=200, member=None):
                 url = f"/v1/missions/{mission_id}/mental-health/astronauts/{member or members['astronaut']}" + path
-                response = client.request(method, url, json=body, headers={"Authorization": f"Bearer {create_access_token(str(users[actor]))}"})
+                response = client.request(method, url, json=body, headers=public_headers(engine, users[actor]))
                 assert response.status_code == expected, response.text
                 return response.json()
             yield call, engine, members, now, client, users, mission_id
@@ -133,17 +133,17 @@ def test_scope_and_direct_id_privacy(mental_api):
     call('PUT', f"/sessions/{session['id']}", follow_up(now), expected=403)
     other_request = call('POST', '/requests', actor='other', member=members['other'])
     call('POST', '/sessions', follow_up(now, contact_request_id=other_request['id']), actor='psychologist', expected=404)
-    response = client.get(f'/v1/missions/{mission_id}/mental-health/astronauts', headers={'Authorization':f"Bearer {create_access_token(str(users['psychologist']))}"})
+    response = client.get(f'/v1/missions/{mission_id}/mental-health/astronauts', headers=public_headers(engine, users['psychologist']))
     assert response.status_code == 200 and len(response.json()) == 2
     assert 'private diary' not in response.text and 'confidential' not in response.text
-    response = client.get(f'/v1/missions/{mission_id}', headers={'Authorization':f"Bearer {create_access_token(str(users['admin']))}"})
+    response = client.get(f'/v1/missions/{mission_id}', headers=public_headers(engine, users['admin']))
     assert 'private diary' not in response.text and 'confidential' not in response.text
 
 
 def test_revoked_psychologist_loses_access_and_authorship_survives(mental_api):
     call, engine, members, now, client, users, mission_id = mental_api
     record = call('POST', '/sessions', follow_up(now), actor='psychologist')
-    response = client.delete(f"/v1/missions/{mission_id}/members/{members['psychologist']}", headers={'Authorization':f"Bearer {create_access_token(str(users['admin']))}"})
+    response = client.delete(f"/v1/missions/{mission_id}/members/{members['psychologist']}", headers=public_headers(engine, users['admin']))
     assert response.status_code == 204, response.text
     call('GET', actor='psychologist', expected=404)
     call('PUT', f"/sessions/{record['id']}", follow_up(now), actor='psychologist', expected=404)
