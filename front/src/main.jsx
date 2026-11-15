@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import {createRoot} from 'react-dom/client';
-import {Orbit, LayoutDashboard, Rocket, Users, HeartPulse, ClipboardList, ArrowUpRight, Plus, X, ChevronRight, ArrowLeft, CalendarDays, Search, Check, Pencil, Trash2, RefreshCw, Bell} from 'lucide-react';
+import {Orbit, LayoutDashboard, Rocket, Users, HeartPulse, ClipboardList, ArrowUpRight, Plus, X, ChevronRight, ArrowLeft, CalendarDays, Search, Check, Pencil, Trash2, RefreshCw, Bell, Activity} from 'lucide-react';
 import {api, allPages} from './services/api';
 import './style.css';
 import MissionCreateForm from './MissionCreateForm';
@@ -26,6 +26,7 @@ import AllergySection from './AllergySection';
 import { NotificationBell } from './NotificationBell';
 const Notifications = lazy(()=>import('./Notifications'));
 const HealthDashboard = lazy(()=>import('./HealthDashboard')); 
+const PredictiveIntelligence = lazy(()=>import('./PredictiveIntelligence'));
 const roles=missionRoles;
 const states={pending:"Pending",scheduled:"Scheduled",awaiting_review:"Awaiting review",repeat_requested:"Repeat requested",completed:"Completed"};
 const date=v=>v?new Date(v).toLocaleString("en-US",{dateStyle:'short',timeStyle:'short'}):"Not provided";
@@ -62,7 +63,7 @@ function App(){
 
  const healthAvailable=healthContext?.is_astronaut||user?.is_physician||user?.is_nurse;
  const currentView=view==='home'?(healthContext?(healthContext.is_astronaut?'astronaut-control':'overview'):'loading'):view;
- const nav=[['astronaut-control',Users,'Astronaut control'],...(healthAvailable?[['health',HeartPulse,"Health monitoring"]]:[]),['overview',LayoutDashboard,"Overview"],['missions',Rocket,"Missions"],['spacecraft',Rocket,'Spacecraft'],['food',ClipboardList,'Food and beverages'],['types',HeartPulse,"Exam types"],['exams',ClipboardList,"Exams"],['medicines',ClipboardList,"Medications"],['active-ingredients',ClipboardList,"Active ingredients"],['users',Users,"User directory"],...(user?.is_global_admin?[["administration",Users,"User administration"]]:[]),...(physician?[["notifications",Bell,"Notifications"]]:[])];
+ const nav=[['astronaut-control',Users,'Astronaut control'],...(healthAvailable?[['health',HeartPulse,"Health monitoring"]]:[]),['overview',LayoutDashboard,"Overview"],['predictive',Activity,'Predictive Intelligence'],['missions',Rocket,"Missions"],['spacecraft',Rocket,'Spacecraft'],['food',ClipboardList,'Food and beverages'],['types',HeartPulse,"Exam types"],['exams',ClipboardList,"Exams"],['medicines',ClipboardList,"Medications"],['active-ingredients',ClipboardList,"Active ingredients"],['users',Users,"User directory"],...(user?.is_global_admin?[["administration",Users,"User administration"]]:[]),...(physician?[["notifications",Bell,"Notifications"]]:[])];
  const visibleMissions=missions.filter(m=>m.name.toLowerCase().includes(search.toLowerCase())), visibleTypes=types.filter(t=>`${t.name} ${t.code}`.toLowerCase().includes(search.toLowerCase()));
  const missionCards=(items)=><div className="mission-grid">{items.map(m=><button key={m.id} className="mission-card" onClick={()=>loadMission(m)}><div className="card-top"><span className="mission-symbol"><Rocket size={22}/></span><span className={`badge ${m.status==='completed'?'completed':m.status==='in_progress'?'scheduled':'pending'}`}>{missionStatuses[m.status]||"Planned"}</span></div><small>MISSION {String(m.id).padStart(3,'0')}</small><h3>{m.name}</h3><p>Planned crew · {m.crew_size ?? "Not specified"}</p><p>Spacecraft · {spacecraft.find(s=>s.id===m.spacecraft_id)?.name||"Not assigned"}</p><p><CalendarDays size={15}/> {date(m.planned_launch_at)}</p><div className="card-bottom">Open mission <ArrowUpRight size={18}/></div></button>)}</div>;
  const empty=(text)=><div className="empty"><Orbit size={34}/><h3>{text}</h3></div>;
@@ -70,6 +71,7 @@ function App(){
  {currentView==='administration'&&user?.is_global_admin&&<Suspense fallback={<p role="status">Loading administration…</p>}><UserAdministration request={request} users={users} onChanged={load}/></Suspense>}
  {currentView==='notifications'&&physician&&<Suspense fallback={<p role="status">Loading notifications…</p>}><Notifications request={request} onChange={()=>setNotificationRevision(value=>value+1)} onOpenRecord={notification=>{setNotificationTarget({key:`${notification.id}-${Date.now()}`,missionId:String(notification.mission_id),astronautId:String(notification.astronaut_id),indicator:notification.indicator});setView('health');}}/></Suspense>}
  {['medicines','active-ingredients'].includes(currentView)&&<Suspense fallback={<p role="status">Loading catalog…</p>}><MedicineCatalog key={currentView} request={request} kind={currentView} canManage={healthContext?.can_manage_catalog}/></Suspense>}
+ {currentView==='predictive'&&user&&<Suspense fallback={<p role="status">Loading predictive intelligence…</p>}><PredictiveIntelligence request={request} missions={missions} spacecraft={spacecraft} user={user}/></Suspense>}
  {currentView==='spacecraft'&&<Suspense fallback={<p role="status">Loading spacecraft…</p>}><SpacecraftCatalog request={request} canManage={Boolean(healthContext?.can_manage_spacecraft)}/></Suspense>}
  {currentView==='food'&&<Suspense fallback={<p role="status">Loading food catalog…</p>}><Nutrition request={request} canManageCatalog={Boolean(healthContext?.can_manage_food_catalog)}/></Suspense>}
  {currentView==='exams'&&<Suspense fallback={<p role="status">Loading exams…</p>}><ExamCatalog request={request} types={types} canManage={physician&&healthContext?.can_manage_catalog} onChanged={async()=>setCatalog(await allPages('/v1/exams',token))}/></Suspense>}
