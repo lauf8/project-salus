@@ -1,0 +1,31 @@
+{
+  "ai_case": {
+    "astronaut": "Matheus Valença",
+    "generated_explanations": 3
+  },
+  "restored": true,
+  "total_missions": 56,
+  "cohort_states": {
+    "planned": 5,
+    "completed": 35,
+    "in_progress": 10
+  },
+  "invalid_constraints": 0,
+  "tables": {
+    "users": 173,
+    "mission_members": 498,
+    "health_observations": 104384,
+    "mental_health_check_ins": 7497,
+    "psychology_follow_ups": 998,
+    "meal_logs": 22563,
+    "meal_log_items": 22563,
+    "food_stock_movements": 22639,
+    "health_occurrences": 51,
+    "mission_occurrences": 35,
+    "knowledge_documents": 16,
+    "prediction_runs": 265,
+    "recommendation_events": 156,
+    "mission_risk_alerts": 3,
+    "health_notifications": 8
+  }
+}

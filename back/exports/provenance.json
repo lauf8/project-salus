@@ -1,0 +1,1809 @@
+{
+  "configuration": {
+    "version": "salus-synthetic-50-v1",
+    "seed": 50,
+    "reference": "2026-11-15T12:00:00+00:00"
+  },
+  "data_origin": "generated fictional development data; not real clinical or spaceflight records",
+  "source_manifest_sha256": "bc00f86cca01a2140f63a137e2e1ff1db996425feab7dfa17bd99e00fa8a7ba4",
+  "prepared_at": "2026-11-15T12:42:51.969594+00:00",
+  "missions": [
+    {
+      "id": 216,
+      "original_name": "Salus Synthetic 001",
+      "name": "Aurora 01"
+    },
+    {
+      "id": 217,
+      "original_name": "Salus Synthetic 002",
+      "name": "Aurora 02"
+    },
+    {
+      "id": 218,
+      "original_name": "Salus Synthetic 003",
+      "name": "Aurora 03"
+    },
+    {
+      "id": 219,
+      "original_name": "Salus Synthetic 004",
+      "name": "Aurora 04"
+    },
+    {
+      "id": 220,
+      "original_name": "Salus Synthetic 005",
+      "name": "Aurora 05"
+    },
+    {
+      "id": 221,
+      "original_name": "Salus Synthetic 006",
+      "name": "Horizonte 01"
+    },
+    {
+      "id": 222,
+      "original_name": "Salus Synthetic 007",
+      "name": "Horizonte 02"
+    },
+    {
+      "id": 223,
+      "original_name": "Salus Synthetic 008",
+      "name": "Horizonte 03"
+    },
+    {
+      "id": 224,
+      "original_name": "Salus Synthetic 009",
+      "name": "Horizonte 04"
+    },
+    {
+      "id": 225,
+      "original_name": "Salus Synthetic 010",
+      "name": "Horizonte 05"
+    },
+    {
+      "id": 226,
+      "original_name": "Salus Synthetic 011",
+      "name": "Meridiano 01"
+    },
+    {
+      "id": 227,
+      "original_name": "Salus Synthetic 012",
+      "name": "Meridiano 02"
+    },
+    {
+      "id": 228,
+      "original_name": "Salus Synthetic 013",
+      "name": "Meridiano 03"
+    },
+    {
+      "id": 229,
+      "original_name": "Salus Synthetic 014",
+      "name": "Meridiano 04"
+    },
+    {
+      "id": 230,
+      "original_name": "Salus Synthetic 015",
+      "name": "Meridiano 05"
+    },
+    {
+      "id": 231,
+      "original_name": "Salus Synthetic 016",
+      "name": "Órbita 01"
+    },
+    {
+      "id": 232,
+      "original_name": "Salus Synthetic 017",
+      "name": "Órbita 02"
+    },
+    {
+      "id": 233,
+      "original_name": "Salus Synthetic 018",
+      "name": "Órbita 03"
+    },
+    {
+      "id": 234,
+      "original_name": "Salus Synthetic 019",
+      "name": "Órbita 04"
+    },
+    {
+      "id": 235,
+      "original_name": "Salus Synthetic 020",
+      "name": "Órbita 05"
+    },
+    {
+      "id": 236,
+      "original_name": "Salus Synthetic 021",
+      "name": "Alvorada 01"
+    },
+    {
+      "id": 237,
+      "original_name": "Salus Synthetic 022",
+      "name": "Alvorada 02"
+    },
+    {
+      "id": 238,
+      "original_name": "Salus Synthetic 023",
+      "name": "Alvorada 03"
+    },
+    {
+      "id": 239,
+      "original_name": "Salus Synthetic 024",
+      "name": "Alvorada 04"
+    },
+    {
+      "id": 240,
+      "original_name": "Salus Synthetic 025",
+      "name": "Alvorada 05"
+    },
+    {
+      "id": 241,
+      "original_name": "Salus Synthetic 026",
+      "name": "Travessia 01"
+    },
+    {
+      "id": 242,
+      "original_name": "Salus Synthetic 027",
+      "name": "Travessia 02"
+    },
+    {
+      "id": 243,
+      "original_name": "Salus Synthetic 028",
+      "name": "Travessia 03"
+    },
+    {
+      "id": 244,
+      "original_name": "Salus Synthetic 029",
+      "name": "Travessia 04"
+    },
+    {
+      "id": 245,
+      "original_name": "Salus Synthetic 030",
+      "name": "Travessia 05"
+    },
+    {
+      "id": 246,
+      "original_name": "Salus Synthetic 031",
+      "name": "Vanguarda 01"
+    },
+    {
+      "id": 247,
+      "original_name": "Salus Synthetic 032",
+      "name": "Vanguarda 02"
+    },
+    {
+      "id": 248,
+      "original_name": "Salus Synthetic 033",
+      "name": "Vanguarda 03"
+    },
+    {
+      "id": 249,
+      "original_name": "Salus Synthetic 034",
+      "name": "Vanguarda 04"
+    },
+    {
+      "id": 250,
+      "original_name": "Salus Synthetic 035",
+      "name": "Vanguarda 05"
+    },
+    {
+      "id": 251,
+      "original_name": "Salus Synthetic 036",
+      "name": "Nascente 01"
+    },
+    {
+      "id": 252,
+      "original_name": "Salus Synthetic 037",
+      "name": "Nascente 02"
+    },
+    {
+      "id": 253,
+      "original_name": "Salus Synthetic 038",
+      "name": "Nascente 03"
+    },
+    {
+      "id": 254,
+      "original_name": "Salus Synthetic 039",
+      "name": "Nascente 04"
+    },
+    {
+      "id": 255,
+      "original_name": "Salus Synthetic 040",
+      "name": "Nascente 05"
+    },
+    {
+      "id": 256,
+      "original_name": "Salus Synthetic 041",
+      "name": "Atlântico 01"
+    },
+    {
+      "id": 257,
+      "original_name": "Salus Synthetic 042",
+      "name": "Atlântico 02"
+    },
+    {
+      "id": 258,
+      "original_name": "Salus Synthetic 043",
+      "name": "Atlântico 03"
+    },
+    {
+      "id": 259,
+      "original_name": "Salus Synthetic 044",
+      "name": "Atlântico 04"
+    },
+    {
+      "id": 260,
+      "original_name": "Salus Synthetic 045",
+      "name": "Atlântico 05"
+    },
+    {
+      "id": 261,
+      "original_name": "Salus Synthetic 046",
+      "name": "Cruzeiro 01"
+    },
+    {
+      "id": 262,
+      "original_name": "Salus Synthetic 047",
+      "name": "Cruzeiro 02"
+    },
+    {
+      "id": 263,
+      "original_name": "Salus Synthetic 048",
+      "name": "Cruzeiro 03"
+    },
+    {
+      "id": 264,
+      "original_name": "Salus Synthetic 049",
+      "name": "Cruzeiro 04"
+    },
+    {
+      "id": 265,
+      "original_name": "Salus Synthetic 050",
+      "name": "Cruzeiro 05"
+    }
+  ],
+  "users": [
+    {
+      "id": 974,
+      "original_name": "Equipe Sintética Médica",
+      "name": "Helena Monteiro",
+      "original_email": "salus50-doctor@example.test",
+      "email": "helena.monteiro@crew.salus.example"
+    },
+    {
+      "id": 975,
+      "original_name": "Equipe Sintética mission_admin",
+      "name": "Rafael Andrade",
+      "original_email": "salus50-mission_admin@example.test",
+      "email": "rafael.andrade@crew.salus.example"
+    },
+    {
+      "id": 976,
+      "original_name": "Equipe Sintética psychologist",
+      "name": "Mariana Azevedo",
+      "original_email": "salus50-psychologist@example.test",
+      "email": "mariana.azevedo@crew.salus.example"
+    },
+    {
+      "id": 977,
+      "original_name": "Equipe Sintética nutritionist",
+      "name": "Camila Duarte",
+      "original_email": "salus50-nutritionist@example.test",
+      "email": "camila.duarte@crew.salus.example"
+    },
+    {
+      "id": 978,
+      "original_name": "Equipe Sintética nurse",
+      "name": "Thiago Menezes",
+      "original_email": "salus50-nurse@example.test",
+      "email": "thiago.menezes@crew.salus.example"
+    },
+    {
+      "id": 979,
+      "original_name": "Equipe Sintética observer",
+      "name": "Beatriz Nogueira",
+      "original_email": "salus50-observer@example.test",
+      "email": "beatriz.nogueira@crew.salus.example"
+    },
+    {
+      "id": 980,
+      "original_name": "Tripulante Sintético 001-1",
+      "name": "André Almeida",
+      "original_email": "salus50-001-1@example.test",
+      "email": "andre.almeida@crew.salus.example"
+    },
+    {
+      "id": 981,
+      "original_name": "Tripulante Sintético 001-2",
+      "name": "Ana Almeida",
+      "original_email": "salus50-001-2@example.test",
+      "email": "ana.almeida@crew.salus.example"
+    },
+    {
+      "id": 982,
+      "original_name": "Tripulante Sintético 002-1",
+      "name": "Bruno Almeida",
+      "original_email": "salus50-002-1@example.test",
+      "email": "bruno.almeida@crew.salus.example"
+    },
+    {
+      "id": 983,
+      "original_name": "Tripulante Sintético 002-2",
+      "name": "Carolina Almeida",
+      "original_email": "salus50-002-2@example.test",
+      "email": "carolina.almeida@crew.salus.example"
+    },
+    {
+      "id": 984,
+      "original_name": "Tripulante Sintético 002-3",
+      "name": "Daniel Almeida",
+      "original_email": "salus50-002-3@example.test",
+      "email": "daniel.almeida@crew.salus.example"
+    },
+    {
+      "id": 985,
+      "original_name": "Tripulante Sintético 003-1",
+      "name": "Eduarda Almeida",
+      "original_email": "salus50-003-1@example.test",
+      "email": "eduarda.almeida@crew.salus.example"
+    },
+    {
+      "id": 986,
+      "original_name": "Tripulante Sintético 003-2",
+      "name": "Felipe Almeida",
+      "original_email": "salus50-003-2@example.test",
+      "email": "felipe.almeida@crew.salus.example"
+    },
+    {
+      "id": 987,
+      "original_name": "Tripulante Sintético 003-3",
+      "name": "Gabriela Almeida",
+      "original_email": "salus50-003-3@example.test",
+      "email": "gabriela.almeida@crew.salus.example"
+    },
+    {
+      "id": 988,
+      "original_name": "Tripulante Sintético 003-4",
+      "name": "Gustavo Almeida",
+      "original_email": "salus50-003-4@example.test",
+      "email": "gustavo.almeida@crew.salus.example"
+    },
+    {
+      "id": 989,
+      "original_name": "Tripulante Sintético 004-1",
+      "name": "Isabela Almeida",
+      "original_email": "salus50-004-1@example.test",
+      "email": "isabela.almeida@crew.salus.example"
+    },
+    {
+      "id": 990,
+      "original_name": "Tripulante Sintético 004-2",
+      "name": "João Almeida",
+      "original_email": "salus50-004-2@example.test",
+      "email": "joao.almeida@crew.salus.example"
+    },
+    {
+      "id": 991,
+      "original_name": "Tripulante Sintético 005-1",
+      "name": "Júlia Almeida",
+      "original_email": "salus50-005-1@example.test",
+      "email": "julia.almeida@crew.salus.example"
+    },
+    {
+      "id": 992,
+      "original_name": "Tripulante Sintético 005-2",
+      "name": "Leonardo Almeida",
+      "original_email": "salus50-005-2@example.test",
+      "email": "leonardo.almeida@crew.salus.example"
+    },
+    {
+      "id": 993,
+      "original_name": "Tripulante Sintético 005-3",
+      "name": "Letícia Almeida",
+      "original_email": "salus50-005-3@example.test",
+      "email": "leticia.almeida@crew.salus.example"
+    },
+    {
+      "id": 994,
+      "original_name": "Tripulante Sintético 006-1",
+      "name": "Lucas Almeida",
+      "original_email": "salus50-006-1@example.test",
+      "email": "lucas.almeida@crew.salus.example"
+    },
+    {
+      "id": 995,
+      "original_name": "Tripulante Sintético 006-2",
+      "name": "Luiza Almeida",
+      "original_email": "salus50-006-2@example.test",
+      "email": "luiza.almeida@crew.salus.example"
+    },
+    {
+      "id": 996,
+      "original_name": "Tripulante Sintético 006-3",
+      "name": "Marcelo Almeida",
+      "original_email": "salus50-006-3@example.test",
+      "email": "marcelo.almeida@crew.salus.example"
+    },
+    {
+      "id": 997,
+      "original_name": "Tripulante Sintético 006-4",
+      "name": "Marina Almeida",
+      "original_email": "salus50-006-4@example.test",
+      "email": "marina.almeida@crew.salus.example"
+    },
+    {
+      "id": 998,
+      "original_name": "Tripulante Sintético 007-1",
+      "name": "Pedro Almeida",
+      "original_email": "salus50-007-1@example.test",
+      "email": "pedro.almeida@crew.salus.example"
+    },
+    {
+      "id": 999,
+      "original_name": "Tripulante Sintético 007-2",
+      "name": "Renata Almeida",
+      "original_email": "salus50-007-2@example.test",
+      "email": "renata.almeida@crew.salus.example"
+    },
+    {
+      "id": 1000,
+      "original_name": "Tripulante Sintético 008-1",
+      "name": "Ricardo Almeida",
+      "original_email": "salus50-008-1@example.test",
+      "email": "ricardo.almeida@crew.salus.example"
+    },
+    {
+      "id": 1001,
+      "original_name": "Tripulante Sintético 008-2",
+      "name": "Sofia Almeida",
+      "original_email": "salus50-008-2@example.test",
+      "email": "sofia.almeida@crew.salus.example"
+    },
+    {
+      "id": 1002,
+      "original_name": "Tripulante Sintético 008-3",
+      "name": "Vinícius Almeida",
+      "original_email": "salus50-008-3@example.test",
+      "email": "vinicius.almeida@crew.salus.example"
+    },
+    {
+      "id": 1003,
+      "original_name": "Tripulante Sintético 009-1",
+      "name": "Vitória Almeida",
+      "original_email": "salus50-009-1@example.test",
+      "email": "vitoria.almeida@crew.salus.example"
+    },
+    {
+      "id": 1004,
+      "original_name": "Tripulante Sintético 009-2",
+      "name": "Caio Almeida",
+      "original_email": "salus50-009-2@example.test",
+      "email": "caio.almeida@crew.salus.example"
+    },
+    {
+      "id": 1005,
+      "original_name": "Tripulante Sintético 009-3",
+      "name": "André Barros",
+      "original_email": "salus50-009-3@example.test",
+      "email": "andre.barros@crew.salus.example"
+    },
+    {
+      "id": 1006,
+      "original_name": "Tripulante Sintético 009-4",
+      "name": "Ana Barros",
+      "original_email": "salus50-009-4@example.test",
+      "email": "ana.barros@crew.salus.example"
+    },
+    {
+      "id": 1007,
+      "original_name": "Tripulante Sintético 010-1",
+      "name": "Bruno Barros",
+      "original_email": "salus50-010-1@example.test",
+      "email": "bruno.barros@crew.salus.example"
+    },
+    {
+      "id": 1008,
+      "original_name": "Tripulante Sintético 010-2",
+      "name": "Carolina Barros",
+      "original_email": "salus50-010-2@example.test",
+      "email": "carolina.barros@crew.salus.example"
+    },
+    {
+      "id": 1009,
+      "original_name": "Tripulante Sintético 011-1",
+      "name": "Daniel Barros",
+      "original_email": "salus50-011-1@example.test",
+      "email": "daniel.barros@crew.salus.example"
+    },
+    {
+      "id": 1010,
+      "original_name": "Tripulante Sintético 011-2",
+      "name": "Eduarda Barros",
+      "original_email": "salus50-011-2@example.test",
+      "email": "eduarda.barros@crew.salus.example"
+    },
+    {
+      "id": 1011,
+      "original_name": "Tripulante Sintético 011-3",
+      "name": "Felipe Barros",
+      "original_email": "salus50-011-3@example.test",
+      "email": "felipe.barros@crew.salus.example"
+    },
+    {
+      "id": 1012,
+      "original_name": "Tripulante Sintético 012-1",
+      "name": "Gabriela Barros",
+      "original_email": "salus50-012-1@example.test",
+      "email": "gabriela.barros@crew.salus.example"
+    },
+    {
+      "id": 1013,
+      "original_name": "Tripulante Sintético 012-2",
+      "name": "Gustavo Barros",
+      "original_email": "salus50-012-2@example.test",
+      "email": "gustavo.barros@crew.salus.example"
+    },
+    {
+      "id": 1014,
+      "original_name": "Tripulante Sintético 012-3",
+      "name": "Isabela Barros",
+      "original_email": "salus50-012-3@example.test",
+      "email": "isabela.barros@crew.salus.example"
+    },
+    {
+      "id": 1015,
+      "original_name": "Tripulante Sintético 012-4",
+      "name": "João Barros",
+      "original_email": "salus50-012-4@example.test",
+      "email": "joao.barros@crew.salus.example"
+    },
+    {
+      "id": 1016,
+      "original_name": "Tripulante Sintético 013-1",
+      "name": "Júlia Barros",
+      "original_email": "salus50-013-1@example.test",
+      "email": "julia.barros@crew.salus.example"
+    },
+    {
+      "id": 1017,
+      "original_name": "Tripulante Sintético 013-2",
+      "name": "Leonardo Barros",
+      "original_email": "salus50-013-2@example.test",
+      "email": "leonardo.barros@crew.salus.example"
+    },
+    {
+      "id": 1018,
+      "original_name": "Tripulante Sintético 014-1",
+      "name": "Letícia Barros",
+      "original_email": "salus50-014-1@example.test",
+      "email": "leticia.barros@crew.salus.example"
+    },
+    {
+      "id": 1019,
+      "original_name": "Tripulante Sintético 014-2",
+      "name": "Lucas Barros",
+      "original_email": "salus50-014-2@example.test",
+      "email": "lucas.barros@crew.salus.example"
+    },
+    {
+      "id": 1020,
+      "original_name": "Tripulante Sintético 014-3",
+      "name": "Luiza Barros",
+      "original_email": "salus50-014-3@example.test",
+      "email": "luiza.barros@crew.salus.example"
+    },
+    {
+      "id": 1021,
+      "original_name": "Tripulante Sintético 015-1",
+      "name": "Marcelo Barros",
+      "original_email": "salus50-015-1@example.test",
+      "email": "marcelo.barros@crew.salus.example"
+    },
+    {
+      "id": 1022,
+      "original_name": "Tripulante Sintético 015-2",
+      "name": "Marina Barros",
+      "original_email": "salus50-015-2@example.test",
+      "email": "marina.barros@crew.salus.example"
+    },
+    {
+      "id": 1023,
+      "original_name": "Tripulante Sintético 015-3",
+      "name": "Pedro Barros",
+      "original_email": "salus50-015-3@example.test",
+      "email": "pedro.barros@crew.salus.example"
+    },
+    {
+      "id": 1024,
+      "original_name": "Tripulante Sintético 015-4",
+      "name": "Renata Barros",
+      "original_email": "salus50-015-4@example.test",
+      "email": "renata.barros@crew.salus.example"
+    },
+    {
+      "id": 1025,
+      "original_name": "Tripulante Sintético 016-1",
+      "name": "Ricardo Barros",
+      "original_email": "salus50-016-1@example.test",
+      "email": "ricardo.barros@crew.salus.example"
+    },
+    {
+      "id": 1026,
+      "original_name": "Tripulante Sintético 016-2",
+      "name": "Sofia Barros",
+      "original_email": "salus50-016-2@example.test",
+      "email": "sofia.barros@crew.salus.example"
+    },
+    {
+      "id": 1027,
+      "original_name": "Tripulante Sintético 017-1",
+      "name": "Vinícius Barros",
+      "original_email": "salus50-017-1@example.test",
+      "email": "vinicius.barros@crew.salus.example"
+    },
+    {
+      "id": 1028,
+      "original_name": "Tripulante Sintético 017-2",
+      "name": "Vitória Barros",
+      "original_email": "salus50-017-2@example.test",
+      "email": "vitoria.barros@crew.salus.example"
+    },
+    {
+      "id": 1029,
+      "original_name": "Tripulante Sintético 017-3",
+      "name": "Caio Barros",
+      "original_email": "salus50-017-3@example.test",
+      "email": "caio.barros@crew.salus.example"
+    },
+    {
+      "id": 1030,
+      "original_name": "Tripulante Sintético 018-1",
+      "name": "André Cardoso",
+      "original_email": "salus50-018-1@example.test",
+      "email": "andre.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1031,
+      "original_name": "Tripulante Sintético 018-2",
+      "name": "Ana Cardoso",
+      "original_email": "salus50-018-2@example.test",
+      "email": "ana.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1032,
+      "original_name": "Tripulante Sintético 018-3",
+      "name": "Bruno Cardoso",
+      "original_email": "salus50-018-3@example.test",
+      "email": "bruno.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1033,
+      "original_name": "Tripulante Sintético 018-4",
+      "name": "Carolina Cardoso",
+      "original_email": "salus50-018-4@example.test",
+      "email": "carolina.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1034,
+      "original_name": "Tripulante Sintético 019-1",
+      "name": "Daniel Cardoso",
+      "original_email": "salus50-019-1@example.test",
+      "email": "daniel.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1035,
+      "original_name": "Tripulante Sintético 019-2",
+      "name": "Eduarda Cardoso",
+      "original_email": "salus50-019-2@example.test",
+      "email": "eduarda.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1036,
+      "original_name": "Tripulante Sintético 020-1",
+      "name": "Felipe Cardoso",
+      "original_email": "salus50-020-1@example.test",
+      "email": "felipe.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1037,
+      "original_name": "Tripulante Sintético 020-2",
+      "name": "Gabriela Cardoso",
+      "original_email": "salus50-020-2@example.test",
+      "email": "gabriela.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1038,
+      "original_name": "Tripulante Sintético 020-3",
+      "name": "Gustavo Cardoso",
+      "original_email": "salus50-020-3@example.test",
+      "email": "gustavo.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1039,
+      "original_name": "Tripulante Sintético 021-1",
+      "name": "Isabela Cardoso",
+      "original_email": "salus50-021-1@example.test",
+      "email": "isabela.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1040,
+      "original_name": "Tripulante Sintético 021-2",
+      "name": "João Cardoso",
+      "original_email": "salus50-021-2@example.test",
+      "email": "joao.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1041,
+      "original_name": "Tripulante Sintético 021-3",
+      "name": "Júlia Cardoso",
+      "original_email": "salus50-021-3@example.test",
+      "email": "julia.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1042,
+      "original_name": "Tripulante Sintético 021-4",
+      "name": "Leonardo Cardoso",
+      "original_email": "salus50-021-4@example.test",
+      "email": "leonardo.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1043,
+      "original_name": "Tripulante Sintético 022-1",
+      "name": "Letícia Cardoso",
+      "original_email": "salus50-022-1@example.test",
+      "email": "leticia.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1044,
+      "original_name": "Tripulante Sintético 022-2",
+      "name": "Lucas Cardoso",
+      "original_email": "salus50-022-2@example.test",
+      "email": "lucas.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1045,
+      "original_name": "Tripulante Sintético 023-1",
+      "name": "Luiza Cardoso",
+      "original_email": "salus50-023-1@example.test",
+      "email": "luiza.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1046,
+      "original_name": "Tripulante Sintético 023-2",
+      "name": "Marcelo Cardoso",
+      "original_email": "salus50-023-2@example.test",
+      "email": "marcelo.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1047,
+      "original_name": "Tripulante Sintético 023-3",
+      "name": "Marina Cardoso",
+      "original_email": "salus50-023-3@example.test",
+      "email": "marina.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1048,
+      "original_name": "Tripulante Sintético 024-1",
+      "name": "Pedro Cardoso",
+      "original_email": "salus50-024-1@example.test",
+      "email": "pedro.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1049,
+      "original_name": "Tripulante Sintético 024-2",
+      "name": "Renata Cardoso",
+      "original_email": "salus50-024-2@example.test",
+      "email": "renata.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1050,
+      "original_name": "Tripulante Sintético 024-3",
+      "name": "Ricardo Cardoso",
+      "original_email": "salus50-024-3@example.test",
+      "email": "ricardo.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1051,
+      "original_name": "Tripulante Sintético 024-4",
+      "name": "Sofia Cardoso",
+      "original_email": "salus50-024-4@example.test",
+      "email": "sofia.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1052,
+      "original_name": "Tripulante Sintético 025-1",
+      "name": "Vinícius Cardoso",
+      "original_email": "salus50-025-1@example.test",
+      "email": "vinicius.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1053,
+      "original_name": "Tripulante Sintético 025-2",
+      "name": "Vitória Cardoso",
+      "original_email": "salus50-025-2@example.test",
+      "email": "vitoria.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1054,
+      "original_name": "Tripulante Sintético 026-1",
+      "name": "Caio Cardoso",
+      "original_email": "salus50-026-1@example.test",
+      "email": "caio.cardoso@crew.salus.example"
+    },
+    {
+      "id": 1055,
+      "original_name": "Tripulante Sintético 026-2",
+      "name": "André Ferreira",
+      "original_email": "salus50-026-2@example.test",
+      "email": "andre.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1056,
+      "original_name": "Tripulante Sintético 026-3",
+      "name": "Ana Ferreira",
+      "original_email": "salus50-026-3@example.test",
+      "email": "ana.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1057,
+      "original_name": "Tripulante Sintético 027-1",
+      "name": "Bruno Ferreira",
+      "original_email": "salus50-027-1@example.test",
+      "email": "bruno.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1058,
+      "original_name": "Tripulante Sintético 027-2",
+      "name": "Carolina Ferreira",
+      "original_email": "salus50-027-2@example.test",
+      "email": "carolina.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1059,
+      "original_name": "Tripulante Sintético 027-3",
+      "name": "Daniel Ferreira",
+      "original_email": "salus50-027-3@example.test",
+      "email": "daniel.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1060,
+      "original_name": "Tripulante Sintético 027-4",
+      "name": "Eduarda Ferreira",
+      "original_email": "salus50-027-4@example.test",
+      "email": "eduarda.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1061,
+      "original_name": "Tripulante Sintético 028-1",
+      "name": "Felipe Ferreira",
+      "original_email": "salus50-028-1@example.test",
+      "email": "felipe.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1062,
+      "original_name": "Tripulante Sintético 028-2",
+      "name": "Gabriela Ferreira",
+      "original_email": "salus50-028-2@example.test",
+      "email": "gabriela.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1063,
+      "original_name": "Tripulante Sintético 029-1",
+      "name": "Gustavo Ferreira",
+      "original_email": "salus50-029-1@example.test",
+      "email": "gustavo.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1064,
+      "original_name": "Tripulante Sintético 029-2",
+      "name": "Isabela Ferreira",
+      "original_email": "salus50-029-2@example.test",
+      "email": "isabela.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1065,
+      "original_name": "Tripulante Sintético 029-3",
+      "name": "João Ferreira",
+      "original_email": "salus50-029-3@example.test",
+      "email": "joao.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1066,
+      "original_name": "Tripulante Sintético 030-1",
+      "name": "Júlia Ferreira",
+      "original_email": "salus50-030-1@example.test",
+      "email": "julia.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1067,
+      "original_name": "Tripulante Sintético 030-2",
+      "name": "Leonardo Ferreira",
+      "original_email": "salus50-030-2@example.test",
+      "email": "leonardo.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1068,
+      "original_name": "Tripulante Sintético 030-3",
+      "name": "Letícia Ferreira",
+      "original_email": "salus50-030-3@example.test",
+      "email": "leticia.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1069,
+      "original_name": "Tripulante Sintético 030-4",
+      "name": "Lucas Ferreira",
+      "original_email": "salus50-030-4@example.test",
+      "email": "lucas.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1070,
+      "original_name": "Tripulante Sintético 031-1",
+      "name": "Luiza Ferreira",
+      "original_email": "salus50-031-1@example.test",
+      "email": "luiza.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1071,
+      "original_name": "Tripulante Sintético 031-2",
+      "name": "Marcelo Ferreira",
+      "original_email": "salus50-031-2@example.test",
+      "email": "marcelo.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1072,
+      "original_name": "Tripulante Sintético 032-1",
+      "name": "Marina Ferreira",
+      "original_email": "salus50-032-1@example.test",
+      "email": "marina.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1073,
+      "original_name": "Tripulante Sintético 032-2",
+      "name": "Pedro Ferreira",
+      "original_email": "salus50-032-2@example.test",
+      "email": "pedro.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1074,
+      "original_name": "Tripulante Sintético 032-3",
+      "name": "Renata Ferreira",
+      "original_email": "salus50-032-3@example.test",
+      "email": "renata.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1075,
+      "original_name": "Tripulante Sintético 033-1",
+      "name": "Ricardo Ferreira",
+      "original_email": "salus50-033-1@example.test",
+      "email": "ricardo.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1076,
+      "original_name": "Tripulante Sintético 033-2",
+      "name": "Sofia Ferreira",
+      "original_email": "salus50-033-2@example.test",
+      "email": "sofia.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1077,
+      "original_name": "Tripulante Sintético 033-3",
+      "name": "Vinícius Ferreira",
+      "original_email": "salus50-033-3@example.test",
+      "email": "vinicius.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1078,
+      "original_name": "Tripulante Sintético 033-4",
+      "name": "Vitória Ferreira",
+      "original_email": "salus50-033-4@example.test",
+      "email": "vitoria.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1079,
+      "original_name": "Tripulante Sintético 034-1",
+      "name": "Caio Ferreira",
+      "original_email": "salus50-034-1@example.test",
+      "email": "caio.ferreira@crew.salus.example"
+    },
+    {
+      "id": 1080,
+      "original_name": "Tripulante Sintético 034-2",
+      "name": "André Lacerda",
+      "original_email": "salus50-034-2@example.test",
+      "email": "andre.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1081,
+      "original_name": "Tripulante Sintético 035-1",
+      "name": "Ana Lacerda",
+      "original_email": "salus50-035-1@example.test",
+      "email": "ana.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1082,
+      "original_name": "Tripulante Sintético 035-2",
+      "name": "Bruno Lacerda",
+      "original_email": "salus50-035-2@example.test",
+      "email": "bruno.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1083,
+      "original_name": "Tripulante Sintético 035-3",
+      "name": "Carolina Lacerda",
+      "original_email": "salus50-035-3@example.test",
+      "email": "carolina.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1084,
+      "original_name": "Tripulante Sintético 036-1",
+      "name": "Daniel Lacerda",
+      "original_email": "salus50-036-1@example.test",
+      "email": "daniel.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1085,
+      "original_name": "Tripulante Sintético 036-2",
+      "name": "Eduarda Lacerda",
+      "original_email": "salus50-036-2@example.test",
+      "email": "eduarda.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1086,
+      "original_name": "Tripulante Sintético 036-3",
+      "name": "Felipe Lacerda",
+      "original_email": "salus50-036-3@example.test",
+      "email": "felipe.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1087,
+      "original_name": "Tripulante Sintético 036-4",
+      "name": "Gabriela Lacerda",
+      "original_email": "salus50-036-4@example.test",
+      "email": "gabriela.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1088,
+      "original_name": "Tripulante Sintético 037-1",
+      "name": "Gustavo Lacerda",
+      "original_email": "salus50-037-1@example.test",
+      "email": "gustavo.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1089,
+      "original_name": "Tripulante Sintético 037-2",
+      "name": "Isabela Lacerda",
+      "original_email": "salus50-037-2@example.test",
+      "email": "isabela.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1090,
+      "original_name": "Tripulante Sintético 038-1",
+      "name": "João Lacerda",
+      "original_email": "salus50-038-1@example.test",
+      "email": "joao.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1091,
+      "original_name": "Tripulante Sintético 038-2",
+      "name": "Júlia Lacerda",
+      "original_email": "salus50-038-2@example.test",
+      "email": "julia.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1092,
+      "original_name": "Tripulante Sintético 038-3",
+      "name": "Leonardo Lacerda",
+      "original_email": "salus50-038-3@example.test",
+      "email": "leonardo.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1093,
+      "original_name": "Tripulante Sintético 039-1",
+      "name": "Letícia Lacerda",
+      "original_email": "salus50-039-1@example.test",
+      "email": "leticia.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1094,
+      "original_name": "Tripulante Sintético 039-2",
+      "name": "Lucas Lacerda",
+      "original_email": "salus50-039-2@example.test",
+      "email": "lucas.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1095,
+      "original_name": "Tripulante Sintético 039-3",
+      "name": "Luiza Lacerda",
+      "original_email": "salus50-039-3@example.test",
+      "email": "luiza.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1096,
+      "original_name": "Tripulante Sintético 039-4",
+      "name": "Marcelo Lacerda",
+      "original_email": "salus50-039-4@example.test",
+      "email": "marcelo.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1097,
+      "original_name": "Tripulante Sintético 040-1",
+      "name": "Marina Lacerda",
+      "original_email": "salus50-040-1@example.test",
+      "email": "marina.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1098,
+      "original_name": "Tripulante Sintético 040-2",
+      "name": "Pedro Lacerda",
+      "original_email": "salus50-040-2@example.test",
+      "email": "pedro.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1099,
+      "original_name": "Tripulante Sintético 041-1",
+      "name": "Renata Lacerda",
+      "original_email": "salus50-041-1@example.test",
+      "email": "renata.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1100,
+      "original_name": "Tripulante Sintético 041-2",
+      "name": "Ricardo Lacerda",
+      "original_email": "salus50-041-2@example.test",
+      "email": "ricardo.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1101,
+      "original_name": "Tripulante Sintético 041-3",
+      "name": "Sofia Lacerda",
+      "original_email": "salus50-041-3@example.test",
+      "email": "sofia.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1102,
+      "original_name": "Tripulante Sintético 042-1",
+      "name": "Vinícius Lacerda",
+      "original_email": "salus50-042-1@example.test",
+      "email": "vinicius.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1103,
+      "original_name": "Tripulante Sintético 042-2",
+      "name": "Vitória Lacerda",
+      "original_email": "salus50-042-2@example.test",
+      "email": "vitoria.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1104,
+      "original_name": "Tripulante Sintético 042-3",
+      "name": "Caio Lacerda",
+      "original_email": "salus50-042-3@example.test",
+      "email": "caio.lacerda@crew.salus.example"
+    },
+    {
+      "id": 1105,
+      "original_name": "Tripulante Sintético 042-4",
+      "name": "André Moraes",
+      "original_email": "salus50-042-4@example.test",
+      "email": "andre.moraes@crew.salus.example"
+    },
+    {
+      "id": 1106,
+      "original_name": "Tripulante Sintético 043-1",
+      "name": "Ana Moraes",
+      "original_email": "salus50-043-1@example.test",
+      "email": "ana.moraes@crew.salus.example"
+    },
+    {
+      "id": 1107,
+      "original_name": "Tripulante Sintético 043-2",
+      "name": "Bruno Moraes",
+      "original_email": "salus50-043-2@example.test",
+      "email": "bruno.moraes@crew.salus.example"
+    },
+    {
+      "id": 1108,
+      "original_name": "Tripulante Sintético 044-1",
+      "name": "Carolina Moraes",
+      "original_email": "salus50-044-1@example.test",
+      "email": "carolina.moraes@crew.salus.example"
+    },
+    {
+      "id": 1109,
+      "original_name": "Tripulante Sintético 044-2",
+      "name": "Daniel Moraes",
+      "original_email": "salus50-044-2@example.test",
+      "email": "daniel.moraes@crew.salus.example"
+    },
+    {
+      "id": 1110,
+      "original_name": "Tripulante Sintético 044-3",
+      "name": "Eduarda Moraes",
+      "original_email": "salus50-044-3@example.test",
+      "email": "eduarda.moraes@crew.salus.example"
+    },
+    {
+      "id": 1111,
+      "original_name": "Tripulante Sintético 045-1",
+      "name": "Felipe Moraes",
+      "original_email": "salus50-045-1@example.test",
+      "email": "felipe.moraes@crew.salus.example"
+    },
+    {
+      "id": 1112,
+      "original_name": "Tripulante Sintético 045-2",
+      "name": "Gabriela Moraes",
+      "original_email": "salus50-045-2@example.test",
+      "email": "gabriela.moraes@crew.salus.example"
+    },
+    {
+      "id": 1113,
+      "original_name": "Tripulante Sintético 045-3",
+      "name": "Gustavo Moraes",
+      "original_email": "salus50-045-3@example.test",
+      "email": "gustavo.moraes@crew.salus.example"
+    },
+    {
+      "id": 1114,
+      "original_name": "Tripulante Sintético 045-4",
+      "name": "Isabela Moraes",
+      "original_email": "salus50-045-4@example.test",
+      "email": "isabela.moraes@crew.salus.example"
+    },
+    {
+      "id": 1115,
+      "original_name": "Tripulante Sintético 046-1",
+      "name": "João Moraes",
+      "original_email": "salus50-046-1@example.test",
+      "email": "joao.moraes@crew.salus.example"
+    },
+    {
+      "id": 1116,
+      "original_name": "Tripulante Sintético 046-2",
+      "name": "Júlia Moraes",
+      "original_email": "salus50-046-2@example.test",
+      "email": "julia.moraes@crew.salus.example"
+    },
+    {
+      "id": 1117,
+      "original_name": "Tripulante Sintético 047-1",
+      "name": "Leonardo Moraes",
+      "original_email": "salus50-047-1@example.test",
+      "email": "leonardo.moraes@crew.salus.example"
+    },
+    {
+      "id": 1118,
+      "original_name": "Tripulante Sintético 047-2",
+      "name": "Letícia Moraes",
+      "original_email": "salus50-047-2@example.test",
+      "email": "leticia.moraes@crew.salus.example"
+    },
+    {
+      "id": 1119,
+      "original_name": "Tripulante Sintético 047-3",
+      "name": "Lucas Moraes",
+      "original_email": "salus50-047-3@example.test",
+      "email": "lucas.moraes@crew.salus.example"
+    },
+    {
+      "id": 1120,
+      "original_name": "Tripulante Sintético 048-1",
+      "name": "Luiza Moraes",
+      "original_email": "salus50-048-1@example.test",
+      "email": "luiza.moraes@crew.salus.example"
+    },
+    {
+      "id": 1121,
+      "original_name": "Tripulante Sintético 048-2",
+      "name": "Marcelo Moraes",
+      "original_email": "salus50-048-2@example.test",
+      "email": "marcelo.moraes@crew.salus.example"
+    },
+    {
+      "id": 1122,
+      "original_name": "Tripulante Sintético 048-3",
+      "name": "Marina Moraes",
+      "original_email": "salus50-048-3@example.test",
+      "email": "marina.moraes@crew.salus.example"
+    },
+    {
+      "id": 1123,
+      "original_name": "Tripulante Sintético 048-4",
+      "name": "Pedro Moraes",
+      "original_email": "salus50-048-4@example.test",
+      "email": "pedro.moraes@crew.salus.example"
+    },
+    {
+      "id": 1124,
+      "original_name": "Tripulante Sintético 049-1",
+      "name": "Renata Moraes",
+      "original_email": "salus50-049-1@example.test",
+      "email": "renata.moraes@crew.salus.example"
+    },
+    {
+      "id": 1125,
+      "original_name": "Tripulante Sintético 049-2",
+      "name": "Ricardo Moraes",
+      "original_email": "salus50-049-2@example.test",
+      "email": "ricardo.moraes@crew.salus.example"
+    },
+    {
+      "id": 1126,
+      "original_name": "Tripulante Sintético 050-1",
+      "name": "Sofia Moraes",
+      "original_email": "salus50-050-1@example.test",
+      "email": "sofia.moraes@crew.salus.example"
+    },
+    {
+      "id": 1127,
+      "original_name": "Tripulante Sintético 050-2",
+      "name": "Vinícius Moraes",
+      "original_email": "salus50-050-2@example.test",
+      "email": "vinicius.moraes@crew.salus.example"
+    },
+    {
+      "id": 1128,
+      "original_name": "Tripulante Sintético 050-3",
+      "name": "Vitória Moraes",
+      "original_email": "salus50-050-3@example.test",
+      "email": "vitoria.moraes@crew.salus.example"
+    }
+  ],
+  "spacecraft": [
+    {
+      "id": 6,
+      "original_name": "Salus Synthetic Vessel 01",
+      "name": "Asteria 01"
+    },
+    {
+      "id": 7,
+      "original_name": "Salus Synthetic Vessel 02",
+      "name": "Ícaro 01"
+    },
+    {
+      "id": 8,
+      "original_name": "Salus Synthetic Vessel 03",
+      "name": "Ventura 01"
+    },
+    {
+      "id": 9,
+      "original_name": "Salus Synthetic Vessel 04",
+      "name": "Arandu 01"
+    },
+    {
+      "id": 10,
+      "original_name": "Salus Synthetic Vessel 05",
+      "name": "Asteria 02"
+    },
+    {
+      "id": 11,
+      "original_name": "Salus Synthetic Vessel 06",
+      "name": "Ícaro 02"
+    },
+    {
+      "id": 12,
+      "original_name": "Salus Synthetic Vessel 07",
+      "name": "Ventura 02"
+    },
+    {
+      "id": 13,
+      "original_name": "Salus Synthetic Vessel 08",
+      "name": "Arandu 02"
+    },
+    {
+      "id": 14,
+      "original_name": "Salus Synthetic Vessel 09",
+      "name": "Asteria 03"
+    },
+    {
+      "id": 15,
+      "original_name": "Salus Synthetic Vessel 10",
+      "name": "Ícaro 03"
+    },
+    {
+      "id": 16,
+      "original_name": "Salus Synthetic Vessel 11",
+      "name": "Ventura 03"
+    },
+    {
+      "id": 17,
+      "original_name": "Salus Synthetic Vessel 12",
+      "name": "Arandu 03"
+    },
+    {
+      "id": 18,
+      "original_name": "Salus Synthetic Vessel 13",
+      "name": "Asteria 04"
+    },
+    {
+      "id": 19,
+      "original_name": "Salus Synthetic Vessel 14",
+      "name": "Ícaro 04"
+    },
+    {
+      "id": 20,
+      "original_name": "Salus Synthetic Vessel 15",
+      "name": "Ventura 04"
+    },
+    {
+      "id": 21,
+      "original_name": "Salus Synthetic Vessel 16",
+      "name": "Arandu 04"
+    }
+  ],
+  "changed_columns": [
+    {
+      "table": "active_ingredients",
+      "column": "name",
+      "rows": 1
+    },
+    {
+      "table": "crew_activities",
+      "column": "note",
+      "rows": 12
+    },
+    {
+      "table": "exam_result_reviews",
+      "column": "notes",
+      "rows": 61
+    },
+    {
+      "table": "exam_results",
+      "column": "summary",
+      "rows": 159
+    },
+    {
+      "table": "exam_results",
+      "column": "structured_values",
+      "rows": 33
+    },
+    {
+      "table": "exam_types",
+      "column": "name",
+      "rows": 1
+    },
+    {
+      "table": "exam_types",
+      "column": "description",
+      "rows": 7
+    },
+    {
+      "table": "feature_snapshots",
+      "column": "features",
+      "rows": 94
+    },
+    {
+      "table": "food_products",
+      "column": "name",
+      "rows": 2
+    },
+    {
+      "table": "food_stock_movements",
+      "column": "risk_snapshot",
+      "rows": 21724
+    },
+    {
+      "table": "health_alert_settings",
+      "column": "emergency_channel",
+      "rows": 1
+    },
+    {
+      "table": "health_alert_settings",
+      "column": "approval_note",
+      "rows": 1
+    },
+    {
+      "table": "health_alerts",
+      "column": "profile_snapshot",
+      "rows": 4
+    },
+    {
+      "table": "health_notifications",
+      "column": "title",
+      "rows": 2
+    },
+    {
+      "table": "health_notifications",
+      "column": "message",
+      "rows": 2
+    },
+    {
+      "table": "health_observations",
+      "column": "note",
+      "rows": 2140
+    },
+    {
+      "table": "health_observations",
+      "column": "evaluation_profile",
+      "rows": 4
+    },
+    {
+      "table": "meal_log_items",
+      "column": "product_snapshot",
+      "rows": 21673
+    },
+    {
+      "table": "meal_logs",
+      "column": "notes",
+      "rows": 891
+    },
+    {
+      "table": "medication_uses",
+      "column": "medicine_name",
+      "rows": 13
+    },
+    {
+      "table": "medication_uses",
+      "column": "reason",
+      "rows": 13
+    },
+    {
+      "table": "medication_uses",
+      "column": "instructed_by",
+      "rows": 13
+    },
+    {
+      "table": "medicines",
+      "column": "name",
+      "rows": 1
+    },
+    {
+      "table": "medicines",
+      "column": "main_indications",
+      "rows": 1
+    },
+    {
+      "table": "mental_health_check_ins",
+      "column": "notes",
+      "rows": 12
+    },
+    {
+      "table": "mission_food_lots",
+      "column": "lot_code",
+      "rows": 1
+    },
+    {
+      "table": "mission_occurrences",
+      "column": "source_references",
+      "rows": 35
+    },
+    {
+      "table": "mission_risk_alerts",
+      "column": "guidance",
+      "rows": 2
+    },
+    {
+      "table": "mission_risk_evaluations",
+      "column": "results",
+      "rows": 52
+    },
+    {
+      "table": "mission_risk_plans",
+      "column": "daily_rates",
+      "rows": 51
+    },
+    {
+      "table": "mission_risk_plans",
+      "column": "approved_actions",
+      "rows": 1
+    },
+    {
+      "table": "missions",
+      "column": "name",
+      "rows": 52
+    },
+    {
+      "table": "nursing_records",
+      "column": "observations",
+      "rows": 6
+    },
+    {
+      "table": "nutrition_plans",
+      "column": "dietary_guidance",
+      "rows": 2
+    },
+    {
+      "table": "proton_flux_readings",
+      "column": "satellite",
+      "rows": 96
+    },
+    {
+      "table": "radiation_follow_ups",
+      "column": "notes",
+      "rows": 4
+    },
+    {
+      "table": "recommendation_events",
+      "column": "rationale",
+      "rows": 3
+    },
+    {
+      "table": "recommendation_events",
+      "column": "explanation",
+      "rows": 1
+    },
+    {
+      "table": "risk_predictions",
+      "column": "title",
+      "rows": 4
+    },
+    {
+      "table": "risk_predictions",
+      "column": "factors",
+      "rows": 4
+    },
+    {
+      "table": "space_weather_events",
+      "column": "note",
+      "rows": 2
+    },
+    {
+      "table": "spacecraft",
+      "column": "name",
+      "rows": 16
+    },
+    {
+      "table": "spacecraft",
+      "column": "model",
+      "rows": 16
+    },
+    {
+      "table": "spacecraft",
+      "column": "manufacturer",
+      "rows": 16
+    },
+    {
+      "table": "spacecraft",
+      "column": "description",
+      "rows": 2
+    },
+    {
+      "table": "spacecraft_modules",
+      "column": "name",
+      "rows": 31
+    },
+    {
+      "table": "spacecraft_modules",
+      "column": "purpose",
+      "rows": 2
+    },
+    {
+      "table": "spacecraft_modules",
+      "column": "technical_specifications",
+      "rows": 1
+    },
+    {
+      "table": "users",
+      "column": "name",
+      "rows": 159
+    },
+    {
+      "table": "users",
+      "column": "email",
+      "rows": 159
+    },
+    {
+      "table": "users",
+      "column": "hashed_password",
+      "rows": 4
+    },
+    {
+      "table": "astronaut_exams",
+      "column": "definition_snapshot",
+      "rows": 98
+    },
+    {
+      "table": "exam_definitions",
+      "column": "applicability_notes",
+      "rows": 7
+    },
+    {
+      "table": "exam_result_reviews",
+      "column": "notes",
+      "rows": 8
+    },
+    {
+      "table": "exam_results",
+      "column": "exam_snapshot",
+      "rows": 83
+    },
+    {
+      "table": "feature_snapshots",
+      "column": "features",
+      "rows": 2
+    },
+    {
+      "table": "food_stock_movements",
+      "column": "purpose",
+      "rows": 110
+    },
+    {
+      "table": "health_alert_events",
+      "column": "rule_version",
+      "rows": 4
+    },
+    {
+      "table": "health_alert_settings",
+      "column": "profile_id",
+      "rows": 4
+    },
+    {
+      "table": "health_alert_settings",
+      "column": "approval_note",
+      "rows": 3
+    },
+    {
+      "table": "health_alerts",
+      "column": "rule_version",
+      "rows": 4
+    },
+    {
+      "table": "health_alerts",
+      "column": "profile_snapshot",
+      "rows": 4
+    },
+    {
+      "table": "health_observations",
+      "column": "evaluation_profile",
+      "rows": 4
+    },
+    {
+      "table": "health_occurrences",
+      "column": "description",
+      "rows": 51
+    },
+    {
+      "table": "health_occurrences",
+      "column": "resolution_note",
+      "rows": 42
+    },
+    {
+      "table": "medication_uses",
+      "column": "dose",
+      "rows": 13
+    },
+    {
+      "table": "mental_health_check_ins",
+      "column": "notes",
+      "rows": 21
+    },
+    {
+      "table": "mission_occurrences",
+      "column": "description",
+      "rows": 35
+    },
+    {
+      "table": "nursing_records",
+      "column": "observations",
+      "rows": 3
+    },
+    {
+      "table": "nursing_records",
+      "column": "care_provided",
+      "rows": 3
+    },
+    {
+      "table": "nursing_records",
+      "column": "sample_collection",
+      "rows": 3
+    },
+    {
+      "table": "nutrition_plans",
+      "column": "dietary_guidance",
+      "rows": 157
+    },
+    {
+      "table": "psychology_follow_ups",
+      "column": "session_summary",
+      "rows": 997
+    },
+    {
+      "table": "space_weather_events",
+      "column": "catalog",
+      "rows": 2
+    },
+    {
+      "table": "spacecraft",
+      "column": "manufacturer",
+      "rows": 2
+    }
+  ],
+  "export_scope": "All public application tables, including six preexisting missions; generated cohort provenance covers the fifty listed missions only."
+}
