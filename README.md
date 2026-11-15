@@ -221,6 +221,20 @@ As a mission administrator, you can also open a mission's risk documents in the 
 
 ---
 
+## 8. Open the landing page
+
+The project presentation page runs with the same web interface. With `npm run dev` running, open:
+
+- http://localhost:5173/overview for the landing page.
+- http://localhost:5173/overview?tour for the narrated tour. The page scrolls through each section in step with the presentation narration (42 seconds by default).
+- http://localhost:5173/overview?tour=50 to set another tour length in seconds, matching the length of your audio.
+
+The tour does not play audio. Start the narration and open the page at the same time. Press any key to stop the automatic scrolling.
+
+The landing page does not need the backend or the local AI. Content, narration timing and verification are described in [LANDING_PAGE.md](LANDING_PAGE.md).
+
+---
+
 ## Everyday commands
 
 From `back/`:
@@ -241,6 +255,7 @@ From `front/`:
 | Start the interface | `npm run dev` |
 | Run the tests | `npm test` |
 | Build for production | `npm run build` |
+| Verify the landing page in a browser | `npm run test:overview:e2e` |
 
 `docker compose down` keeps the database. Do not delete Docker volumes to fix an error; you would lose all data.
 
@@ -270,6 +285,7 @@ From `front/`:
 | Spacecraft | [SPACECRAFT.md](SPACECRAFT.md) |
 | Profiles and permissions | [USER_ACCESS.md](USER_ACCESS.md) |
 | The 50 synthetic missions | [SYNTHETIC_MISSIONS.md](SYNTHETIC_MISSIONS.md) |
+| Landing page and narrated tour | [LANDING_PAGE.md](LANDING_PAGE.md) |
 | Backend details | [back/README.md](back/README.md) |
 
 ---
