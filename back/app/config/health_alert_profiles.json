@@ -2,7 +2,7 @@
   "default_profile": "simulation-v2",
   "profiles": {
     "simulation-v1": {
-      "name": "Perfil de simulação",
+      "name": "Simulation profile",
       "version": "simulation-v1",
       "timezone": "UTC",
       "freshness_minutes": {
@@ -197,7 +197,7 @@
       ]
     },
     "simulation-v2": {
-      "name": "Perfil de simulação · glicemia alta",
+      "name": "Simulation profile · high glucose",
       "version": "simulation-v2",
       "timezone": "UTC",
       "freshness_minutes": {
@@ -400,7 +400,7 @@
           ]
         }
       ],
-      "high_glucose_note": "Limite operacional inicial do protótipo para verificação de glicemia elevada; não estabelece diagnóstico. Metas individualizadas devem ser configuradas pela equipe médica."
+      "high_glucose_note": "Initial prototype operational limit for checking high glucose; it does not establish a diagnosis. Individual targets must be configured by the medical team."
     }
   }
 }

@@ -1,8 +1,8 @@
-"""Fluxo de radiação: alertas próprios, relatos de sintomas e ajustes no acompanhamento.
+"""Radiation flow: dedicated alerts, symptom reports and follow-up adjustments.
 
-- radiation_alerts: alertas sem medição de origem (evento, acompanhamento ou dose).
-- radiation_symptom_reports: relatos de sintomas na janela de 48 h.
-- radiation_follow_ups.detected_at e opened_by_user_id opcional (sincronização agendada).
+- radiation_alerts: alerts without a source measurement (event, follow-up or dose).
+- radiation_symptom_reports: symptom reports within the 48 h window.
+- radiation_follow_ups.detected_at and optional opened_by_user_id (scheduled synchronization).
 """
 
 from alembic import op
@@ -76,9 +76,9 @@ def downgrade():
     connection = op.get_bind()
     for table in ('radiation_alerts', 'radiation_symptom_reports'):
         if connection.execute(sa.text(f'SELECT EXISTS (SELECT 1 FROM {table})')).scalar():
-            raise RuntimeError(f'Preserve os registros de {table} antes de reverter esta migration')
+            raise RuntimeError(f'Preserve the {table} records before reverting this migration')
     if connection.execute(sa.text('SELECT EXISTS (SELECT 1 FROM radiation_follow_ups WHERE opened_by_user_id IS NULL)')).scalar():
-        raise RuntimeError('Há acompanhamentos abertos pela sincronização agendada; atribua um usuário antes de reverter')
+        raise RuntimeError('There are follow-ups opened by the scheduled synchronization; assign a user before reverting')
     op.drop_table('radiation_alerts')
     op.drop_table('radiation_symptom_reports')
     op.alter_column('radiation_follow_ups', 'opened_by_user_id', existing_type=sa.Integer(), nullable=False)

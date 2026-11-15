@@ -33,11 +33,11 @@ def sync_events(
     user: User = Depends(get_current_user),
     donki: DonkiClient = Depends(get_donki_client),
 ):
-    """Importa FLR, CME e SEP do NASA DONKI. Exige médico vinculado como
-    flight_surgeon ou mission_admin em alguma missão."""
+    """Imports FLR, CME and SEP from NASA DONKI. Requires a physician assigned as
+    flight_surgeon or mission_admin in some mission."""
     runs = SpaceWeatherService(session, user, donki).sync(payload.start_date, payload.end_date, payload.event_types)
     if runs and all(run.status == 'failed' for run in runs):
-        raise HTTPException(502, {'message': 'Não foi possível consultar o DONKI', 'runs': [run.model_dump(mode='json') for run in runs]})
+        raise HTTPException(502, {'message': 'DONKI could not be queried', 'runs': [run.model_dump(mode='json') for run in runs]})
     return SyncResponse(runs=runs)
 
 
@@ -56,7 +56,7 @@ def list_events(
     per_page: int = Query(20, ge=1, le=100),
 ):
     if start and end and end < start:
-        raise HTTPException(422, 'end deve ser igual ou posterior a start')
+        raise HTTPException(422, 'end must be equal to or after start')
     return service.list_events(event_type, start, end, page, per_page)
 
 

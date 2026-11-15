@@ -1,66 +1,71 @@
-# Demonstração completa do monitoramento
+# Complete monitoring demonstration
 
-Execute na pasta `NASA`, com os serviços Docker ativos e o banco já migrado:
+Run from `back/`, with the Docker services running and the database migrated:
 
 ```bash
 docker compose exec api python -m scripts.seed_full_demo --apply
 ```
 
-Para apenas listar as tabelas reais e suas contagens:
+To only list the real tables and their record counts:
 
 ```bash
 docker compose exec api python -m scripts.seed_full_demo
 ```
 
-A conta nova usa o login `demo.monitoramento@example.com` e a senha
-`Monitoramento2026!`. Ela tem os perfis médico e astronauta. As permissões por
-missão são preservadas: a mesma conta é administradora na missão Administração,
-médica de voo em Atendimento médico e astronauta em Meu monitoramento.
-Selecione a missão correspondente à função que deseja testar.
+The new account uses the login `demo.monitoramento@example.com` and the password
+`Monitoramento2026!`. It has the physician and astronaut profiles. Permissions
+are kept per mission: the same account is administrator in the Administração
+mission, flight surgeon in Atendimento médico and astronaut in Meu monitoramento.
+Select the mission that matches the role you want to test.
 
-São criadas quatro contas fictícias, três missões, cinco tipos de exame, quinze
-requisitos, quinze itens de checklist, nove resultados e seis revisões. Os
-checklists mostram os cinco estados: pendente, agendado, aguardando revisão,
-repetição solicitada e concluído. São adicionadas 990 observações em trinta dias,
-com os onze indicadores e referências individuais para comparação nos painéis.
-As três contas auxiliares também usam a senha inicial acima.
+The script creates four fictional accounts, three missions, five exam types,
+fifteen requirements, fifteen checklist items, nine results and six reviews. The
+checklists show the five states: pending, scheduled, awaiting review, repeat
+requested and completed. It adds 990 observations over thirty days, with the
+eleven indicators and individual references for comparison in the dashboards.
+The three auxiliary accounts also use the initial password above.
 
-O script usa os serviços e validações da aplicação. Reexecuções mantêm contas,
-senhas e amostras existentes; completam dados faltantes sem apagar registros.
-Cada serviço confirma sua própria transação: uma interrupção pode deixar carga
-parcial, que pode ser completada executando novamente. As datas das séries são
-mantidas em reexecuções. Os dados são identificados como fictícios.
+The script uses the application services and validations. Repeated runs keep
+accounts, passwords and existing samples, and fill in missing data without
+deleting records. Each service commits its own transaction: an interruption can
+leave a partial load, which can be completed by running the script again. Series
+dates are kept on repeated runs. The data is labeled as fictional.
 
-## Tabelas identificadas nos modelos
+The account, mission and note texts created by this script (for example
+`Missão demonstração` and `dados fictícios`) are identifiers that repeated runs
+match exactly. They were kept as originally created so that existing databases
+are not duplicated.
 
-| Tabela | Finalidade |
+## Tables identified in the models
+
+| Table | Purpose |
 | --- | --- |
-| users | Usuários, perfis e senhas protegidas por hash |
-| missions | Missões e datas |
-| mission_members | Vínculos e permissões por missão |
-| exam_types | Catálogo de exames |
-| mission_exam_requirements | Exames exigidos em cada missão |
-| astronaut_exams | Checklist individual e agendamentos |
-| exam_results | Resultados e autoria |
-| exam_result_reviews | Revisões e decisões |
-| health_observations | Medições, autorrelatos e referências |
-| knowledge_documents | Documentos de referência NASA |
-| knowledge_passages | Trechos e tópicos da base de referência |
-| revoked_tokens | Sessões revogadas |
+| users | Users, profiles and hashed passwords |
+| missions | Missions and dates |
+| mission_members | Memberships and permissions per mission |
+| exam_types | Exam catalog |
+| mission_exam_requirements | Exams required in each mission |
+| astronaut_exams | Individual checklist and scheduling |
+| exam_results | Results and authorship |
+| exam_result_reviews | Reviews and decisions |
+| health_observations | Measurements, self-reports and references |
+| knowledge_documents | NASA reference documents |
+| knowledge_passages | Passages and topics of the reference base |
+| revoked_tokens | Revoked sessions |
 
-O Alembic também mantém `alembic_version` para controle de migração. A base de
-conhecimento usa os documentos reais do `knowledge_seed.json`, carregados pelo
-setup normal; o script de demonstração não os substitui por conteúdo fictício.
-Tokens revogados são gerados pelo logout, sem inserir sessões falsas.
+Alembic also keeps `alembic_version` for migration control. The knowledge base
+uses the real documents from `knowledge_seed.json`, loaded by the normal setup;
+the demonstration script does not replace them with fictional content. Revoked
+tokens are created by logout, without inserting fake sessions.
 
-## Banco configurado e validação
+## Configured database and validation
 
-A API seleciona seu banco por `NASA_DATABASE` no `.env`, com fallback para
-`POSTGRES_DB`. Nesta instalação, `NASA_DATABASE=nasa_front_validation_20261111`
-aponta para o banco existente do monitoramento. O `app_db` pertence a outro
-sistema e foi preservado, incluindo sua migração `7efe7ee6f54f`.
-Não remova volumes nem altere o versionamento Alembic para contornar esse erro.
+The API selects its database through `NASA_DATABASE` in `.env`, falling back to
+`POSTGRES_DB`. In this installation, `NASA_DATABASE=nasa_front_validation_20261111`
+points to the existing monitoring database. `app_db` belongs to another system
+and was preserved, including its migration `7efe7ee6f54f`. Do not remove volumes
+or change Alembic versioning to work around that error.
 
-A carga foi executada no PostgreSQL e validou os cinco estados de checklist e
-os onze indicadores nas três missões. O login pela API foi validado e retornou
-as três missões de demonstração para a conta principal.
+The load was run on PostgreSQL and validated the five checklist states and the
+eleven indicators in the three missions. Login through the API was validated and
+returned the three demonstration missions for the main account.

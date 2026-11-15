@@ -1,11 +1,11 @@
-"""Sincroniza FLR, CME e SEP do NASA DONKI sem passar pela API HTTP.
+"""Synchronizes FLR, CME and SEP from NASA DONKI without going through the HTTP API.
 
-Uso (dentro do container):
-    python -m scripts.sync_space_weather                 # últimos 30 dias
+Usage (inside the container):
+    python -m scripts.sync_space_weather                 # last 30 days
     python -m scripts.sync_space_weather --days 7
     python -m scripts.sync_space_weather --start 2024-10-01 --end 2024-11-14 --types SEP FLR
 
-Pensado para agendamento (cron). Usa NASA_API_KEY do ambiente.
+Designed for scheduling (cron). Uses NASA_API_KEY from the environment.
 """
 
 import argparse
@@ -22,24 +22,24 @@ from app.services.space_weather_service import SpaceWeatherService
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description='Sincroniza eventos do NASA DONKI')
+    parser = argparse.ArgumentParser(description='Synchronizes NASA DONKI events')
     parser.add_argument('--start', type=date.fromisoformat)
     parser.add_argument('--end', type=date.fromisoformat)
-    parser.add_argument('--days', type=int, default=30, help='Usado quando --start não é informado')
+    parser.add_argument('--days', type=int, default=30, help='Used when --start is not given')
     parser.add_argument('--types', nargs='+', choices=['FLR', 'CME', 'SEP'], default=['FLR', 'CME', 'SEP'])
     args = parser.parse_args(argv)
 
     end = args.end or datetime.now(timezone.utc).date()
     start = args.start or end - timedelta(days=args.days - 1)
     if end < start or (end - start).days + 1 > MAX_SYNC_DAYS:
-        parser.error(f'Intervalo inválido: use até {MAX_SYNC_DAYS} dias com fim igual ou posterior ao início')
+        parser.error(f'Invalid interval: use up to {MAX_SYNC_DAYS} days with an end equal to or after the start')
 
     with httpx.Client() as http_client, Session(engine) as session:
         service = SpaceWeatherService(session, None, DonkiClient(http_client, DonkiSettings.from_environment()))
         runs = service.sync(start, end, list(dict.fromkeys(args.types)), check_permission=False)
 
     for run in runs:
-        detail = f'{run.fetched_count} recebidos, {run.created_count} novos, {run.updated_count} atualizados' if run.status == 'success' else run.error
+        detail = f'{run.fetched_count} received, {run.created_count} new, {run.updated_count} updated' if run.status == 'success' else run.error
         print(f'{run.event_type} {run.start_date}..{run.end_date}: {run.status} — {detail}')
     return 1 if any(run.status == 'failed' for run in runs) else 0
 

@@ -181,7 +181,9 @@ def test_single_migration_head_includes_predictive_tables():
     config = Config(str(Path(__file__).resolve().parents[1] / 'alembic.ini'))
     config.set_main_option('script_location', str(Path(__file__).resolve().parents[1] / 'alembic'))
     script = ScriptDirectory.from_config(config)
-    assert script.get_heads() == ['3f1a2b4c5d60']
+    assert script.get_heads() == ['5b3c4d5e6f72']
+    assert script.get_revision('5b3c4d5e6f72').down_revision == '4a2b3c4d5e61'
+    assert script.get_revision('4a2b3c4d5e61').down_revision == '3f1a2b4c5d60'
     assert script.get_revision('3f1a2b4c5d60').down_revision == '2d9e3f405162'
 
 

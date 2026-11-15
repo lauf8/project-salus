@@ -1,17 +1,17 @@
-"""Fluxo de exposição à radiação durante a missão.
+"""Radiation exposure flow during the mission.
 
-Fundamentação: NASA SP-2009-3405, cap. 5. Resumo do fluxo:
+Basis: NASA SP-2009-3405, chapter 5. Flow summary:
 
-1. O SEP chega pelo DONKI (ou é reprocessado manualmente). Quem estava em EVA no
-   início do evento ganha uma janela de acompanhamento de 48 h e um alerta.
-2. Durante a janela, sintomas prodrômicos (náusea, vômito, perda de apetite, fadiga)
-   e reação de pele são registrados no acompanhamento ou numa medição de saúde.
-3. O fluxo de prótons ≥10 MeV vem da NOAA SWPC (ou de uma simulação) e alimenta a
-   estimativa simulada de dose. Doses medidas também podem ser registradas.
-4. A dose acumulada é comparada com os limites por órgão e período.
+1. The SEP arrives from DONKI (or is reprocessed manually). Crew on EVA at the
+   start of the event get a 48 h follow-up window and an alert.
+2. During the window, prodromal symptoms (nausea, vomiting, loss of appetite, fatigue)
+   and skin reaction are recorded in the follow-up or in a health measurement.
+3. The ≥10 MeV proton flux comes from NOAA SWPC (or a simulation) and feeds the
+   simulated dose estimate. Measured doses can also be recorded.
+4. The accumulated dose is compared with the limits per organ and period.
 
-Os limiares de alerta e a estimativa de dose são de SIMULAÇÃO, para demonstração.
-Não substituem dosimetria real nem os critérios clínicos da equipe médica.
+Alert thresholds and the dose estimate are SIMULATION values, for demonstration.
+They do not replace real dosimetry or the medical team's clinical criteria.
 """
 
 import math
@@ -41,28 +41,28 @@ from app.services.preflight_service import PreflightService, transactional
 
 DEFAULT_LIMIT_PROFILE = 'nasa-sp-2009-3405-table-5-1'
 FOLLOW_UP_WINDOW = timedelta(hours=48)
-# Uma EVA sem fim registrado só conta se começou até 12 h antes do SEP (EVAs reais
-# duram menos que isso); evita que um registro esquecido abra acompanhamentos.
+# An EVA without a recorded end only counts if it started up to 12 h before the SEP (real EVAs
+# are shorter than that); this prevents a forgotten record from opening follow-ups.
 OPEN_EVA_LOOKBACK = timedelta(hours=12)
 
 SEVERITY_RANK = {'attention': 1, 'urgent': 2, 'critical': 3}
-# Escala S da NOAA para o fluxo ≥10 MeV (pfu): S1 = 10, S2 = 100, S3 = 1000.
+# NOAA S-scale for the ≥10 MeV flux (pfu): S1 = 10, S2 = 100, S3 = 1000.
 FLUX_CHANNEL = '>=10 MeV'
 FLUX_S1, FLUX_S2, FLUX_S3 = 10.0, 100.0, 1000.0
-# Fração do limite de dose que gera alerta (perfil de simulação).
+# Fraction of the dose limit that raises an alert (simulation profile).
 DOSE_THRESHOLDS = ((1.0, 'critical'), (0.75, 'urgent'), (0.5, 'attention'))
 PERIOD_DAYS = {'30_day': 30, '1_year': 365, 'career': None}
 
-# Estimativa didática de dose a partir do fluxo ≥10 MeV. Não é um modelo físico de
-# transporte: só mostra a ordem de grandeza e o efeito da blindagem.
-SKIN_DOSE_RATE_PER_PFU = 0.02  # mGy-Eq/h por pfu, em EVA (traje sem blindagem da nave)
+# Teaching dose estimate from the ≥10 MeV flux. It is not a physical transport
+# model: it only shows the order of magnitude and the effect of shielding.
+SKIN_DOSE_RATE_PER_PFU = 0.02  # mGy-Eq/h per pfu, on EVA (suit without spacecraft shielding)
 SHIELDING_FACTOR = {'eva': 1.0, 'iva': 0.15, 'storm_shelter': 0.05}
 ORGAN_FACTOR = {'skin': 1.0, 'lens': 0.9, 'cns': 0.35, 'bfo': 0.3, 'heart': 0.3}
 ACTIVITY_PRIORITY = {'eva': 0, 'storm_shelter': 1, 'iva': 2}
 SIMULATED_BASELINE_PFU = 0.5
 
-ORGAN_LABELS = {'lens': 'cristalino', 'skin': 'pele', 'bfo': 'órgãos formadores de sangue', 'heart': 'coração', 'cns': 'sistema nervoso central', 'cns_z_ge_10': 'SNC (íons Z ≥ 10)'}
-PERIOD_LABELS = {'30_day': '30 dias', '1_year': '1 ano', 'career': 'carreira'}
+ORGAN_LABELS = {'lens': 'eye lens', 'skin': 'skin', 'bfo': 'blood-forming organs', 'heart': 'heart', 'cns': 'central nervous system', 'cns_z_ge_10': 'CNS (ions Z ≥ 10)'}
+PERIOD_LABELS = {'30_day': '30 days', '1_year': '1 year', 'career': 'career'}
 FLUX_CHANNELS = ('>=1 MeV', '>=5 MeV', '>=10 MeV', '>=30 MeV', '>=50 MeV', '>=60 MeV', '>=100 MeV', '>=500 MeV')
 
 
@@ -87,7 +87,7 @@ def dose_severity(fraction: float) -> str | None:
 
 
 def simulated_flux(hours: float, peak: float, rise: float, decay: float) -> float:
-    """Subida linear até o pico e queda exponencial, sobre um fundo de 0,5 pfu."""
+    """Linear rise to the peak and exponential decay, over a 0.5 pfu background."""
     amplitude = peak - SIMULATED_BASELINE_PFU
     if hours <= rise:
         return SIMULATED_BASELINE_PFU + amplitude * hours / rise
@@ -95,7 +95,7 @@ def simulated_flux(hours: float, peak: float, rise: float, decay: float) -> floa
 
 
 def parse_swpc_reading(item: dict) -> tuple[datetime, str, str, float] | None:
-    """Converte uma leitura do SWPC (time_tag, satellite, flux, energy). None se inválida."""
+    """Converts an SWPC reading (time_tag, satellite, flux, energy). None if invalid."""
     energy = str(item.get('energy') or '').replace(' ', '').replace('MeV', ' MeV')
     if energy not in FLUX_CHANNELS:
         return None
@@ -118,10 +118,10 @@ class RadiationService(PreflightService):
     def actor_id(self) -> int | None:
         return self.user.id if self.user else None
 
-    # --- Permissões ------------------------------------------------------------------------
+    # --- Permissions ----------------------------------------------------------------------
 
     def _member(self, mission_id):
-        """Qualquer membro da missão; devolve (missão, vínculo, é_médico_de_voo)."""
+        """Any mission member; returns (mission, membership, is_flight_surgeon)."""
         mission, member = self._access(mission_id)
         surgeon = member.role == 'flight_surgeon' and bool(self.user.is_physician)
         return mission, member, surgeon
@@ -129,7 +129,7 @@ class RadiationService(PreflightService):
     def _surgeon(self, mission_id):
         mission, member, surgeon = self._member(mission_id)
         if not surgeon:
-            raise HTTPException(403, 'Somente o médico de voo da missão pode realizar esta operação')
+            raise HTTPException(403, 'Only the mission flight surgeon can perform this operation')
         return mission, member
 
     def _crew(self, mission_id, astronaut_id):
@@ -137,29 +137,29 @@ class RadiationService(PreflightService):
             MissionMember.mission_id == mission_id, MissionMember.user_id == astronaut_id, MissionMember.role == 'astronaut',
         )).first()
         if member is None:
-            raise HTTPException(404, 'Astronauta não encontrado na tripulação desta missão')
+            raise HTTPException(404, 'Astronaut not found in this mission crew')
         return member
 
     def _clinical_view(self, mission_id, astronaut_id=None):
-        """Dados clínicos: o médico de voo vê todos; o astronauta vê apenas os próprios."""
+        """Clinical data: the flight surgeon sees everyone; the astronaut sees only their own."""
         mission, member, surgeon = self._member(mission_id)
         if surgeon:
             return mission, None
         if member.role == 'astronaut' and astronaut_id in (None, self.user.id):
             return mission, self.user.id
-        raise HTTPException(403, 'Acesso não autorizado aos dados de radiação deste astronauta')
+        raise HTTPException(403, 'Access to this astronaut radiation data is not authorized')
 
     def _self_or_surgeon(self, mission_id, astronaut_id):
         mission, member, surgeon = self._member(mission_id)
         if not surgeon and self.user.id != astronaut_id:
-            raise HTTPException(403, 'Somente o próprio astronauta ou o médico de voo podem registrar')
+            raise HTTPException(403, 'Only the astronaut or the flight surgeon can record this')
         return mission, surgeon
 
-    # --- Alertas ----------------------------------------------------------------------------
+    # --- Alerts -----------------------------------------------------------------------------
 
     def _raise_alert(self, mission_id, astronaut_id, rule_id, key, severity, reason, details=None, **links) -> bool:
-        """Cria o alerta ou eleva a severidade do alerta ativo com a mesma chave.
-        Devolve True quando um alerta novo foi criado."""
+        """Creates the alert or raises the severity of the active alert with the same key.
+        Returns True when a new alert was created."""
         alert = self.session.exec(select(RadiationAlert).where(
             RadiationAlert.astronaut_id == astronaut_id, RadiationAlert.dedupe_key == key,
             RadiationAlert.status.in_(['open', 'acknowledged']),
@@ -210,7 +210,7 @@ class RadiationService(PreflightService):
     def _mission_alert(self, mission_id, alert_id):
         alert = self.session.get(RadiationAlert, alert_id)
         if alert is None or alert.mission_id != mission_id:
-            raise HTTPException(404, 'Alerta de radiação não encontrado nesta missão')
+            raise HTTPException(404, 'Radiation alert not found in this mission')
         return alert
 
     @transactional
@@ -218,7 +218,7 @@ class RadiationService(PreflightService):
         alert = self._mission_alert(mission_id, alert_id)
         _, surgeon = self._self_or_surgeon(mission_id, alert.astronaut_id)
         if alert.status == 'resolved':
-            raise HTTPException(409, 'Um alerta resolvido não pode ser reconhecido')
+            raise HTTPException(409, 'A resolved alert cannot be acknowledged')
         if alert.status == 'open':
             alert.status = 'acknowledged'
             alert.acknowledged_at = alert.updated_at = now()
@@ -240,7 +240,7 @@ class RadiationService(PreflightService):
             self.session.flush()
         return self._alert_response(alert, True)
 
-    # --- Atividade da tripulação -------------------------------------------------------------
+    # --- Crew activity -----------------------------------------------------------------------
 
     def list_activities(self, mission_id, astronaut_id, page, per_page):
         self._member(mission_id)
@@ -252,19 +252,19 @@ class RadiationService(PreflightService):
     def _activity_writer(self, mission_id, astronaut_id):
         mission, member, surgeon = self._member(mission_id)
         if not (surgeon or member.role == 'mission_admin' or self.user.id == astronaut_id):
-            raise HTTPException(403, 'Somente o próprio astronauta, o médico de voo ou o administrador da missão podem registrar a atividade')
+            raise HTTPException(403, 'Only the astronaut, the flight surgeon or the mission administrator can record the activity')
         return mission
 
     def _validate_activity_window(self, mission, started_at, ended_at):
         mission_start = utc(mission.started_at or mission.planned_launch_at)
         mission_end = utc(mission.ended_at)
         if started_at < mission_start or (mission_end and started_at > mission_end):
-            raise HTTPException(422, 'A atividade deve começar dentro do período da missão')
+            raise HTTPException(422, 'The activity must start within the mission period')
         if ended_at and mission_end and ended_at > mission_end:
-            raise HTTPException(422, 'A atividade deve terminar dentro do período da missão')
+            raise HTTPException(422, 'The activity must end within the mission period')
 
     def _check_overlap(self, activity):
-        """Um astronauta não pode estar em duas atividades ao mesmo tempo."""
+        """An astronaut cannot be in two activities at the same time."""
         start, end = utc(activity.started_at), utc(activity.ended_at)
         statement = select(CrewActivity).where(
             CrewActivity.astronaut_id == activity.astronaut_id,
@@ -276,7 +276,7 @@ class RadiationService(PreflightService):
             statement = statement.where(CrewActivity.started_at < end)
         conflict = self.session.exec(statement).first()
         if conflict is not None:
-            raise HTTPException(409, f'Já existe uma atividade registrada nesse horário (#{conflict.id}); encerre-a antes')
+            raise HTTPException(409, f'An activity is already recorded at that time (#{conflict.id}); end it first')
 
     @transactional
     def create_activity(self, mission_id, payload):
@@ -294,12 +294,12 @@ class RadiationService(PreflightService):
     def end_activity(self, mission_id, activity_id, payload):
         activity = self.session.get(CrewActivity, activity_id)
         if activity is None or activity.mission_id != mission_id:
-            raise HTTPException(404, 'Atividade não encontrada nesta missão')
+            raise HTTPException(404, 'Activity not found in this mission')
         mission = self._activity_writer(mission_id, activity.astronaut_id)
         if activity.ended_at is not None:
-            raise HTTPException(409, 'A atividade já foi encerrada')
+            raise HTTPException(409, 'The activity has already ended')
         if payload.ended_at <= utc(activity.started_at):
-            raise HTTPException(422, 'ended_at deve ser posterior ao início da atividade')
+            raise HTTPException(422, 'ended_at must be after the activity start')
         self._validate_activity_window(mission, utc(activity.started_at), payload.ended_at)
         activity.ended_at = payload.ended_at
         if payload.note:
@@ -311,7 +311,7 @@ class RadiationService(PreflightService):
         return CrewActivityResponse.model_validate(activity)
 
     def _after_activity(self, activity):
-        """Uma EVA registrada depois do SEP (ou do fluxo alto) também gera acompanhamento."""
+        """An EVA recorded after the SEP (or the high flux) also opens a follow-up."""
         if activity.activity_type != 'eva':
             return
         start, end = utc(activity.started_at), utc(activity.ended_at) or now()
@@ -323,7 +323,7 @@ class RadiationService(PreflightService):
             self.process_sep(sep)
         self._flux_eva_alerts(start, end)
 
-    # --- SEP: janela de 48 h ------------------------------------------------------------------
+    # --- SEP: 48 h window ---------------------------------------------------------------------
 
     def _eva_during(self, start, end):
         return self.session.exec(select(CrewActivity).where(
@@ -338,9 +338,9 @@ class RadiationService(PreflightService):
         )).one()
 
     def process_sep(self, event) -> tuple[int, int]:
-        """Abre a janela de 48 h para quem estava em EVA no SEP. Idempotente.
+        """Opens the 48 h window for crew on EVA during the SEP. Idempotent.
 
-        Devolve (acompanhamentos abertos, alertas criados)."""
+        Returns (follow-ups opened, alerts created)."""
         if event.event_type != 'SEP':
             return 0, 0
         start = utc(event.start_time)
@@ -371,11 +371,11 @@ class RadiationService(PreflightService):
                 self.session.flush()
                 opened += 1
             severity = 'critical' if peak is not None and peak >= FLUX_S3 else 'urgent'
-            flux_text = f' Pico de prótons ≥10 MeV nas 48 h: {peak:g} pfu.' if peak is not None else ' Sem leituras de fluxo de prótons para o período.'
+            flux_text = f' Peak ≥10 MeV proton flux in the 48 h: {peak:g} pfu.' if peak is not None else ' No proton flux readings for the period.'
             created += self._raise_alert(
                 activity.mission_id, activity.astronaut_id, 'sep_during_eva', f'sep_during_eva:{event.id}', severity,
-                f'Tripulante em EVA durante o SEP {event.activity_id}. Janela de observação de 48 h aberta '
-                f'(até {follow_up.window_ends_at:%Y-%m-%d %H:%M} UTC): registre náusea, vômito, perda de apetite, fadiga e pele.{flux_text}',
+                f'Crew member on EVA during SEP {event.activity_id}. 48 h observation window open '
+                f'(until {follow_up.window_ends_at:%Y-%m-%d %H:%M} UTC): record nausea, vomiting, loss of appetite, fatigue and skin.{flux_text}',
                 {'activity_id': activity.id, 'peak_flux_pfu': peak},
                 event_id=event.id, follow_up_id=follow_up.id,
             )
@@ -394,13 +394,13 @@ class RadiationService(PreflightService):
         self._catalog_writer()
         event = self.session.exec(select(SpaceWeatherEvent).where(SpaceWeatherEvent.activity_id == activity_id)).first()
         if event is None:
-            raise HTTPException(404, 'Evento de clima espacial não encontrado')
+            raise HTTPException(404, 'Space weather event not found')
         if event.event_type != 'SEP':
-            raise HTTPException(422, 'Somente SEPs abrem acompanhamento; flares e CMEs são precursores')
+            raise HTTPException(422, 'Only SEPs open a follow-up; flares and CMEs are precursors')
         opened, created = self.process_sep(event)
         return SepProcessResponse(event_activity_id=activity_id, follow_ups_opened=opened, alerts_created=created)
 
-    # --- Acompanhamento pós-evento -------------------------------------------------------------
+    # --- Post-event follow-up -----------------------------------------------------------------
 
     def _follow_up_response(self, follow_up):
         event = self.session.get(SpaceWeatherEvent, follow_up.event_id)
@@ -427,7 +427,7 @@ class RadiationService(PreflightService):
     def _mission_follow_up(self, mission_id, follow_up_id):
         follow_up = self.session.get(RadiationFollowUp, follow_up_id)
         if follow_up is None or follow_up.mission_id != mission_id:
-            raise HTTPException(404, 'Acompanhamento não encontrado nesta missão')
+            raise HTTPException(404, 'Follow-up not found in this mission')
         return follow_up
 
     def get_follow_up(self, mission_id, follow_up_id):
@@ -445,9 +445,9 @@ class RadiationService(PreflightService):
 
     def _record_report(self, follow_up, symptoms, reported_at, note=None, observation_id=None):
         if follow_up.status != 'open':
-            raise HTTPException(409, 'O acompanhamento já foi encerrado')
+            raise HTTPException(409, 'The follow-up has already been closed')
         if reported_at < utc(follow_up.opened_at):
-            raise HTTPException(422, 'O relato não pode ser anterior ao início do SEP')
+            raise HTTPException(422, 'The report cannot be earlier than the SEP start')
         self.session.add(RadiationSymptomReport(
             follow_up_id=follow_up.id, reported_at=reported_at, symptoms=list(symptoms), note=note,
             observation_id=observation_id, recorded_by_user_id=self.user.id,
@@ -466,25 +466,25 @@ class RadiationService(PreflightService):
         mission, astronaut = follow_up.mission_id, follow_up.astronaut_id
         if reported_at > utc(follow_up.window_ends_at):
             self._raise_alert(mission, astronaut, 'late_symptoms', f'late_symptoms:{follow_up.id}', 'attention',
-                              f'Sintomas relatados após a janela de 48 h: {labels}. Avalie outras causas além da radiação.', details, **base)
+                              f'Symptoms reported after the 48 h window: {labels}. Consider causes other than radiation.', details, **base)
             return
         if 'vomiting' in symptoms:
             self._raise_alert(mission, astronaut, 'prodromal_vomiting', f'prodromal_vomiting:{follow_up.id}', 'critical',
-                              'Vômito na janela de 48 h após o SEP. Na síndrome aguda da radiação, vômito precoce sugere dose '
-                              'relevante: avalie o tripulante, confira a dose estimada e siga o protocolo médico.', details, **base)
+                              'Vomiting within the 48 h window after the SEP. In acute radiation syndrome, early vomiting suggests a relevant '
+                              'dose: assess the crew member, check the estimated dose and follow the medical protocol.', details, **base)
         prodromal = symptoms & {'nausea', 'anorexia', 'fatigue'}
         if prodromal:
             self._raise_alert(mission, astronaut, 'prodromal_symptoms', f'prodromal_symptoms:{follow_up.id}', 'urgent',
-                              f'Sintomas prodrômicos na janela de 48 h após o SEP: {", ".join(RADIATION_SYMPTOMS[key] for key in sorted(prodromal))}. '
-                              'Reavalie o tripulante e acompanhe a evolução.', details, **base)
+                              f'Prodromal symptoms within the 48 h window after the SEP: {", ".join(RADIATION_SYMPTOMS[key] for key in sorted(prodromal))}. '
+                              'Reassess the crew member and monitor progression.', details, **base)
         if 'skin_erythema' in symptoms:
-            context = ' O tripulante estava em EVA, cenário de maior dose na pele.' if follow_up.was_on_eva else ''
+            context = ' The crew member was on EVA, the scenario with the highest skin dose.' if follow_up.was_on_eva else ''
             self._raise_alert(mission, astronaut, 'skin_reaction', f'skin_reaction:{follow_up.id}', 'urgent',
-                              f'Reação de pele relatada após o SEP.{context} Examine e registre a área afetada.', details, **base)
+                              f'Skin reaction reported after the SEP.{context} Examine and record the affected area.', details, **base)
 
     def report_from_observation(self, observation) -> int:
-        """Sintomas de radiação numa medição de saúde entram nos acompanhamentos abertos
-        cuja janela inclui o horário da coleta. Devolve quantos acompanhamentos receberam."""
+        """Radiation symptoms in a health measurement join the open follow-ups whose
+        window includes the collection time. Returns how many follow-ups received them."""
         symptoms = sorted(set(observation.symptoms or []) & set(RADIATION_SYMPTOMS))
         if not symptoms:
             return 0
@@ -497,7 +497,7 @@ class RadiationService(PreflightService):
             statement = statement.where(RadiationFollowUp.mission_id == observation.mission_id)
         follow_ups = self.session.exec(statement).all()
         for follow_up in follow_ups:
-            self._record_report(follow_up, symptoms, collected, 'Registrado a partir de uma medição de saúde.', observation.id)
+            self._record_report(follow_up, symptoms, collected, 'Recorded from a health measurement.', observation.id)
         return len(follow_ups)
 
     @transactional
@@ -505,7 +505,7 @@ class RadiationService(PreflightService):
         self._surgeon(mission_id)
         follow_up = self._mission_follow_up(mission_id, follow_up_id)
         if follow_up.status != 'open':
-            raise HTTPException(409, 'O acompanhamento já foi encerrado')
+            raise HTTPException(409, 'The follow-up has already been closed')
         follow_up.status = payload.status
         follow_up.notes = payload.notes
         follow_up.closed_at = now()
@@ -521,7 +521,7 @@ class RadiationService(PreflightService):
             return None
         event = self.session.exec(select(SpaceWeatherEvent).where(SpaceWeatherEvent.activity_id == activity_id)).first()
         if event is None:
-            raise HTTPException(404, 'Evento de clima espacial não encontrado')
+            raise HTTPException(404, 'Space weather event not found')
         return event
 
     @transactional
@@ -554,11 +554,11 @@ class RadiationService(PreflightService):
         return DoseSummary(astronaut_id=astronaut_id, profile_id=profile_id, as_of=as_of, items=self._dose_totals(astronaut_id, as_of, profile_id))
 
     def _dose_totals(self, astronaut_id, as_of, profile_id=DEFAULT_LIMIT_PROFILE):
-        """Soma a dose de toda a carreira do astronauta (todas as missões) por órgão e
-        período. Cada registro conta inteiro na data de period_end."""
+        """Sums the astronaut's career dose (all missions) by organ and
+        period. Each record counts in full on its period_end date."""
         limits = self.session.exec(select(RadiationExposureLimit).where(RadiationExposureLimit.profile_id == profile_id)).all()
         if not limits:
-            raise HTTPException(404, 'Perfil de limites de dose não encontrado')
+            raise HTTPException(404, 'Dose limit profile not found')
         items = []
         for limit in sorted(limits, key=lambda row: (row.organ, list(PERIOD_DAYS).index(row.period))):
             statement = select(func.coalesce(func.sum(RadiationDoseRecord.dose), 0.0)).where(
@@ -583,8 +583,8 @@ class RadiationService(PreflightService):
                 continue
             created += self._raise_alert(
                 mission_id, astronaut_id, 'dose_limit', f'dose_limit:{item.organ}:{item.period}', item.severity,
-                f'Dose acumulada em {ORGAN_LABELS[item.organ]} ({PERIOD_LABELS[item.period]}): {item.total:g} de {item.limit:g} '
-                f'{item.unit} ({item.fraction:.0%} do limite do perfil {DEFAULT_LIMIT_PROFILE}).',
+                f'Accumulated dose in {ORGAN_LABELS[item.organ]} ({PERIOD_LABELS[item.period]}): {item.total:g} of {item.limit:g} '
+                f'{item.unit} ({item.fraction:.0%} of the {DEFAULT_LIMIT_PROFILE} profile limit).',
                 {'organ': item.organ, 'period': item.period, 'total': item.total, 'limit': item.limit, 'fraction': item.fraction},
                 dose_record_id=dose_record_id,
             )
@@ -592,9 +592,9 @@ class RadiationService(PreflightService):
 
     @transactional
     def simulate_doses(self, mission_id, payload):
-        """Estima a dose de cada tripulante integrando o fluxo ≥10 MeV no período,
-        com o fator de blindagem da atividade em cada intervalo (IVA quando não há
-        registro). Substitui uma simulação anterior do mesmo período."""
+        """Estimates each crew member's dose by integrating the ≥10 MeV flux over the period,
+        with the activity shielding factor in each interval (IVA when there is no
+        record). Replaces a previous simulation of the same period."""
         self._surgeon(mission_id)
         event = self._event_by_activity_id(payload.event_activity_id)
         crew_ids = self.session.exec(select(MissionMember.user_id).where(
@@ -605,7 +605,7 @@ class RadiationService(PreflightService):
             self._crew(mission_id, astronaut_id)
         points = self._flux_series(payload.start, payload.end)
         if len(points) < 2:
-            raise HTTPException(422, 'Não há leituras suficientes de prótons ≥10 MeV no período. Importe da NOAA SWPC ou simule o fluxo.')
+            raise HTTPException(422, 'Not enough ≥10 MeV proton readings in the period. Import from NOAA SWPC or simulate the flux.')
 
         records = []
         hours = (payload.end - payload.start).total_seconds() / 3600
@@ -625,7 +625,7 @@ class RadiationService(PreflightService):
                 RadiationDoseRecord.source == 'simulation', RadiationDoseRecord.period_start == payload.start,
                 RadiationDoseRecord.period_end == payload.end,
             )
-            # Os alertas continuam; só perdem o vínculo com o registro substituído.
+            # Alerts remain; they only lose the link to the replaced record.
             self.session.exec(update(RadiationAlert).where(RadiationAlert.dose_record_id.in_(previous)).values(dose_record_id=None))
             self.session.exec(delete(RadiationDoseRecord).where(RadiationDoseRecord.id.in_(previous)))
             for organ, factor in ORGAN_FACTOR.items():
@@ -642,7 +642,7 @@ class RadiationService(PreflightService):
         return DoseSimulationResponse(
             readings_used=len(points), records=[DoseResponse.model_validate(record) for record in records],
             assumptions={
-                'model': 'Simulação didática: dose na pele = fluxo ≥10 MeV × taxa de referência × blindagem × tempo. Não é um modelo de transporte de radiação.',
+                'model': 'Teaching simulation: skin dose = ≥10 MeV flux × reference rate × shielding × time. Not a radiation transport model.',
                 'skin_dose_rate_per_pfu_mgy_eq_per_hour': SKIN_DOSE_RATE_PER_PFU,
                 'shielding_factor': SHIELDING_FACTOR, 'organ_factor': ORGAN_FACTOR,
                 'default_activity': 'iva',
@@ -658,14 +658,14 @@ class RadiationService(PreflightService):
         return min(current, key=ACTIVITY_PRIORITY.get) if current else 'iva'
 
     def _flux_series(self, start, end):
-        """Maior fluxo ≥10 MeV por horário (entre satélites e fontes), em ordem."""
+        """Highest ≥10 MeV flux per timestamp (across satellites and sources), in order."""
         rows = self.session.exec(select(ProtonFluxReading.observed_at, func.max(ProtonFluxReading.flux_pfu)).where(
             ProtonFluxReading.energy_channel == FLUX_CHANNEL,
             ProtonFluxReading.observed_at >= start, ProtonFluxReading.observed_at <= end,
         ).group_by(ProtonFluxReading.observed_at).order_by(ProtonFluxReading.observed_at)).all()
         return [(utc(time), flux) for time, flux in rows]
 
-    # --- Fluxo de prótons ------------------------------------------------------------------------
+    # --- Proton flux ---------------------------------------------------------------------------
 
     def list_flux(self, channel, start, end, limit):
         statement = select(ProtonFluxReading).where(ProtonFluxReading.energy_channel == channel)
@@ -720,7 +720,7 @@ class RadiationService(PreflightService):
         self._catalog_writer()
         event = self._event_by_activity_id(payload.event_activity_id)
         if event is not None and event.event_type != 'SEP':
-            raise HTTPException(422, 'A simulação de fluxo deve partir de um SEP')
+            raise HTTPException(422, 'The flux simulation must start from an SEP')
         onset = utc(event.start_time) if event else payload.onset
         end = onset + timedelta(hours=payload.duration_hours)
         self.session.exec(delete(ProtonFluxReading).where(
@@ -737,14 +737,14 @@ class RadiationService(PreflightService):
         self.session.flush()
         self._flux_eva_alerts(onset, end)
         if event is not None:
-            # A severidade do alerta de EVA depende do pico de fluxo.
+            # The EVA alert severity depends on the peak flux.
             self.process_sep(event)
         return ProtonFluxSimulationResponse(
             stored_count=steps + 1, onset=onset, peak_at=onset + timedelta(hours=payload.rise_hours), peak_pfu=payload.peak_pfu,
         )
 
     def _flux_eva_alerts(self, start, end) -> int:
-        """Fluxo ≥10 MeV na escala S1 ou acima durante uma EVA gera alerta."""
+        """≥10 MeV flux at S1 or above during an EVA raises an alert."""
         created = 0
         for activity in self._eva_during(start, end):
             eva_start = max(utc(activity.started_at), start)
@@ -755,13 +755,13 @@ class RadiationService(PreflightService):
                 continue
             created += self._raise_alert(
                 activity.mission_id, activity.astronaut_id, 'proton_flux_during_eva', f'proton_flux_during_eva:{activity.id}', severity,
-                f'Fluxo de prótons ≥10 MeV de {peak:g} pfu durante a EVA iniciada em {utc(activity.started_at):%Y-%m-%d %H:%M} UTC '
-                '(escala S da NOAA: S1 a partir de 10 pfu). Avalie encerrar a EVA e levar o tripulante ao abrigo.',
+                f'≥10 MeV proton flux of {peak:g} pfu during the EVA started at {utc(activity.started_at):%Y-%m-%d %H:%M} UTC '
+                '(NOAA S-scale: S1 from 10 pfu). Consider ending the EVA and moving the crew member to the shelter.',
                 {'activity_id': activity.id, 'peak_flux_pfu': peak},
             )
         return created
 
-    # --- Linha do tempo ------------------------------------------------------------------------
+    # --- Timeline ------------------------------------------------------------------------------
 
     def timeline(self, mission_id):
         mission, member, surgeon = self._member(mission_id)
@@ -793,8 +793,8 @@ class RadiationService(PreflightService):
         )
 
     def _chains(self, events) -> list[EventChain]:
-        """Agrupa FLR, CME e SEP ligados pelo DONKI (em qualquer sentido). Eventos ligados
-        fora do período da missão entram na cadeia se estiverem importados."""
+        """Groups FLR, CME and SEP linked by DONKI (in either direction). Linked events
+        outside the mission period join the chain if they were imported."""
         if not events:
             return []
         by_activity = {event.activity_id: event for event in events}

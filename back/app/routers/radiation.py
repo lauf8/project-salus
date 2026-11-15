@@ -31,16 +31,16 @@ PageNumber = Annotated[int, Query(ge=1)]
 PerPage = Annotated[int, Query(ge=1, le=100)]
 
 
-# --- Linha do tempo -----------------------------------------------------------------------------
+# --- Timeline ----------------------------------------------------------------------------------
 
 @router.get('/missions/{mission_id}/timeline', response_model=TimelineResponse)
 def timeline(mission_id: int, service: Service):
-    """Eventos do período da missão, cadeias flare → CME → SEP, atividades da
-    tripulação e, para quem pode ver, acompanhamentos e alertas ativos."""
+    """Events in the mission period, flare → CME → SEP chains, crew activities
+    and, for those allowed to see them, follow-ups and active alerts."""
     return service.timeline(mission_id)
 
 
-# --- Atividade da tripulação ----------------------------------------------------------------------
+# --- Crew activity --------------------------------------------------------------------------------
 
 @router.get('/missions/{mission_id}/crew-activities', response_model=Page[CrewActivityResponse])
 def list_activities(mission_id: int, service: Service, astronaut_id: int | None = None, page: PageNumber = 1, per_page: PerPage = 50):
@@ -49,7 +49,7 @@ def list_activities(mission_id: int, service: Service, astronaut_id: int | None 
 
 @router.post('/missions/{mission_id}/crew-activities', response_model=CrewActivityResponse, status_code=201)
 def create_activity(mission_id: int, payload: CrewActivityCreate, service: Service):
-    """IVA, EVA ou abrigo. Uma EVA que coincide com um SEP já importado abre o acompanhamento."""
+    """IVA, EVA or shelter. An EVA that overlaps an imported SEP opens the follow-up."""
     return service.create_activity(mission_id, payload)
 
 
@@ -67,13 +67,13 @@ def list_doses(mission_id: int, service: Service, astronaut_id: int | None = Non
 
 @router.post('/missions/{mission_id}/doses', response_model=DoseResponse, status_code=201)
 def create_dose(mission_id: int, payload: DoseCreate, service: Service):
-    """Dose medida (dosímetro) ou estimada por modelo externo. Exige o médico de voo."""
+    """Dose measured (dosimeter) or estimated by an external model. Requires the flight surgeon."""
     return service.create_dose(mission_id, payload)
 
 
 @router.post('/missions/{mission_id}/doses/simulate', response_model=DoseSimulationResponse)
 def simulate_doses(mission_id: int, payload: DoseSimulationRequest, service: Service):
-    """Gera doses simuladas a partir do fluxo de prótons ≥10 MeV e da atividade de cada tripulante."""
+    """Generates simulated doses from the ≥10 MeV proton flux and each crew member's activity."""
     return service.simulate_doses(mission_id, payload)
 
 
@@ -82,7 +82,7 @@ def dose_summary(mission_id: int, astronaut_id: int, service: Service, profile_i
     return service.dose_summary(mission_id, astronaut_id, profile_id, as_of)
 
 
-# --- Acompanhamento pós-evento ------------------------------------------------------------------------
+# --- Post-event follow-up ----------------------------------------------------------------------------
 
 @router.get('/missions/{mission_id}/follow-ups', response_model=list[FollowUpResponse])
 def list_follow_ups(mission_id: int, service: Service, status: Literal['open', 'completed', 'cancelled', 'all'] = 'all', astronaut_id: int | None = None):
@@ -96,7 +96,7 @@ def get_follow_up(mission_id: int, follow_up_id: int, service: Service):
 
 @router.post('/missions/{mission_id}/follow-ups/{follow_up_id}/reports', response_model=FollowUpResponse, status_code=201)
 def add_report(mission_id: int, follow_up_id: int, payload: SymptomReportCreate, service: Service):
-    """Relato de sintomas pelo próprio astronauta ou pelo médico de voo."""
+    """Symptom report by the astronaut or by the flight surgeon."""
     return service.add_report(mission_id, follow_up_id, payload)
 
 
@@ -105,7 +105,7 @@ def close_follow_up(mission_id: int, follow_up_id: int, payload: FollowUpClose, 
     return service.close_follow_up(mission_id, follow_up_id, payload)
 
 
-# --- Alertas ----------------------------------------------------------------------------------------------
+# --- Alerts -----------------------------------------------------------------------------------------------
 
 @router.get('/missions/{mission_id}/alerts', response_model=Page[RadiationAlertResponse])
 def list_alerts(
@@ -125,11 +125,11 @@ def resolve_alert(mission_id: int, alert_id: int, payload: RadiationAlertResolve
     return service.resolve_alert(mission_id, alert_id, payload)
 
 
-# --- Eventos e fluxo de prótons ------------------------------------------------------------------------------
+# --- Events and proton flux ----------------------------------------------------------------------------------
 
 @router.post('/events/{activity_id}/process', response_model=SepProcessResponse)
 def reprocess_event(activity_id: str, service: Service):
-    """Reavalia um SEP já importado (ex.: depois de corrigir o registro de uma EVA)."""
+    """Reassesses an imported SEP (e.g. after correcting an EVA record)."""
     return service.reprocess_event(activity_id)
 
 
@@ -139,17 +139,17 @@ def list_flux(
     limit: int = Query(2000, ge=1, le=5000),
 ):
     if start and end and end < start:
-        raise HTTPException(422, 'end deve ser igual ou posterior a start')
+        raise HTTPException(422, 'end must be equal to or after start')
     return service.list_flux(channel, start, end, limit)
 
 
 @router.post('/proton-flux/sync', response_model=ProtonFluxSyncResponse)
 def sync_flux(payload: ProtonFluxSyncRequest, service: Service, swpc: SwpcClient = Depends(get_swpc_client)):
-    """Importa o fluxo integral de prótons do GOES pela NOAA SWPC (somente dados recentes)."""
+    """Imports the GOES integral proton flux from NOAA SWPC (recent data only)."""
     return service.sync_proton_flux(swpc, payload.window)
 
 
 @router.post('/proton-flux/simulate', response_model=ProtonFluxSimulationResponse)
 def simulate_flux(payload: ProtonFluxSimulationRequest, service: Service):
-    """Gera um perfil sintético de fluxo ≥10 MeV para um SEP (fonte 'simulation')."""
+    """Generates a synthetic ≥10 MeV flux profile for an SEP (source 'simulation')."""
     return service.simulate_proton_flux(payload)

@@ -29,7 +29,7 @@ def test_alert_http_lifecycle_history_and_permissions(catalog_api):
     assert alert['can_resolve'] is True
     assert alert['trigger_observation']['value'] == 91
     assert alert['source_count'] == 2
-    assert 'protocolo de emergência' in alert['protocol_message']
+    assert 'emergency protocol' in alert['protocol_message']
     history = call('astronaut', 'GET', path + '/history' + query + '&per_page=1')
     assert history['pagination']['has_next'] is True
     assert history['data'][0]['action'] == 'escalated'
@@ -39,7 +39,7 @@ def test_alert_http_lifecycle_history_and_permissions(catalog_api):
         call(actor, 'POST', path + '/acknowledge' + query, expected=403)
     call('astronaut', 'POST', path + '/resolve' + query, {'note': 'Denied'}, 403)
     call('doctor', 'POST', path + '/resolve' + query, {'note': '   '}, 422)
-    resolved = call('doctor', 'POST', path + '/resolve' + query, {'note': 'Avaliação médica registrada'})
+    resolved = call('doctor', 'POST', path + '/resolve' + query, {'note': 'Medical assessment recorded'})
     assert resolved['status'] == 'resolved'
     assert call('astronaut', 'GET', base + '/alerts' + query)['pagination']['total'] == 0
     assert call('astronaut', 'GET', base + '/alerts' + query + '&status=resolved')['pagination']['total'] == 1
@@ -50,7 +50,7 @@ def test_http_profile_and_structured_symptoms(catalog_api):
     call, people, mission_id = catalog_api
     settings_path = f'/health/missions/{mission_id}/alert-settings'
     assert call('astronaut', 'GET', settings_path)['can_edit'] is False
-    settings = call('doctor', 'PUT', settings_path, {'expected_revision': 0, 'timezone': 'America/Bahia', 'emergency_channel': 'Canal clínico 2', 'approval_note': 'Metas da simulação aprovadas'})
+    settings = call('doctor', 'PUT', settings_path, {'expected_revision': 0, 'timezone': 'America/Bahia', 'emergency_channel': 'Clinical channel 2', 'approval_note': 'Simulation targets approved'})
     assert settings['revision'] == 1
     call('astronaut', 'PUT', settings_path, {'expected_revision': 1, 'timezone': 'UTC', 'approval_note': 'Denied'}, 403)
     base = f"/health/astronauts/{people['astronaut']}"
@@ -59,7 +59,7 @@ def test_http_profile_and_structured_symptoms(catalog_api):
     query = f'?mission_id={mission_id}'
     urgent = call('astronaut', 'GET', base + '/alerts' + query)['data'][0]
     assert urgent['severity'] == 'urgent'
-    assert 'Sintomas desconhecidos' in urgent['reason']
+    assert 'Symptoms unknown' in urgent['reason']
     assert urgent['trigger_observation']['symptoms_status'] == 'unknown'
     payload['symptoms'] = ['chest_pain']
     payload['client_request_id'] = str(uuid4())
@@ -67,7 +67,7 @@ def test_http_profile_and_structured_symptoms(catalog_api):
     critical = call('astronaut', 'GET', base + '/alerts' + query)['data'][0]
     assert critical['id'] == urgent['id']
     assert critical['severity'] == 'critical'
-    assert 'Canal clínico 2' in critical['protocol_message']
+    assert 'Clinical channel 2' in critical['protocol_message']
     assert critical['trigger_observation']['symptoms_status'] == 'present'
     call('astronaut', 'POST', base + '/observations', measurement(mission_id, indicator='attention', value=None, category='worse', acute_confusion=True), 201)
     assert call('astronaut', 'GET', base + '/alerts' + query)['pagination']['total'] == 2

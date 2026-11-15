@@ -21,13 +21,13 @@ class ExamField(InputModel):
     @model_validator(mode='after')
     def validate_options(self):
         if self.type == 'select' and not self.options:
-            raise ValueError('Um campo de seleção exige opções')
+            raise ValueError('A selection field requires options')
         if self.type != 'select' and self.options:
-            raise ValueError('Opções são permitidas apenas em campos de seleção')
+            raise ValueError('Options are allowed only in selection fields')
         if self.unit and self.type != 'number':
-            raise ValueError('Unidades são permitidas apenas em campos numéricos')
+            raise ValueError('Units are allowed only in numeric fields')
         if len({option.value for option in self.options}) != len(self.options):
-            raise ValueError('As opções não podem ter valores duplicados')
+            raise ValueError('Options cannot have duplicate values')
         return self
 
 
@@ -48,7 +48,7 @@ class ExamCreate(InputModel):
     @model_validator(mode='after')
     def validate_fields(self):
         if len({field.code for field in self.fields}) != len(self.fields):
-            raise ValueError('Os campos do exame devem ter identificadores únicos')
+            raise ValueError('Exam fields must have unique identifiers')
         return self
 
 

@@ -40,34 +40,34 @@ class HealthService:
         target = self.session.get(User, astronaut_id)
         memberships = self.session.exec(select(MissionMember).where(MissionMember.user_id == astronaut_id)).all()
         if target is None or not (target.is_astronaut or any(m.role == 'astronaut' for m in memberships)):
-            raise HTTPException(404, 'Astronauta não encontrado')
+            raise HTTPException(404, 'Astronaut not found')
         if mission_id is not None:
             if self.session.get(Mission, mission_id) is None or not any(m.mission_id == mission_id and m.role == 'astronaut' for m in memberships):
-                raise HTTPException(404, 'Vínculo do astronauta com a missão não encontrado')
+                raise HTTPException(404, 'Astronaut mission membership not found')
         if self.user.id == astronaut_id:
             return False
         if not (self.user.is_physician or self.user.is_nurse) or mission_id is None:
-            raise HTTPException(403, 'Acesso não autorizado aos dados deste astronauta')
+            raise HTTPException(403, 'Access to this astronaut data is not authorized')
         assessor = self.session.exec(select(MissionMember).where(
             MissionMember.user_id == self.user.id, MissionMember.mission_id == mission_id,
             MissionMember.role.in_(['flight_surgeon', 'nurse']),
         )).first()
         if assessor is None or not (assessor.role == 'flight_surgeon' and self.user.is_physician or assessor.role == 'nurse' and self.user.is_nurse):
-            raise HTTPException(403, 'Somente o médico de voo desta missão pode avaliar o astronauta')
+            raise HTTPException(403, 'Only the flight surgeon of this mission can assess the astronaut')
         return assessor.role == 'flight_surgeon' and self.user.is_physician
 
     @transactional
     def create(self, astronaut_id, payload):
         assessor = self.authorize(astronaut_id, payload.mission_id)
         if payload.indicator == 'consciousness' and not assessor:
-            raise HTTPException(403, 'A avaliação AVPU deve ser registrada por outro médico autorizado')
+            raise HTTPException(403, 'The AVPU assessment must be recorded by another authorized physician')
         if payload.is_preflight_reference:
             if not assessor:
-                raise HTTPException(403, 'A referência pré-missão deve ser registrada por outro médico autorizado')
+                raise HTTPException(403, 'The pre-mission reference must be recorded by another authorized physician')
             mission = self.session.get(Mission, payload.mission_id)
             boundary = mission.started_at or mission.planned_launch_at
             if payload.collected_at >= boundary:
-                raise HTTPException(422, 'A referência deve ter sido coletada antes do início da missão')
+                raise HTTPException(422, 'The reference must have been collected before the mission start')
         self.session.exec(select(User).where(User.id == astronaut_id).with_for_update()).one()
         values = payload.model_dump()
         values['client_request_id'] = str(payload.client_request_id) if payload.client_request_id else None
@@ -79,7 +79,7 @@ class HealthService:
             previous = self.session.exec(select(HealthObservation).where(HealthObservation.astronaut_id == astronaut_id, HealthObservation.client_request_id == str(payload.client_request_id))).first()
             if previous:
                 if previous.submission_hash != submission_hash:
-                    raise HTTPException(409, 'A chave de reenvio já foi usada com outra medição')
+                    raise HTTPException(409, 'The retry key was already used with another measurement')
                 return previous
         previous = self.session.exec(select(HealthObservation).where(HealthObservation.astronaut_id == astronaut_id, HealthObservation.submission_hash == submission_hash)).first()
         if previous:
@@ -92,7 +92,7 @@ class HealthService:
         self.session.flush()
         from app.services.health_alert_service import HealthAlertService
         HealthAlertService(self.session, self.user).evaluate(observation)
-        # Sintomas de radiação entram no acompanhamento pós-SEP aberto, se houver.
+        # Radiation symptoms join the open post-SEP follow-up, if any.
         from app.services.radiation_service import RadiationService
         RadiationService(self.session, self.user).report_from_observation(observation)
         return observation
@@ -106,7 +106,7 @@ class HealthService:
     def history(self, astronaut_id, indicator, mission_id, start, end, page, per_page):
         self.authorize(astronaut_id, mission_id)
         if start > end:
-            raise HTTPException(422, 'O início do período deve ser anterior ao fim')
+            raise HTTPException(422, 'The period start must be before its end')
         statement = self.statement(astronaut_id, mission_id).where(
             HealthObservation.indicator == indicator,
             HealthObservation.collected_at >= start,
@@ -164,7 +164,7 @@ class HealthService:
                 freshness = profile['freshness_minutes'].get(indicator, profile['freshness_minutes']['default'])
                 if datetime.now(timezone.utc) - aware(latest.collected_at) > timedelta(minutes=freshness):
                     status = 'stale'
-                    notes.append('Medição desatualizada para a janela configurada; registre uma nova leitura.')
+                    notes.append('Measurement is outdated for the configured window; record a new reading.')
             indicators.append(IndicatorSummary(
                 indicator=indicator, unit=unit, latest=latest, previous=previous,
                 measurement_status=status, evaluation_notes=notes,

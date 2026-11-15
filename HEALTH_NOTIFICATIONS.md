@@ -1,50 +1,50 @@
-# Notificações clínicas internas
+# Internal clinical notifications
 
-A área Notificações e o sino no cabeçalho são exibidos para contas médicas. A lista consulta o backend a cada 30 segundos enquanto a página estiver visível. O sino também atualiza ao voltar para a janela e após ações de leitura. Não há webhook, e-mail, push, som ou integração externa.
+The Notifications area and the bell in the header are shown to physician accounts. The list queries the backend every 30 seconds while the page is visible. The bell also refreshes when you return to the window and after read actions. There is no webhook, email, push, sound or external integration.
 
-## Quando gerar uma notificação
+## When a notification is created
 
-Somente um alerta com gravidade `critical`, gerado por uma leitura recente que ainda seja a leitura válida mais atual daquele indicador, pode gerar uma notificação. Leituras com qualidade `poor`, desatualizadas ou já substituídas por uma medição válida mais recente não geram novos avisos. Alertas de atenção e urgentes, inclusive a glicemia alta urgente do perfil de simulação, não geram notificações. O critério usa as regras de simulação existentes; não estabelece diagnóstico.
+Only an alert with `critical` severity, raised by a recent reading that is still the latest valid reading of that indicator, can create a notification. Readings with `poor` quality, outdated readings, or readings already replaced by a more recent valid measurement do not create new notices. Attention and urgent alerts, including the urgent high glucose alert of the simulation profile, do not create notifications. The criterion uses the existing simulation rules; it does not establish a diagnosis.
 
-Uma escalada para crítico gera uma notificação. Se a primeira leitura crítica tiver sinal ruim, uma leitura crítica posterior válida pode gerar o primeiro aviso. Reenvios, medições críticas repetidas e reconhecimento do mesmo alerta não criam avisos duplicados. Após resolução, uma nova ocorrência cria outro alerta e pode gerar outra notificação.
+An escalation to critical creates a notification. If the first critical reading has a poor signal, a later valid critical reading can create the first notice. Resubmissions, repeated critical measurements and acknowledging the same alert do not create duplicate notices. After resolution, a new occurrence creates another alert and can create another notification.
 
-As notificações são gravadas na mesma transação da medição e do alerta, com chave única por médico, missão e alerta. Os dados da notificação preservam o motivo e a medição que geraram o aviso. O estado atual do alerta é consultado ao exibir a notificação.
+Notifications are stored in the same transaction as the measurement and the alert, with a unique key per physician, mission and alert. The notification data keeps the reason and the measurement that triggered the notice. The current alert state is read when the notification is displayed.
 
-## Destinatários e acesso
+## Recipients and access
 
-O destinatário deve ter `is_physician=true` e estar vinculado à missão como `flight_surgeon`, sendo outro usuário que não o tripulante avaliado. Apenas o destinatário pode consultar ou marcar suas notificações como lidas. O vínculo clínico e o vínculo do tripulante são revalidados em toda consulta; remover ou alterar o papel de médico de voo revoga o acesso às notificações daquela missão.
+The recipient must have `is_physician=true` and be assigned to the mission as `flight_surgeon`, and must be a different user from the crew member being assessed. Only the recipient can view their notifications or mark them as read. The clinical membership and the crew member membership are checked again on every query; removing or changing the flight surgeon role revokes access to that mission's notifications.
 
-A missão informada na medição é usada para o direcionamento. Se a medição não informar missão, usa-se a única missão não encerrada em que o tripulante tem papel `astronaut`. Se houver zero ou várias, o sistema não escolhe uma equipe arbitrariamente; o contexto da medição registra que é necessário informar a missão. Missões encerradas não recebem novos avisos. Se não houver médico de voo elegível, isso também é registrado no contexto da medição.
+The mission given in the measurement is used for routing. If the measurement has no mission, the only open mission in which the crew member has the `astronaut` role is used. If there are zero or several, the system does not pick a team arbitrarily; the measurement context records that the mission must be provided. Closed missions do not receive new notices. If there is no eligible flight surgeon, that is also recorded in the measurement context.
 
-Marcar uma notificação como lida apenas registra a leitura. Não reconhece nem resolve o alerta. A aba Pendentes e o contador do sino mostram avisos não lidos cujo alerta ainda não foi resolvido. A aba Todas mantém o histórico, incluindo notificações de alertas resolvidos. Abrir prontuário marca a notificação como lida e seleciona missão, tripulante e indicador no monitoramento, mantendo as regras de acesso existentes.
+Marking a notification as read only records the reading. It does not acknowledge or resolve the alert. The Pending tab and the bell counter show unread notices whose alert has not been resolved. The All tab keeps the history, including notifications of resolved alerts. Opening the medical record marks the notification as read and selects the mission, crew member and indicator in monitoring, keeping the existing access rules.
 
-## Rotas
+## Routes
 
-Todas exigem autenticação de uma conta médica e têm prefixo `/v1`.
+All routes require a physician account and use the `/v1` prefix.
 
-| Rota | Método e comportamento |
+| Route | Method and behavior |
 | --- | --- |
-| `/notifications` | GET com `status=pending/all`, `mission_id` opcional, `page` e `per_page` |
-| `/notifications/summary` | GET com contagem de não lidas e pendentes |
-| `/notifications/{notification_id}/read` | POST para marcar uma notificação própria como lida |
-| `/notifications/read-all` | POST para marcar todas as notificações visíveis do destinatário como lidas |
+| `/notifications` | GET with `status=pending/all`, optional `mission_id`, `page` and `per_page` |
+| `/notifications/summary` | GET with the unread and pending counts |
+| `/notifications/{notification_id}/read` | POST to mark one of your notifications as read |
+| `/notifications/read-all` | POST to mark all notifications visible to the recipient as read |
 
-## Instalação e verificação
+## Installation and verification
 
-Dentro de `NASA`:
+From `back/`:
 
 ```sh
 docker compose exec -T api alembic upgrade head
 docker compose exec -T api python -m scripts.sync_health_notifications
 ```
 
-A revisão `e26d7f8091a2` cria `health_notifications`. A sincronização verifica alertas críticos já existentes com os mesmos critérios de atualidade, qualidade e direcionamento; não cria avisos de eventos já superados. Pode ser repetida sem duplicação. A avaliação de novas medições já gera as notificações automaticamente, sem depender desse comando.
+Revision `e26d7f8091a2` creates `health_notifications`. The synchronization checks existing critical alerts with the same recency, quality and routing criteria; it does not create notices for superseded events. It can be repeated without duplicates. Evaluating new measurements already creates notifications automatically, without depending on this command.
 
-Com pytest instalado:
+With pytest installed:
 
 ```sh
 python -m pytest -q tests/test_health_notifications.py
 python -m scripts.verify_health_alerts
 ```
 
-O verificador PostgreSQL cria e remove um banco isolado e testa gravações concorrentes, incluindo a geração de uma única notificação na escalada crítica.
+The PostgreSQL verifier creates and removes an isolated database and tests concurrent writes, including the creation of a single notification on a critical escalation.

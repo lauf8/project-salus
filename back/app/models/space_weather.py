@@ -1,9 +1,9 @@
-"""Clima espacial e exposição à radiação.
+"""Space weather and radiation exposure.
 
-Fundamentação: NASA SP-2009-3405, cap. 5 (Risk of Acute Radiation Syndromes Due to
-Solar Particle Events). Flares e CMEs são tratados como precursores; SEPs, fluxo de
-prótons e dosimetria descrevem a exposição. Um evento registrado no DONKI não
-significa que um tripulante recebeu dose relevante.
+Basis: NASA SP-2009-3405, chapter 5 (Risk of Acute Radiation Syndromes Due to
+Solar Particle Events). Flares and CMEs are treated as precursors; SEPs, proton
+flux and dosimetry describe the exposure. An event recorded in DONKI does not
+mean that a crew member received a relevant dose.
 """
 
 from datetime import date, datetime, timezone
@@ -25,7 +25,7 @@ def _in(values) -> str:
 
 
 class SpaceWeatherEvent(SQLModel, table=True):
-    """Evento do catálogo NASA DONKI (flare, CME ou SEP)."""
+    """NASA DONKI catalog event (flare, CME or SEP)."""
 
     __tablename__ = 'space_weather_events'
     __table_args__ = (
@@ -45,11 +45,11 @@ class SpaceWeatherEvent(SQLModel, table=True):
     source_location: str | None = Field(default=None, sa_type=Text)
     active_region_num: int | None = None
 
-    # Flare: classe GOES (ex.: X1.9) e pico de fluxo de raios X equivalente em W/m².
+    # Flare: GOES class (e.g. X1.9) and equivalent peak X-ray flux in W/m².
     flare_class: str | None = Field(default=None, sa_type=Text)
     flare_peak_flux_wm2: float | None = None
 
-    # CME: análise marcada como mais precisa pelo DONKI.
+    # CME: analysis marked as most accurate by DONKI.
     cme_speed_kms: float | None = None
     cme_half_angle_deg: float | None = None
     cme_type: str | None = Field(default=None, sa_type=Text)
@@ -68,15 +68,15 @@ class SpaceWeatherEvent(SQLModel, table=True):
 
     @property
     def health_relevance(self) -> str:
-        """FLR e CME são precursores; SEP é o evento de exposição (cap. 5)."""
+        """FLR and CME are precursors; SEP is the exposure event (chapter 5)."""
         return 'exposure' if self.event_type == 'SEP' else 'precursor'
 
 
 class SpaceWeatherEventLink(SQLModel, table=True):
-    """Ligação informada pelo DONKI (linkedEvents).
+    """Link reported by DONKI (linkedEvents).
 
-    O evento ligado pode ser de um tipo não importado (IPS, GST...), por isso o
-    identificador é guardado como texto e o tipo é extraído do próprio ID.
+    The linked event can be of a type that is not imported (IPS, GST...), so the
+    identifier is stored as text and the type is extracted from the ID itself.
     """
 
     __tablename__ = 'space_weather_event_links'
@@ -92,7 +92,7 @@ class SpaceWeatherEventLink(SQLModel, table=True):
 
 
 class SpaceWeatherSyncRun(SQLModel, table=True):
-    """Registro de cada consulta ao DONKI, inclusive as que falharam."""
+    """Record of each DONKI request, including failed ones."""
 
     __tablename__ = 'space_weather_sync_runs'
     __table_args__ = (
@@ -116,8 +116,8 @@ class SpaceWeatherSyncRun(SQLModel, table=True):
 
 
 class ProtonFluxReading(SQLModel, table=True):
-    """Fluxo integral de prótons (GOES/NOAA SWPC) em pfu. O canal ≥30 MeV é o
-    parâmetro usado no cap. 5 para comparar SEPs."""
+    """Integral proton flux (GOES/NOAA SWPC) in pfu. The ≥30 MeV channel is the
+    parameter used in chapter 5 to compare SEPs."""
 
     __tablename__ = 'proton_flux_readings'
     __table_args__ = (
@@ -138,8 +138,8 @@ class ProtonFluxReading(SQLModel, table=True):
 
 
 class CrewActivity(SQLModel, table=True):
-    """Onde o tripulante estava: dentro da nave (IVA), em EVA ou no abrigo.
-    A EVA é o cenário crítico para síndrome aguda da radiação (cap. 5)."""
+    """Where the crew member was: inside the spacecraft (IVA), on EVA or in the shelter.
+    EVA is the critical scenario for acute radiation syndrome (chapter 5)."""
 
     __tablename__ = 'crew_activities'
     __table_args__ = (
@@ -161,11 +161,11 @@ class CrewActivity(SQLModel, table=True):
 
 
 class RadiationExposureLimit(SQLModel, table=True):
-    """Limites de dose por órgão e período, versionados por perfil.
+    """Dose limits per organ and period, versioned by profile.
 
-    O perfil inicial reproduz a Tabela 5-1 do NASA SP-2009-3405 (2009). Os limites
-    da NASA foram revisados depois (NASA-STD-3001); crie um novo perfil em vez de
-    alterar um perfil já usado.
+    The initial profile reproduces Table 5-1 of NASA SP-2009-3405 (2009). NASA
+    revised these limits later (NASA-STD-3001); create a new profile instead of
+    changing a profile already in use.
     """
 
     __tablename__ = 'radiation_exposure_limits'
@@ -187,7 +187,7 @@ class RadiationExposureLimit(SQLModel, table=True):
 
 
 class RadiationDoseRecord(SQLModel, table=True):
-    """Dose estimada ou medida para um tripulante, opcionalmente ligada a um evento."""
+    """Estimated or measured dose for a crew member, optionally linked to an event."""
 
     __tablename__ = 'radiation_dose_records'
     __table_args__ = (
@@ -216,8 +216,8 @@ class RadiationDoseRecord(SQLModel, table=True):
 
 
 class RadiationFollowUp(SQLModel, table=True):
-    """Janela de observação de 48 h após um SEP relevante (efeitos prodrômicos:
-    náusea, vômito, anorexia e fadiga; pele em caso de EVA)."""
+    """48 h observation window after a relevant SEP (prodromal effects:
+    nausea, vomiting, anorexia and fatigue; skin in case of EVA)."""
 
     __tablename__ = 'radiation_follow_ups'
     __table_args__ = (
@@ -234,20 +234,20 @@ class RadiationFollowUp(SQLModel, table=True):
     was_on_eva: bool | None = None
     symptoms: list[str] = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
     notes: str | None = Field(default=None, sa_type=Text)
-    # opened_at é o início do SEP (início da janela); detected_at é quando o sistema
-    # percebeu a exposição, que pode ser depois se o SEP chegou atrasado pelo DONKI.
+    # opened_at is the SEP start (window start); detected_at is when the system
+    # detected the exposure, which can be later if the SEP arrived late from DONKI.
     opened_at: datetime = Field(default_factory=utc_now, sa_column=Column(DateTime(timezone=True), nullable=False))
     window_ends_at: datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))
     detected_at: datetime = Field(default_factory=utc_now, sa_column=Column(DateTime(timezone=True), nullable=False))
-    # Nulo quando aberto pela sincronização agendada (sem usuário).
+    # Null when opened by the scheduled synchronization (no user).
     opened_by_user_id: int | None = Field(default=None, foreign_key='users.id')
     closed_at: datetime | None = Field(default=None, sa_column=Column(DateTime(timezone=True)))
     closed_by_user_id: int | None = Field(default=None, foreign_key='users.id')
 
 
 class RadiationSymptomReport(SQLModel, table=True):
-    """Relato de sintomas durante o acompanhamento pós-evento. Pode vir do próprio
-    formulário do acompanhamento ou de uma medição de saúde com sintomas de radiação."""
+    """Symptom report during the post-event follow-up. It can come from the follow-up
+    form itself or from a health measurement with radiation symptoms."""
 
     __tablename__ = 'radiation_symptom_reports'
     __table_args__ = (
@@ -265,11 +265,11 @@ class RadiationSymptomReport(SQLModel, table=True):
 
 
 class RadiationAlert(SQLModel, table=True):
-    """Alerta de radiação. Tabela própria porque HealthAlert exige uma medição de
-    origem; aqui a origem é um evento, um acompanhamento ou um registro de dose.
+    """Radiation alert. It has its own table because HealthAlert requires a source
+    measurement; here the source is an event, a follow-up or a dose record.
 
-    dedupe_key identifica o alerta lógico (ex.: dose_limit:bfo:30_day); só pode
-    haver um alerta ativo por astronauta e chave.
+    dedupe_key identifies the logical alert (e.g. dose_limit:bfo:30_day); there can
+    be only one active alert per astronaut and key.
     """
 
     __tablename__ = 'radiation_alerts'

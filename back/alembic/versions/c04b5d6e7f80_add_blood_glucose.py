@@ -20,7 +20,7 @@ def upgrade():
 def downgrade():
     connection = op.get_bind()
     if connection.execute(text("SELECT EXISTS (SELECT 1 FROM health_observations WHERE indicator = 'blood_glucose')")).scalar():
-        raise RuntimeError('Não é possível reverter a migration enquanto houver registros de glicemia')
+        raise RuntimeError('The migration cannot be reverted while blood glucose records exist')
     op.drop_constraint('ck_health_glucose_positive', 'health_observations', type_='check')
     op.drop_constraint('ck_health_indicator', 'health_observations', type_='check')
     op.create_check_constraint('ck_health_indicator', 'health_observations', f'indicator IN ({PREVIOUS_INDICATORS})')

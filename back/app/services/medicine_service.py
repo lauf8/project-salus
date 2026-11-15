@@ -13,7 +13,7 @@ class MedicineService(PreflightService):
     def ingredients(self, ids):
         rows = self.session.exec(select(ActiveIngredient).where(ActiveIngredient.id.in_(ids)).order_by(ActiveIngredient.name, ActiveIngredient.id).with_for_update()).all() if ids else []
         if len(rows) != len(ids):
-            raise HTTPException(422, 'Um ou mais princípios ativos não existem')
+            raise HTTPException(422, 'One or more active ingredients do not exist')
         return rows
 
     def composition(self, medicine_id):
@@ -48,7 +48,7 @@ class MedicineService(PreflightService):
         self._catalog_writer()
         medicine = self.session.exec(select(Medicine).where(Medicine.id == medicine_id).with_for_update()).first() if medicine_id else Medicine(name=payload.name)
         if medicine is None:
-            raise HTTPException(404, 'Medicamento não encontrado')
+            raise HTTPException(404, 'Medication not found')
         if payload.name is not None:
             medicine.name = payload.name
         if 'main_indications' in payload.model_fields_set:
@@ -75,7 +75,7 @@ class MedicineService(PreflightService):
         if model is ActiveIngredient:
             for link in (MedicineActiveIngredient, CrewMemberAllergy):
                 if self.session.exec(select(link).where(link.active_ingredient_id == record_id)).first():
-                    raise HTTPException(409, 'Este princípio ativo está vinculado a medicamentos ou alergias e não pode ser excluído')
+                    raise HTTPException(409, 'This active ingredient is linked to medications or allergies and cannot be deleted')
         else:
             for link in self.session.exec(select(MedicineActiveIngredient).where(MedicineActiveIngredient.medicine_id == record_id)).all():
                 self.session.delete(link)
@@ -84,7 +84,7 @@ class MedicineService(PreflightService):
         try:
             self.session.flush()
         except IntegrityError as exc:
-            raise HTTPException(409, 'O registro está em uso e não pode ser excluído') from exc
+            raise HTTPException(409, 'The record is in use and cannot be deleted') from exc
 
     def allergy_response(self, crew_member_id, can_edit):
         target = self._get(User, crew_member_id)
@@ -98,7 +98,7 @@ class MedicineService(PreflightService):
     @transactional
     def update_allergies(self, crew_member_id, mission_id, payload):
         if not HealthService(self.session, self.user).authorize(crew_member_id, mission_id):
-            raise HTTPException(403, 'Somente o médico de voo da missão pode editar as alergias')
+            raise HTTPException(403, 'Only the mission flight surgeon can edit allergies')
         target = self.session.exec(select(User).where(User.id == crew_member_id).with_for_update()).one()
         self.ingredients(payload.active_ingredient_ids)
         for row in self.session.exec(select(CrewMemberAllergy).where(CrewMemberAllergy.crew_member_id == crew_member_id)).all():

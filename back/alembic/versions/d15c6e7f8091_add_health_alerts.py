@@ -100,7 +100,7 @@ def upgrade():
 def downgrade():
     connection = op.get_bind()
     if connection.execute(sa.text('SELECT EXISTS (SELECT 1 FROM health_alerts)')).scalar():
-        raise RuntimeError('Exporte e preserve o histórico de alertas antes de reverter esta migration')
+        raise RuntimeError('Export and preserve the alert history before reverting this migration')
     for table in ('health_alert_events', 'health_alert_observations', 'health_alerts', 'health_alert_settings'):
         op.drop_table(table)
     op.drop_constraint('uq_health_observation_request', 'health_observations', type_='unique')

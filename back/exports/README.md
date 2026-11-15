@@ -1,28 +1,30 @@
-# Banco Salus para importação
+# Salus database for import
 
-`salus_database_20261115.dump` contém todo o schema da aplicação (`public`), com suas tabelas, sequências, funções, índices, constraints, registros, documentos e revisão Alembic. Inclui as 56 missões: as 50 do histórico gerado e as 6 anteriores. Os schemas auxiliares de testes não estão no arquivo.
+`salus_database_20261115.dump` contains the whole application schema (`public`), with its tables, sequences, functions, indexes, constraints, records, documents and Alembic revision. It includes the 56 missions: the 50 from the generated history and the 6 earlier ones. Auxiliary test schemas are not in the file.
 
-As missões e equipes do histórico usam nomes ficcionais plausíveis, como Aurora 01 e Rafael Andrade. A origem gerada das 50 missões está documentada em `provenance.json`, separadamente do banco. Isso não transforma os registros em dados clínicos ou missões reais. As referências documentais originais, incluindo seus PDFs e fontes, foram preservadas.
+Missions and crews in the history use plausible fictional names, such as Aurora 01 and Rafael Andrade. The generated origin of the 50 missions is documented in `provenance.json`, separately from the database. This does not turn the records into clinical data or real missions. The original reference documents, including their PDFs and sources, were preserved.
 
-## Restaurar
+The dump was created before the English translation of the interface data. After restoring it, run `alembic upgrade head` to convert the respiratory rate unit and the medication catalog to English. Stored free text, such as notes and alert reasons recorded at the time, stays as recorded.
 
-Use as ferramentas do PostgreSQL 17, apontando para um banco novo e vazio:
+## Restore
+
+Use the PostgreSQL 17 tools, targeting a new, empty database:
 
 ```bash
-createdb -U SEU_USUARIO salus_import
-pg_restore -U SEU_USUARIO --clean --if-exists --no-owner --no-acl --exit-on-error --dbname=salus_import salus_database_20261115.dump
+createdb -U YOUR_USER salus_import
+pg_restore -U YOUR_USER --clean --if-exists --no-owner --no-acl --exit-on-error --dbname=salus_import salus_database_20261115.dump
 ```
 
-Configure o `PGDATABASE` da aplicação para o banco restaurado. As credenciais do PostgreSQL e outras variáveis de ambiente não fazem parte deste pacote.
+Point the application `PGDATABASE` to the restored database. PostgreSQL credentials and other environment variables are not part of this package.
 
-Na interface, selecione **Mission administrator → Rafael Andrade** para as 50 missões do histórico, ou **Physician → Helena Monteiro** para saúde e prontuário. Os perfis anteriores também foram preservados. Os endereços de contato gerados usam o domínio reservado `crew.salus.example`.
+In the interface, select **Mission administrator → Rafael Andrade** for the 50 history missions, or **Physician → Helena Monteiro** for health and medical records. Earlier profiles were also preserved. Generated contact addresses use the reserved domain `crew.salus.example`.
 
-## Conferência
+## Verification
 
-`SHA256SUMS` permite conferir os arquivos. `restore-validation.json` registra a conferência executada após restaurar o dump em outro banco PostgreSQL.
+`SHA256SUMS` lets you check the files. `restore-validation.json` records the check performed after restoring the dump into another PostgreSQL database.
 
-Antes da exportação, a comparação com o backup verificou 189.691 registros em 62 tabelas sem alterações em valores numéricos, datas de origem, chaves, vínculos ou dados binários. O horário de enriquecimento automático de recomendações é atualizado pelo worker e foi excluído dessa comparação. Códigos técnicos dos protocolos e origens de telemetria foram preservados; não são rótulos de apresentação. Nove testes do preparo de exportação e do gerador passaram.
+Before the export, the comparison with the backup verified 189,691 records in 62 tables with no changes to numeric values, source dates, keys, links or binary data. The automatic recommendation enrichment time is updated by the worker and was excluded from that comparison. Technical protocol codes and telemetry origins were preserved; they are not display labels. Nine tests for the export preparation and the generator passed.
 
-## Caso com análise de IA
+## Case with AI analysis
 
-A exportação atualizada inclui Matheus Valença na missão Atlântico 03, com cinco alertas clínicos, duas notificações internas e três recomendações com explicações efetivamente geradas e validadas pelo Ollama, usando referências NASA. Abra Physician → Helena Monteiro → Predictive Intelligence e selecione Matheus. Expanda as evidências documentais das recomendações. A origem do caso e seus IDs estão em `ai-health-case.json`. A avaliação clínica separada não produziu hipóteses diagnósticas e não recebeu aprovação automática.
+The updated export includes Matheus Valença in the Atlântico 03 mission, with five clinical alerts, two internal notifications and three recommendations whose explanations were actually generated and validated by Ollama, using NASA references. Open Physician → Helena Monteiro → Predictive Intelligence and select Matheus. Expand the documentary evidence of the recommendations. The case origin and its IDs are in `ai-health-case.json`. The separate clinical assessment produced no diagnostic hypotheses and was not approved automatically.

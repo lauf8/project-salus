@@ -12,7 +12,7 @@ function component(path) {
 }
 const { default: Catalog } = component('src/ExamCatalog.jsx');
 const { default: ResultForm, StructuredResult } = component('src/ExamResultForm.jsx');
-const definition = { name: 'Hemograma', revision: 1, fields: [{ code: 'hemoglobin', label: 'Hemoglobina', type: 'number', unit: 'g/dL', required: true, options: [] }, { code: 'fasting', label: "Fasting", type: 'boolean', required: false, options: [] }] };
+const definition = { name: 'Complete blood count', revision: 1, fields: [{ code: 'hemoglobin', label: 'Hemoglobin', type: 'number', unit: 'g/dL', required: true, options: [] }, { code: 'fasting', label: "Fasting", type: 'boolean', required: false, options: [] }] };
 
 test('catalog creation action requires authorized medical permission', () => {
   const readOnly = renderToStaticMarkup(React.createElement(Catalog, { types: [], canManage: false }));
@@ -23,7 +23,7 @@ test('catalog creation action requires authorized medical permission', () => {
 
 test('result form uses assigned fields, units, references and collection metadata', () => {
   const html = renderToStaticMarkup(React.createElement(ResultForm, { exam: { definition_snapshot: definition }, initial: {} }));
-  assert.match(html, /Hemoglobina \(g\/dL\) \*/);
+  assert.match(html, /Hemoglobin \(g\/dL\) \*/);
   assert.match(html, /<input[^>]*required=""[^>]*name="value:hemoglobin"/);
   assert.match(html, /name="reference:hemoglobin"/);
   assert.match(html, /name="collected_at"/);
@@ -32,12 +32,12 @@ test('result form uses assigned fields, units, references and collection metadat
 });
 
 test('history renders frozen labels, zero and false, plus laboratory reference', () => {
-  const html = renderToStaticMarkup(React.createElement(StructuredResult, { result: { exam_snapshot: definition, structured_values: { hemoglobin: 0, fasting: false }, reference_ranges: { hemoglobin: 'Referência original' }, laboratory: 'Laboratório original' } }));
-  assert.match(html, /0 g\/dL/); assert.match(html, />No</); assert.match(html, /Referência original/); assert.match(html, /Laboratório original/); assert.match(html, /Version 1/);
+  const html = renderToStaticMarkup(React.createElement(StructuredResult, { result: { exam_snapshot: definition, structured_values: { hemoglobin: 0, fasting: false }, reference_ranges: { hemoglobin: 'Original reference' }, laboratory: 'Original laboratory' } }));
+  assert.match(html, /0 g\/dL/); assert.match(html, />No</); assert.match(html, /Original reference/); assert.match(html, /Original laboratory/); assert.match(html, /Version 1/);
 });
 
 test('legacy result correction uses its original schema', () => {
-  const html = renderToStaticMarkup(React.createElement(ResultForm, { exam: { definition_snapshot: definition }, initial: { id: 1, exam_snapshot: null, summary: 'Resultado antigo' } }));
+  const html = renderToStaticMarkup(React.createElement(ResultForm, { exam: { definition_snapshot: definition }, initial: { id: 1, exam_snapshot: null, summary: 'Legacy result' } }));
   assert.doesNotMatch(html, /name="value:hemoglobin"/);
-  assert.match(html, /Resultado antigo/);
+  assert.match(html, /Legacy result/);
 });

@@ -1,8 +1,8 @@
-"""Cliente HTTP da NOAA SWPC para o fluxo integral de prótons do GOES.
+"""NOAA SWPC HTTP client for the GOES integral proton flux.
 
-O SWPC publica arquivos JSON com as leituras recentes (6 horas, 1, 3 ou 7 dias).
-Não há histórico mais antigo nesse serviço: para eventos passados use a simulação
-de fluxo (POST /v1/radiation/proton-flux/simulate).
+SWPC publishes JSON files with recent readings (6 hours, 1, 3 or 7 days).
+The service has no older history: for past events use the flux simulation
+(POST /v1/radiation/proton-flux/simulate).
 """
 
 import os
@@ -17,7 +17,7 @@ SwpcWindow = Literal['6-hour', '1-day', '3-day', '7-day']
 
 
 class SwpcError(Exception):
-    """Falha ao consultar a NOAA SWPC (rede ou resposta inválida)."""
+    """NOAA SWPC request failure (network or invalid response)."""
 
     def __init__(self, message: str, status_code: int | None = None):
         super().__init__(message)
@@ -45,18 +45,18 @@ class SwpcClient:
         self.settings = settings or SwpcSettings.from_environment()
 
     def integral_protons(self, window: SwpcWindow = '1-day') -> list[dict]:
-        """Leituras no formato do SWPC: time_tag, satellite, flux (pfu) e energy (ex.: '>=10 MeV')."""
+        """Readings in SWPC format: time_tag, satellite, flux (pfu) and energy (e.g. '>=10 MeV')."""
         url = f'{self.settings.base_url}/{self.settings.satellite}/integral-protons-{window}.json'
         try:
             response = self.client.get(url, timeout=self.settings.timeout_seconds)
         except httpx.HTTPError as exc:
-            raise SwpcError(f'Falha de rede ao consultar a NOAA SWPC: {exc.__class__.__name__}') from exc
+            raise SwpcError(f'Network failure while querying NOAA SWPC: {exc.__class__.__name__}') from exc
         if response.status_code >= 400:
             raise SwpcError(f'A NOAA SWPC respondeu {response.status_code}', response.status_code)
         try:
             payload = response.json()
         except ValueError as exc:
-            raise SwpcError('Resposta da NOAA SWPC não é JSON válido') from exc
+            raise SwpcError('NOAA SWPC response is not valid JSON') from exc
         if not isinstance(payload, list) or not all(isinstance(item, dict) for item in payload):
-            raise SwpcError('Formato inesperado na resposta da NOAA SWPC')
+            raise SwpcError('Unexpected NOAA SWPC response format')
         return payload

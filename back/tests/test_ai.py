@@ -10,8 +10,8 @@ from app.main import app
 from app.providers.openai_compatible import OpenAiCompatibleProvider
 
 
-REPORT = "Senti dor de cabeça depois do treino"
-EXTRACTION = {"symptom": "dor de cabeça", "activity_context": "depois do treino"}
+REPORT = "I had a headache after training"
+EXTRACTION = {"symptom": "headache", "activity_context": "after training"}
 
 
 @pytest.mark.parametrize("api_key", ["", "fictional-key"])

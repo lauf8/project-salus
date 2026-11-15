@@ -110,7 +110,7 @@ def test_read_is_separate_from_acknowledgment_and_resolution(records):
     assert service.summary()['pending_count'] == 0
     assert service.list_notifications('all', None, 1, 20)['data'][0].read_at is not None
     assert service.read_all()['marked_count'] == 0
-    resolved = HealthAlertService(session, doctor).resolve(astronaut.id, mission.id, alert.id, AlertResolve(note='Avaliação registrada'))
+    resolved = HealthAlertService(session, doctor).resolve(astronaut.id, mission.id, alert.id, AlertResolve(note='Assessment recorded'))
     assert resolved.status == 'resolved'
     assert service.list_notifications('all', None, 1, 20)['data'][0].alert_status == 'resolved'
 
@@ -119,7 +119,7 @@ def test_resolved_alert_does_not_remain_in_pending_badge(records):
     session, doctor, astronaut, outsider, mission = records
     HealthService(session, astronaut).create(astronaut.id, payload(mission.id))
     notification = session.exec(select(HealthNotification)).one()
-    HealthAlertService(session, doctor).resolve(astronaut.id, mission.id, notification.alert_id, AlertResolve(note='Avaliação registrada'))
+    HealthAlertService(session, doctor).resolve(astronaut.id, mission.id, notification.alert_id, AlertResolve(note='Assessment recorded'))
     summary = NotificationService(session, doctor).summary()
     assert summary == {'unread_count': 1, 'pending_count': 0}
     assert NotificationService(session, doctor).list_notifications('pending', None, 1, 20)['data'] == []
@@ -176,7 +176,7 @@ def test_notification_http_pagination_visibility_and_read_actions(catalog_api):
         call('astronaut', 'POST', base + '/observations', body, 201)
         alert_id = call('doctor', 'GET', base + f'/alerts?mission_id={mission_id}')['data'][0]['id']
         if index < 2:
-            call('doctor', 'POST', base + f'/alerts/{alert_id}/resolve?mission_id={mission_id}', {'note': 'Avaliação registrada'})
+            call('doctor', 'POST', base + f'/alerts/{alert_id}/resolve?mission_id={mission_id}', {'note': 'Assessment recorded'})
     first = call('doctor', 'GET', '/notifications?status=all&page=1&per_page=2')
     second = call('doctor', 'GET', '/notifications?status=all&page=2&per_page=2')
     assert first['pagination']['total'] == 3

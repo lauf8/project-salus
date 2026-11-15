@@ -52,7 +52,6 @@ function FluxChart({ readings }) {
   const series = useMemo(() => fluxSeries(readings).map(point => ({ ...point, flux: Math.max(point.flux, 0.01) })), [readings]);
   if (!series.length) return <p>No proton flux readings in this period. Import recent data from NOAA SWPC or simulate the flux of an SEP.</p>;
   const peak = Math.max(...series.map(point => point.flux));
-  // Décadas de 0,1 pfu até a primeira potência de 10 acima do pico.
   const ticks = Array.from({ length: Math.max(2, Math.ceil(Math.log10(peak)) + 2) }, (_, index) => 10 ** (index - 1));
   return <>
     <p>Peak ≥10 MeV flux: <strong>{peak.toLocaleString('en-US', { maximumFractionDigits: 1 })} pfu</strong>{solarRadiationScale(peak) && ` · NOAA ${solarRadiationScale(peak)}`}{series.some(point => point.simulated) && ' · includes simulated readings'}</p>

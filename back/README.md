@@ -7,14 +7,14 @@ this directory uses `nasa_postgres_data`. The default directory name `back`
 can select an unrelated older volume (`back_postgres_data`, PostgreSQL 13).
 Do not delete that volume to resolve a version mismatch.
 
-## Banco do monitoramento nesta instalação
+## Monitoring database in this installation
 
-A variável `NASA_DATABASE` em `.env` seleciona o banco usado pela API; quando
-omitida, a API usa `POSTGRES_DB`. O banco selecionado deve existir. Nesta máquina,
-`nasa_front_validation_20261111` contém o monitoramento já migrado. `app_db`
-contém tabelas de outro sistema e uma revisão Alembic ausente neste projeto;
-ele deve permanecer separado. Veja [DEMO.md](DEMO.md) para a conta e os cenários
-fictícios de demonstração.
+The `NASA_DATABASE` variable in `.env` selects the database used by the API; when
+omitted, the API uses `POSTGRES_DB`. The selected database must exist. On the
+development machine, `nasa_front_validation_20261111` contains the migrated
+monitoring data. `app_db` contains tables from another system and an Alembic
+revision missing from this project; it must stay separate. See [DEMO.md](DEMO.md)
+for the account and the fictional demonstration scenarios.
 
 ## Fresh installation
 
@@ -173,7 +173,7 @@ codes automatically:
 ```bash
 curl --fail-with-body http://127.0.0.1:8000/demo/assessments/extract \
   -H 'Content-Type: application/json' \
-  -d '{"context":"Senti dor de cabeça depois do treino","confirmed_symptom_codes":["headache"]}'
+  -d '{"context":"I had a headache after training","confirmed_symptom_codes":["headache"]}'
 ```
 
 The service sends the report, confirmed codes, and `reference_excerpts` before
@@ -470,9 +470,9 @@ For types with multiple assigned exams, pass the checklist exam ID to
 An ambiguous type-only lookup returns 409. The existing preflight date rule
 remains: a result must have been performed before mission start, when configured.
 
-In the frontend, use **Exames** to manage definitions and result fields. In
-**Missões → Requisitos**, choose a catalog exam and a deadline; the existing
-checklist assigns it to astronaut members. In **Checklist → Histórico**, the
+In the frontend, use **Exams** to manage definitions and result fields. In
+the mission **Requirements**, choose a catalog exam and a deadline; the existing
+checklist assigns it to astronaut members. In the checklist **History**, the
 flight surgeon records structured results and reviews, while the astronaut has
 a read-only view of their own records. Correcting a reviewed result is hidden.
 

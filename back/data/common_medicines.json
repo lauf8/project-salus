@@ -5,7 +5,7 @@
   "sources": {
     "US": {
       "url": "https://clincalc.com/drugstats/Top200Drugs.aspx",
-      "description": "ClinCalc DrugStats, outpatient prescription counts, 2024; first 100 generic entries, names translated to Portuguese.",
+      "description": "ClinCalc DrugStats, outpatient prescription counts, 2024; first 100 generic entries, English generic names.",
       "license": "CC BY-SA 4.0"
     },
     "BR": {
@@ -15,7 +15,7 @@
     "indications": {
       "url": "https://dailymed.nlm.nih.gov/dailymed/",
       "brazil_url": "https://consultas.anvisa.gov.br/#/bulario/",
-      "description": "Brief Portuguese summaries; indications depend on formulation and jurisdiction."
+      "description": "Brief English summaries; indications depend on formulation and jurisdiction."
     },
     "additional_indication_sources": [
       "https://www.gov.br/anvisa/pt-br/sistemas/bulario-eletronico",
@@ -29,11 +29,11 @@
   },
   "medicines": [
     {
-      "name": "Atorvastatina",
+      "name": "Atorvastatin",
       "active_ingredients": [
-        "Atorvastatina"
+        "Atorvastatin"
       ],
-      "main_indications": "Colesterol elevado e prevenção de eventos cardiovasculares.",
+      "main_indications": "High cholesterol and prevention of cardiovascular events.",
       "reference_query": "atorvastatin",
       "markets": [
         "US",
@@ -41,11 +41,11 @@
       ]
     },
     {
-      "name": "Levotiroxina",
+      "name": "Levothyroxine",
       "active_ingredients": [
-        "Levotiroxina"
+        "Levothyroxine"
       ],
-      "main_indications": "Reposição hormonal no hipotireoidismo.",
+      "main_indications": "Hormone replacement in hypothyroidism.",
       "reference_query": "levothyroxine",
       "markets": [
         "US",
@@ -53,11 +53,11 @@
       ]
     },
     {
-      "name": "Metformina",
+      "name": "Metformin",
       "active_ingredients": [
-        "Metformina"
+        "Metformin"
       ],
-      "main_indications": "Diabetes tipo 2.",
+      "main_indications": "Type 2 diabetes.",
       "reference_query": "metformin",
       "markets": [
         "US",
@@ -65,11 +65,11 @@
       ]
     },
     {
-      "name": "Anlodipino",
+      "name": "Amlodipine",
       "active_ingredients": [
-        "Anlodipino"
+        "Amlodipine"
       ],
-      "main_indications": "Hipertensão arterial e angina.",
+      "main_indications": "Hypertension and angina.",
       "reference_query": "amlodipine",
       "markets": [
         "US",
@@ -81,7 +81,7 @@
       "active_ingredients": [
         "Lisinopril"
       ],
-      "main_indications": "Hipertensão arterial e insuficiência cardíaca.",
+      "main_indications": "Hypertension and heart failure.",
       "reference_query": "lisinopril",
       "markets": [
         "US"
@@ -92,7 +92,7 @@
       "active_ingredients": [
         "Salbutamol"
       ],
-      "main_indications": "Broncoespasmo associado à asma ou à doença pulmonar obstrutiva crônica.",
+      "main_indications": "Bronchospasm associated with asthma or chronic obstructive pulmonary disease.",
       "reference_query": "albuterol",
       "markets": [
         "US",
@@ -100,11 +100,11 @@
       ]
     },
     {
-      "name": "Losartana",
+      "name": "Losartan",
       "active_ingredients": [
-        "Losartana"
+        "Losartan"
       ],
-      "main_indications": "Hipertensão arterial e nefropatia diabética em pacientes selecionados.",
+      "main_indications": "Hypertension and diabetic nephropathy in selected patients.",
       "reference_query": "losartan",
       "markets": [
         "US",
@@ -116,7 +116,7 @@
       "active_ingredients": [
         "Metoprolol"
       ],
-      "main_indications": "Hipertensão arterial, angina e insuficiência cardíaca, conforme apresentação.",
+      "main_indications": "Hypertension, angina and heart failure, depending on the formulation.",
       "reference_query": "metoprolol",
       "markets": [
         "US",
@@ -124,11 +124,11 @@
       ]
     },
     {
-      "name": "Rosuvastatina",
+      "name": "Rosuvastatin",
       "active_ingredients": [
-        "Rosuvastatina"
+        "Rosuvastatin"
       ],
-      "main_indications": "Colesterol elevado e prevenção de eventos cardiovasculares.",
+      "main_indications": "High cholesterol and prevention of cardiovascular events.",
       "reference_query": "rosuvastatin",
       "markets": [
         "US",
@@ -136,11 +136,11 @@
       ]
     },
     {
-      "name": "Omeprazol",
+      "name": "Omeprazole",
       "active_ingredients": [
-        "Omeprazol"
+        "Omeprazole"
       ],
-      "main_indications": "Refluxo gastroesofágico e úlceras gastroduodenais.",
+      "main_indications": "Gastroesophageal reflux and gastroduodenal ulcers.",
       "reference_query": "omeprazole",
       "markets": [
         "US",
@@ -148,22 +148,22 @@
       ]
     },
     {
-      "name": "Gabapentina",
+      "name": "Gabapentin",
       "active_ingredients": [
-        "Gabapentina"
+        "Gabapentin"
       ],
-      "main_indications": "Crises epilépticas focais e dor neuropática, conforme indicação aprovada.",
+      "main_indications": "Focal epileptic seizures and neuropathic pain, per the approved indication.",
       "reference_query": "gabapentin",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Sertralina",
+      "name": "Sertraline",
       "active_ingredients": [
-        "Sertralina"
+        "Sertraline"
       ],
-      "main_indications": "Depressão, transtorno obsessivo-compulsivo e transtornos de ansiedade.",
+      "main_indications": "Depression, obsessive-compulsive disorder and anxiety disorders.",
       "reference_query": "sertraline",
       "markets": [
         "US",
@@ -175,7 +175,7 @@
       "active_ingredients": [
         "Escitalopram"
       ],
-      "main_indications": "Depressão e transtorno de ansiedade generalizada.",
+      "main_indications": "Depression and generalized anxiety disorder.",
       "reference_query": "escitalopram",
       "markets": [
         "US",
@@ -183,11 +183,11 @@
       ]
     },
     {
-      "name": "Semaglutida",
+      "name": "Semaglutide",
       "active_ingredients": [
-        "Semaglutida"
+        "Semaglutide"
       ],
-      "main_indications": "Diabetes tipo 2 e controle crônico do peso, conforme apresentação.",
+      "main_indications": "Type 2 diabetes and chronic weight management, depending on the formulation.",
       "reference_query": "semaglutide",
       "markets": [
         "US",
@@ -195,25 +195,25 @@
       ]
     },
     {
-      "name": "Sais mistos de anfetamina",
+      "name": "Mixed amphetamine salts",
       "active_ingredients": [
-        "Sulfato de dextroanfetamina",
-        "Sacarato de dextroanfetamina",
-        "Sulfato de anfetamina",
-        "Aspartato de anfetamina"
+        "Dextroamphetamine sulfate",
+        "Dextroamphetamine saccharate",
+        "Amphetamine sulfate",
+        "Amphetamine aspartate"
       ],
-      "main_indications": "Transtorno de déficit de atenção e hiperatividade e narcolepsia, conforme apresentação.",
+      "main_indications": "Attention-deficit/hyperactivity disorder and narcolepsy, depending on the formulation.",
       "reference_query": "amphetamine dextroamphetamine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Pantoprazol",
+      "name": "Pantoprazole",
       "active_ingredients": [
-        "Pantoprazol"
+        "Pantoprazole"
       ],
-      "main_indications": "Refluxo gastroesofágico e esofagite erosiva.",
+      "main_indications": "Gastroesophageal reflux and erosive esophagitis.",
       "reference_query": "pantoprazole",
       "markets": [
         "US",
@@ -221,22 +221,22 @@
       ]
     },
     {
-      "name": "Bupropiona",
+      "name": "Bupropion",
       "active_ingredients": [
-        "Bupropiona"
+        "Bupropion"
       ],
-      "main_indications": "Depressão e auxílio à cessação do tabagismo, conforme apresentação.",
+      "main_indications": "Depression and smoking cessation aid, depending on the formulation.",
       "reference_query": "bupropion",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Hidroclorotiazida",
+      "name": "Hydrochlorothiazide",
       "active_ingredients": [
-        "Hidroclorotiazida"
+        "Hydrochlorothiazide"
       ],
-      "main_indications": "Hipertensão arterial e edema.",
+      "main_indications": "Hypertension and edema.",
       "reference_query": "hydrochlorothiazide",
       "markets": [
         "US",
@@ -244,11 +244,11 @@
       ]
     },
     {
-      "name": "Fluoxetina",
+      "name": "Fluoxetine",
       "active_ingredients": [
-        "Fluoxetina"
+        "Fluoxetine"
       ],
-      "main_indications": "Depressão, transtorno obsessivo-compulsivo e bulimia nervosa.",
+      "main_indications": "Depression, obsessive-compulsive disorder and bulimia nervosa.",
       "reference_query": "fluoxetine",
       "markets": [
         "US",
@@ -256,33 +256,33 @@
       ]
     },
     {
-      "name": "Trazodona",
+      "name": "Trazodone",
       "active_ingredients": [
-        "Trazodona"
+        "Trazodone"
       ],
-      "main_indications": "Depressão.",
+      "main_indications": "Depression.",
       "reference_query": "trazodone",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Montelucaste",
+      "name": "Montelukast",
       "active_ingredients": [
-        "Montelucaste"
+        "Montelukast"
       ],
-      "main_indications": "Controle da asma e rinite alérgica em situações específicas.",
+      "main_indications": "Asthma control and allergic rhinitis in specific situations.",
       "reference_query": "montelukast",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Amoxicilina",
+      "name": "Amoxicillin",
       "active_ingredients": [
-        "Amoxicilina"
+        "Amoxicillin"
       ],
-      "main_indications": "Infecções bacterianas por microrganismos sensíveis.",
+      "main_indications": "Bacterial infections caused by susceptible organisms.",
       "reference_query": "amoxicillin",
       "markets": [
         "US",
@@ -290,44 +290,44 @@
       ]
     },
     {
-      "name": "Fluticasona",
+      "name": "Fluticasone",
       "active_ingredients": [
-        "Fluticasona"
+        "Fluticasone"
       ],
-      "main_indications": "Rinite alérgica ou controle da asma, conforme apresentação.",
+      "main_indications": "Allergic rhinitis or asthma control, depending on the formulation.",
       "reference_query": "fluticasone",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Tansulosina",
+      "name": "Tamsulosin",
       "active_ingredients": [
-        "Tansulosina"
+        "Tamsulosin"
       ],
-      "main_indications": "Sintomas urinários associados à hiperplasia prostática benigna.",
+      "main_indications": "Urinary symptoms associated with benign prostatic hyperplasia.",
       "reference_query": "tamsulosin",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Apixabana",
+      "name": "Apixaban",
       "active_ingredients": [
-        "Apixabana"
+        "Apixaban"
       ],
-      "main_indications": "Prevenção de AVC na fibrilação atrial não valvar e prevenção ou tratamento de tromboembolismo venoso.",
+      "main_indications": "Stroke prevention in non-valvular atrial fibrillation and prevention or treatment of venous thromboembolism.",
       "reference_query": "apixaban",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Sinvastatina",
+      "name": "Simvastatin",
       "active_ingredients": [
-        "Sinvastatina"
+        "Simvastatin"
       ],
-      "main_indications": "Colesterol elevado e prevenção de eventos cardiovasculares.",
+      "main_indications": "High cholesterol and prevention of cardiovascular events.",
       "reference_query": "simvastatin",
       "markets": [
         "US",
@@ -335,22 +335,22 @@
       ]
     },
     {
-      "name": "Insulina glargina",
+      "name": "Insulin glargine",
       "active_ingredients": [
-        "Insulina glargina"
+        "Insulin glargine"
       ],
-      "main_indications": "Controle da glicemia no diabetes mellitus.",
+      "main_indications": "Glycemic control in diabetes mellitus.",
       "reference_query": "insulin glargine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Empagliflozina",
+      "name": "Empagliflozin",
       "active_ingredients": [
-        "Empagliflozina"
+        "Empagliflozin"
       ],
-      "main_indications": "Diabetes tipo 2, insuficiência cardíaca e doença renal crônica em pacientes elegíveis.",
+      "main_indications": "Type 2 diabetes, heart failure and chronic kidney disease in eligible patients.",
       "reference_query": "empagliflozin",
       "markets": [
         "US",
@@ -358,11 +358,11 @@
       ]
     },
     {
-      "name": "Furosemida",
+      "name": "Furosemide",
       "active_ingredients": [
-        "Furosemida"
+        "Furosemide"
       ],
-      "main_indications": "Edema associado a doenças cardíacas, renais ou hepáticas e hipertensão arterial.",
+      "main_indications": "Edema associated with heart, kidney or liver disease, and hypertension.",
       "reference_query": "furosemide",
       "markets": [
         "US",
@@ -374,63 +374,63 @@
       "active_ingredients": [
         "Meloxicam"
       ],
-      "main_indications": "Dor e inflamação na osteoartrite e artrite reumatoide.",
+      "main_indications": "Pain and inflammation in osteoarthritis and rheumatoid arthritis.",
       "reference_query": "meloxicam",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Paracetamol + Hidrocodona",
+      "name": "Paracetamol + Hydrocodone",
       "active_ingredients": [
         "Paracetamol",
-        "Hidrocodona"
+        "Hydrocodone"
       ],
-      "main_indications": "Dor suficientemente intensa para exigir um analgésico opioide quando alternativas são inadequadas.",
+      "main_indications": "Pain severe enough to require an opioid analgesic when alternatives are inadequate.",
       "reference_query": "hydrocodone acetaminophen",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Tirzepatida",
+      "name": "Tirzepatide",
       "active_ingredients": [
-        "Tirzepatida"
+        "Tirzepatide"
       ],
-      "main_indications": "Diabetes tipo 2 e controle crônico do peso, conforme apresentação.",
+      "main_indications": "Type 2 diabetes and chronic weight management, depending on the formulation.",
       "reference_query": "tirzepatide",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Metilfenidato",
+      "name": "Methylphenidate",
       "active_ingredients": [
-        "Metilfenidato"
+        "Methylphenidate"
       ],
-      "main_indications": "Transtorno de déficit de atenção e hiperatividade e narcolepsia, conforme apresentação.",
+      "main_indications": "Attention-deficit/hyperactivity disorder and narcolepsy, depending on the formulation.",
       "reference_query": "methylphenidate",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Duloxetina",
+      "name": "Duloxetine",
       "active_ingredients": [
-        "Duloxetina"
+        "Duloxetine"
       ],
-      "main_indications": "Depressão, ansiedade generalizada e determinadas síndromes de dor neuropática ou crônica.",
+      "main_indications": "Depression, generalized anxiety and certain neuropathic or chronic pain syndromes.",
       "reference_query": "duloxetine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Prednisona",
+      "name": "Prednisone",
       "active_ingredients": [
-        "Prednisona"
+        "Prednisone"
       ],
-      "main_indications": "Doenças inflamatórias, alérgicas e autoimunes responsivas a corticosteroides.",
+      "main_indications": "Inflammatory, allergic and autoimmune diseases responsive to corticosteroids.",
       "reference_query": "prednisone",
       "markets": [
         "US",
@@ -442,7 +442,7 @@
       "active_ingredients": [
         "Carvedilol"
       ],
-      "main_indications": "Insuficiência cardíaca e hipertensão arterial.",
+      "main_indications": "Heart failure and hypertension.",
       "reference_query": "carvedilol",
       "markets": [
         "US",
@@ -450,22 +450,22 @@
       ]
     },
     {
-      "name": "Famotidina",
+      "name": "Famotidine",
       "active_ingredients": [
-        "Famotidina"
+        "Famotidine"
       ],
-      "main_indications": "Refluxo gastroesofágico e úlceras gastroduodenais.",
+      "main_indications": "Gastroesophageal reflux and gastroduodenal ulcers.",
       "reference_query": "famotidine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Ibuprofeno",
+      "name": "Ibuprofen",
       "active_ingredients": [
-        "Ibuprofeno"
+        "Ibuprofen"
       ],
-      "main_indications": "Dor, febre e inflamação.",
+      "main_indications": "Pain, fever and inflammation.",
       "reference_query": "ibuprofen",
       "markets": [
         "US",
@@ -473,22 +473,22 @@
       ]
     },
     {
-      "name": "Buspirona",
+      "name": "Buspirone",
       "active_ingredients": [
-        "Buspirona"
+        "Buspirone"
       ],
-      "main_indications": "Transtornos de ansiedade.",
+      "main_indications": "Anxiety disorders.",
       "reference_query": "buspirone",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Venlafaxina",
+      "name": "Venlafaxine",
       "active_ingredients": [
-        "Venlafaxina"
+        "Venlafaxine"
       ],
-      "main_indications": "Depressão e transtornos de ansiedade, conforme apresentação.",
+      "main_indications": "Depression and anxiety disorders, depending on the formulation.",
       "reference_query": "venlafaxine",
       "markets": [
         "US"
@@ -499,40 +499,40 @@
       "active_ingredients": [
         "Tramadol"
       ],
-      "main_indications": "Dor suficientemente intensa para exigir um analgésico opioide quando alternativas são inadequadas.",
+      "main_indications": "Pain severe enough to require an opioid analgesic when alternatives are inadequate.",
       "reference_query": "tramadol",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Cloreto de potássio",
+      "name": "Potassium chloride",
       "active_ingredients": [
-        "Cloreto de potássio"
+        "Potassium chloride"
       ],
-      "main_indications": "Prevenção e tratamento da deficiência de potássio.",
+      "main_indications": "Prevention and treatment of potassium deficiency.",
       "reference_query": "potassium chloride",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Hidroxizina",
+      "name": "Hydroxyzine",
       "active_ingredients": [
-        "Hidroxizina"
+        "Hydroxyzine"
       ],
-      "main_indications": "Prurido de origem alérgica e ansiedade, conforme apresentação.",
+      "main_indications": "Allergic pruritus and anxiety, depending on the formulation.",
       "reference_query": "hydroxyzine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Alopurinol",
+      "name": "Allopurinol",
       "active_ingredients": [
-        "Alopurinol"
+        "Allopurinol"
       ],
-      "main_indications": "Hiperuricemia associada à gota e outras condições específicas.",
+      "main_indications": "Hyperuricemia associated with gout and other specific conditions.",
       "reference_query": "allopurinol",
       "markets": [
         "US"
@@ -543,7 +543,7 @@
       "active_ingredients": [
         "Clopidogrel"
       ],
-      "main_indications": "Prevenção de eventos aterotrombóticos em pacientes com doença cardiovascular.",
+      "main_indications": "Prevention of atherothrombotic events in patients with cardiovascular disease.",
       "reference_query": "clopidogrel",
       "markets": [
         "US"
@@ -554,18 +554,18 @@
       "active_ingredients": [
         "Ergocalciferol"
       ],
-      "main_indications": "Deficiência de vitamina D e condições específicas do metabolismo do cálcio.",
+      "main_indications": "Vitamin D deficiency and specific calcium metabolism conditions.",
       "reference_query": "ergocalciferol",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Cetirizina",
+      "name": "Cetirizine",
       "active_ingredients": [
-        "Cetirizina"
+        "Cetirizine"
       ],
-      "main_indications": "Rinite alérgica e urticária.",
+      "main_indications": "Allergic rhinitis and urticaria.",
       "reference_query": "cetirizine",
       "markets": [
         "US",
@@ -573,11 +573,11 @@
       ]
     },
     {
-      "name": "Ondansetrona",
+      "name": "Ondansetron",
       "active_ingredients": [
-        "Ondansetrona"
+        "Ondansetron"
       ],
-      "main_indications": "Prevenção de náuseas e vômitos associados a quimioterapia, radioterapia ou cirurgia.",
+      "main_indications": "Prevention of nausea and vomiting associated with chemotherapy, radiotherapy or surgery.",
       "reference_query": "ondansetron",
       "markets": [
         "US",
@@ -585,22 +585,22 @@
       ]
     },
     {
-      "name": "Ciclobenzaprina",
+      "name": "Cyclobenzaprine",
       "active_ingredients": [
-        "Ciclobenzaprina"
+        "Cyclobenzaprine"
       ],
-      "main_indications": "Espasmos musculares associados a condições musculoesqueléticas agudas.",
+      "main_indications": "Muscle spasms associated with acute musculoskeletal conditions.",
       "reference_query": "cyclobenzaprine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Espironolactona",
+      "name": "Spironolactone",
       "active_ingredients": [
-        "Espironolactona"
+        "Spironolactone"
       ],
-      "main_indications": "Insuficiência cardíaca, edema, hipertensão arterial e hiperaldosteronismo.",
+      "main_indications": "Heart failure, edema, hypertension and hyperaldosteronism.",
       "reference_query": "spironolactone",
       "markets": [
         "US",
@@ -608,11 +608,11 @@
       ]
     },
     {
-      "name": "Oxicodona",
+      "name": "Oxycodone",
       "active_ingredients": [
-        "Oxicodona"
+        "Oxycodone"
       ],
-      "main_indications": "Dor suficientemente intensa para exigir um analgésico opioide quando alternativas são inadequadas.",
+      "main_indications": "Pain severe enough to require an opioid analgesic when alternatives are inadequate.",
       "reference_query": "oxycodone",
       "markets": [
         "US"
@@ -623,18 +623,18 @@
       "active_ingredients": [
         "Estradiol"
       ],
-      "main_indications": "Sintomas associados à menopausa e reposição estrogênica em situações específicas.",
+      "main_indications": "Menopause-associated symptoms and estrogen replacement in specific situations.",
       "reference_query": "estradiol",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Ácido acetilsalicílico",
+      "name": "Acetylsalicylic acid",
       "active_ingredients": [
-        "Ácido acetilsalicílico"
+        "Acetylsalicylic acid"
       ],
-      "main_indications": "Dor e febre; prevenção de eventos cardiovasculares em pacientes selecionados, conforme apresentação.",
+      "main_indications": "Pain and fever; prevention of cardiovascular events in selected patients, depending on the formulation.",
       "reference_query": "aspirin",
       "markets": [
         "US",
@@ -642,11 +642,11 @@
       ]
     },
     {
-      "name": "Glipizida",
+      "name": "Glipizide",
       "active_ingredients": [
-        "Glipizida"
+        "Glipizide"
       ],
-      "main_indications": "Diabetes tipo 2.",
+      "main_indications": "Type 2 diabetes.",
       "reference_query": "glipizide",
       "markets": [
         "US"
@@ -657,18 +657,18 @@
       "active_ingredients": [
         "Zolpidem"
       ],
-      "main_indications": "Insônia, conforme indicação e apresentação.",
+      "main_indications": "Insomnia, depending on the indication and formulation.",
       "reference_query": "zolpidem",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Lamotrigina",
+      "name": "Lamotrigine",
       "active_ingredients": [
-        "Lamotrigina"
+        "Lamotrigine"
       ],
-      "main_indications": "Epilepsia e manutenção do tratamento do transtorno bipolar tipo 1.",
+      "main_indications": "Epilepsy and maintenance treatment of bipolar I disorder.",
       "reference_query": "lamotrigine",
       "markets": [
         "US"
@@ -679,7 +679,7 @@
       "active_ingredients": [
         "Alprazolam"
       ],
-      "main_indications": "Transtornos de ansiedade e transtorno do pânico.",
+      "main_indications": "Anxiety disorders and panic disorder.",
       "reference_query": "alprazolam",
       "markets": [
         "US",
@@ -691,29 +691,29 @@
       "active_ingredients": [
         "Citalopram"
       ],
-      "main_indications": "Depressão.",
+      "main_indications": "Depression.",
       "reference_query": "citalopram",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Pregabalina",
+      "name": "Pregabalin",
       "active_ingredients": [
-        "Pregabalina"
+        "Pregabalin"
       ],
-      "main_indications": "Dor neuropática, fibromialgia e tratamento adjuvante de crises epilépticas focais, conforme indicação aprovada.",
+      "main_indications": "Neuropathic pain, fibromyalgia and adjunctive treatment of focal epileptic seizures, per the approved indication.",
       "reference_query": "pregabalin",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Colecalciferol",
+      "name": "Cholecalciferol",
       "active_ingredients": [
-        "Colecalciferol"
+        "Cholecalciferol"
       ],
-      "main_indications": "Prevenção e tratamento da deficiência de vitamina D.",
+      "main_indications": "Prevention and treatment of vitamin D deficiency.",
       "reference_query": "cholecalciferol",
       "markets": [
         "US",
@@ -725,7 +725,7 @@
       "active_ingredients": [
         "Clonazepam"
       ],
-      "main_indications": "Determinados transtornos convulsivos e transtorno do pânico.",
+      "main_indications": "Certain seizure disorders and panic disorder.",
       "reference_query": "clonazepam",
       "markets": [
         "US",
@@ -733,11 +733,11 @@
       ]
     },
     {
-      "name": "Azitromicina",
+      "name": "Azithromycin",
       "active_ingredients": [
-        "Azitromicina"
+        "Azithromycin"
       ],
-      "main_indications": "Infecções bacterianas por microrganismos sensíveis.",
+      "main_indications": "Bacterial infections caused by susceptible organisms.",
       "reference_query": "azithromycin",
       "markets": [
         "US",
@@ -745,44 +745,44 @@
       ]
     },
     {
-      "name": "Pravastatina",
+      "name": "Pravastatin",
       "active_ingredients": [
-        "Pravastatina"
+        "Pravastatin"
       ],
-      "main_indications": "Colesterol elevado e prevenção de eventos cardiovasculares.",
+      "main_indications": "High cholesterol and prevention of cardiovascular events.",
       "reference_query": "pravastatin",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Valsartana",
+      "name": "Valsartan",
       "active_ingredients": [
-        "Valsartana"
+        "Valsartan"
       ],
-      "main_indications": "Hipertensão arterial e insuficiência cardíaca.",
+      "main_indications": "Hypertension and heart failure.",
       "reference_query": "valsartan",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Ezetimiba",
+      "name": "Ezetimibe",
       "active_ingredients": [
-        "Ezetimiba"
+        "Ezetimibe"
       ],
-      "main_indications": "Colesterol elevado.",
+      "main_indications": "High cholesterol.",
       "reference_query": "ezetimibe",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Diclofenaco",
+      "name": "Diclofenac",
       "active_ingredients": [
-        "Diclofenaco"
+        "Diclofenac"
       ],
-      "main_indications": "Dor e inflamação em condições musculoesqueléticas ou articulares, conforme apresentação.",
+      "main_indications": "Pain and inflammation in musculoskeletal or joint conditions, depending on the formulation.",
       "reference_query": "diclofenac",
       "markets": [
         "US",
@@ -790,23 +790,23 @@
       ]
     },
     {
-      "name": "Insulina lispro",
+      "name": "Insulin lispro",
       "active_ingredients": [
-        "Insulina lispro"
+        "Insulin lispro"
       ],
-      "main_indications": "Controle da glicemia no diabetes mellitus.",
+      "main_indications": "Glycemic control in diabetes mellitus.",
       "reference_query": "insulin lispro",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Etinilestradiol + Noretisterona",
+      "name": "Ethinylestradiol + Norethisterone",
       "active_ingredients": [
-        "Etinilestradiol",
-        "Noretisterona"
+        "Ethinylestradiol",
+        "Norethisterone"
       ],
-      "main_indications": "Contracepção hormonal e outras indicações específicas da apresentação.",
+      "main_indications": "Hormonal contraception and other formulation-specific indications.",
       "reference_query": "ethinyl estradiol norethindrone",
       "markets": [
         "US"
@@ -817,7 +817,7 @@
       "active_ingredients": [
         "Propranolol"
       ],
-      "main_indications": "Hipertensão arterial, angina, determinadas arritmias e prevenção da enxaqueca.",
+      "main_indications": "Hypertension, angina, certain arrhythmias and migraine prevention.",
       "reference_query": "propranolol",
       "markets": [
         "US",
@@ -825,11 +825,11 @@
       ]
     },
     {
-      "name": "Latanoprosta",
+      "name": "Latanoprost",
       "active_ingredients": [
-        "Latanoprosta"
+        "Latanoprost"
       ],
-      "main_indications": "Glaucoma de ângulo aberto e hipertensão ocular.",
+      "main_indications": "Open-angle glaucoma and ocular hypertension.",
       "reference_query": "latanoprost",
       "markets": [
         "US"
@@ -840,7 +840,7 @@
       "active_ingredients": [
         "Atenolol"
       ],
-      "main_indications": "Hipertensão arterial e angina.",
+      "main_indications": "Hypertension and angina.",
       "reference_query": "atenolol",
       "markets": [
         "US",
@@ -848,34 +848,34 @@
       ]
     },
     {
-      "name": "Lisdexanfetamina",
+      "name": "Lisdexamfetamine",
       "active_ingredients": [
-        "Lisdexanfetamina"
+        "Lisdexamfetamine"
       ],
-      "main_indications": "Transtorno de déficit de atenção e hiperatividade e transtorno de compulsão alimentar em adultos, conforme indicação aprovada.",
+      "main_indications": "Attention-deficit/hyperactivity disorder and binge eating disorder in adults, per the approved indication.",
       "reference_query": "lisdexamfetamine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Doxiciclina",
+      "name": "Doxycycline",
       "active_ingredients": [
-        "Doxiciclina"
+        "Doxycycline"
       ],
-      "main_indications": "Infecções bacterianas por microrganismos sensíveis e acne em situações específicas.",
+      "main_indications": "Bacterial infections caused by susceptible organisms and acne in specific situations.",
       "reference_query": "doxycycline",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Amoxicilina + Ácido clavulânico",
+      "name": "Amoxicillin + Clavulanic acid",
       "active_ingredients": [
-        "Amoxicilina",
-        "Ácido clavulânico"
+        "Amoxicillin",
+        "Clavulanic acid"
       ],
-      "main_indications": "Infecções bacterianas por microrganismos sensíveis à associação.",
+      "main_indications": "Bacterial infections caused by organisms susceptible to the combination.",
       "reference_query": "amoxicillin clavulanate",
       "markets": [
         "US",
@@ -883,23 +883,23 @@
       ]
     },
     {
-      "name": "Dulaglutida",
+      "name": "Dulaglutide",
       "active_ingredients": [
-        "Dulaglutida"
+        "Dulaglutide"
       ],
-      "main_indications": "Diabetes tipo 2 e redução de risco cardiovascular em pacientes elegíveis.",
+      "main_indications": "Type 2 diabetes and cardiovascular risk reduction in eligible patients.",
       "reference_query": "dulaglutide",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Hidroclorotiazida + Lisinopril",
+      "name": "Hydrochlorothiazide + Lisinopril",
       "active_ingredients": [
-        "Hidroclorotiazida",
+        "Hydrochlorothiazide",
         "Lisinopril"
       ],
-      "main_indications": "Hipertensão arterial.",
+      "main_indications": "Hypertension.",
       "reference_query": "hydrochlorothiazide lisinopril",
       "markets": [
         "US"
@@ -910,96 +910,96 @@
       "active_ingredients": [
         "Lorazepam"
       ],
-      "main_indications": "Transtornos de ansiedade; outras indicações dependem da apresentação.",
+      "main_indications": "Anxiety disorders; other indications depend on the formulation.",
       "reference_query": "lorazepam",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Fluticasona + Salmeterol",
+      "name": "Fluticasone + Salmeterol",
       "active_ingredients": [
-        "Fluticasona",
+        "Fluticasone",
         "Salmeterol"
       ],
-      "main_indications": "Controle da asma e manutenção do tratamento da doença pulmonar obstrutiva crônica, conforme apresentação.",
+      "main_indications": "Asthma control and maintenance treatment of chronic obstructive pulmonary disease, depending on the formulation.",
       "reference_query": "fluticasone salmeterol",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Insulina asparte",
+      "name": "Insulin aspart",
       "active_ingredients": [
-        "Insulina asparte"
+        "Insulin aspart"
       ],
-      "main_indications": "Controle da glicemia no diabetes mellitus.",
+      "main_indications": "Glycemic control in diabetes mellitus.",
       "reference_query": "insulin aspart",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Celecoxibe",
+      "name": "Celecoxib",
       "active_ingredients": [
-        "Celecoxibe"
+        "Celecoxib"
       ],
-      "main_indications": "Dor e inflamação na osteoartrite, artrite reumatoide e outras condições específicas.",
+      "main_indications": "Pain and inflammation in osteoarthritis, rheumatoid arthritis and other specific conditions.",
       "reference_query": "celecoxib",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Finasterida",
+      "name": "Finasteride",
       "active_ingredients": [
-        "Finasterida"
+        "Finasteride"
       ],
-      "main_indications": "Hiperplasia prostática benigna ou alopecia androgenética, conforme apresentação.",
+      "main_indications": "Benign prostatic hyperplasia or androgenetic alopecia, depending on the formulation.",
       "reference_query": "finasteride",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Quetiapina",
+      "name": "Quetiapine",
       "active_ingredients": [
-        "Quetiapina"
+        "Quetiapine"
       ],
-      "main_indications": "Esquizofrenia e transtorno bipolar; outras indicações dependem da apresentação.",
+      "main_indications": "Schizophrenia and bipolar disorder; other indications depend on the formulation.",
       "reference_query": "quetiapine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Clonidina",
+      "name": "Clonidine",
       "active_ingredients": [
-        "Clonidina"
+        "Clonidine"
       ],
-      "main_indications": "Hipertensão arterial ou transtorno de déficit de atenção e hiperatividade, conforme apresentação.",
+      "main_indications": "Hypertension or attention-deficit/hyperactivity disorder, depending on the formulation.",
       "reference_query": "clonidine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Aripiprazol",
+      "name": "Aripiprazole",
       "active_ingredients": [
-        "Aripiprazol"
+        "Aripiprazole"
       ],
-      "main_indications": "Esquizofrenia e transtorno bipolar; outras indicações dependem da apresentação.",
+      "main_indications": "Schizophrenia and bipolar disorder; other indications depend on the formulation.",
       "reference_query": "aripiprazole",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Cefalexina",
+      "name": "Cefalexin",
       "active_ingredients": [
-        "Cefalexina"
+        "Cefalexin"
       ],
-      "main_indications": "Infecções bacterianas por microrganismos sensíveis.",
+      "main_indications": "Bacterial infections caused by susceptible organisms.",
       "reference_query": "cephalexin",
       "markets": [
         "US",
@@ -1007,44 +1007,44 @@
       ]
     },
     {
-      "name": "Alendronato",
+      "name": "Alendronate",
       "active_ingredients": [
-        "Alendronato"
+        "Alendronate"
       ],
-      "main_indications": "Osteoporose e doença de Paget óssea, conforme indicação aprovada.",
+      "main_indications": "Osteoporosis and Paget disease of bone, per the approved indication.",
       "reference_query": "alendronate",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Topiramato",
+      "name": "Topiramate",
       "active_ingredients": [
-        "Topiramato"
+        "Topiramate"
       ],
-      "main_indications": "Epilepsia e prevenção da enxaqueca.",
+      "main_indications": "Epilepsy and migraine prevention.",
       "reference_query": "topiramate",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Tizanidina",
+      "name": "Tizanidine",
       "active_ingredients": [
-        "Tizanidina"
+        "Tizanidine"
       ],
-      "main_indications": "Espasticidade muscular.",
+      "main_indications": "Muscle spasticity.",
       "reference_query": "tizanidine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Dapagliflozina",
+      "name": "Dapagliflozin",
       "active_ingredients": [
-        "Dapagliflozina"
+        "Dapagliflozin"
       ],
-      "main_indications": "Diabetes tipo 2, insuficiência cardíaca e doença renal crônica em pacientes elegíveis.",
+      "main_indications": "Type 2 diabetes, heart failure and chronic kidney disease in eligible patients.",
       "reference_query": "dapagliflozin",
       "markets": [
         "US",
@@ -1052,57 +1052,57 @@
       ]
     },
     {
-      "name": "Paracetamol + Oxicodona",
+      "name": "Paracetamol + Oxycodone",
       "active_ingredients": [
         "Paracetamol",
-        "Oxicodona"
+        "Oxycodone"
       ],
-      "main_indications": "Dor suficientemente intensa para exigir um analgésico opioide quando alternativas são inadequadas.",
+      "main_indications": "Pain severe enough to require an opioid analgesic when alternatives are inadequate.",
       "reference_query": "oxycodone acetaminophen",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Hidroclorotiazida + Losartana",
+      "name": "Hydrochlorothiazide + Losartan",
       "active_ingredients": [
-        "Hidroclorotiazida",
-        "Losartana"
+        "Hydrochlorothiazide",
+        "Losartan"
       ],
-      "main_indications": "Hipertensão arterial.",
+      "main_indications": "Hypertension.",
       "reference_query": "hydrochlorothiazide losartan",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Olmesartana",
+      "name": "Olmesartan",
       "active_ingredients": [
-        "Olmesartana"
+        "Olmesartan"
       ],
-      "main_indications": "Hipertensão arterial.",
+      "main_indications": "Hypertension.",
       "reference_query": "olmesartan",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Testosterona",
+      "name": "Testosterone",
       "active_ingredients": [
-        "Testosterona"
+        "Testosterone"
       ],
-      "main_indications": "Reposição hormonal em homens com deficiência de testosterona associada a condições específicas.",
+      "main_indications": "Hormone replacement in men with testosterone deficiency associated with specific conditions.",
       "reference_query": "testosterone",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Amitriptilina",
+      "name": "Amitriptyline",
       "active_ingredients": [
-        "Amitriptilina"
+        "Amitriptyline"
       ],
-      "main_indications": "Depressão.",
+      "main_indications": "Depression.",
       "reference_query": "amitriptyline",
       "markets": [
         "US",
@@ -1110,11 +1110,11 @@
       ]
     },
     {
-      "name": "Ácido fólico",
+      "name": "Folic acid",
       "active_ingredients": [
-        "Ácido fólico"
+        "Folic acid"
       ],
-      "main_indications": "Deficiência de folato e prevenção de defeitos do tubo neural em situações específicas.",
+      "main_indications": "Folate deficiency and prevention of neural tube defects in specific situations.",
       "reference_query": "folic acid",
       "markets": [
         "US",
@@ -1122,55 +1122,55 @@
       ]
     },
     {
-      "name": "Rivaroxabana",
+      "name": "Rivaroxaban",
       "active_ingredients": [
-        "Rivaroxabana"
+        "Rivaroxaban"
       ],
-      "main_indications": "Prevenção de AVC na fibrilação atrial não valvar e prevenção ou tratamento de tromboembolismo venoso.",
+      "main_indications": "Stroke prevention in non-valvular atrial fibrillation and prevention or treatment of venous thromboembolism.",
       "reference_query": "rivaroxaban",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Fenofibrato",
+      "name": "Fenofibrate",
       "active_ingredients": [
-        "Fenofibrato"
+        "Fenofibrate"
       ],
-      "main_indications": "Hipertrigliceridemia e determinadas dislipidemias.",
+      "main_indications": "Hypertriglyceridemia and certain dyslipidemias.",
       "reference_query": "fenofibrate",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Triancinolona",
+      "name": "Triamcinolone",
       "active_ingredients": [
-        "Triancinolona"
+        "Triamcinolone"
       ],
-      "main_indications": "Dermatoses inflamatórias ou rinite alérgica, conforme apresentação.",
+      "main_indications": "Inflammatory dermatoses or allergic rhinitis, depending on the formulation.",
       "reference_query": "triamcinolone",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Paroxetina",
+      "name": "Paroxetine",
       "active_ingredients": [
-        "Paroxetina"
+        "Paroxetine"
       ],
-      "main_indications": "Depressão e transtornos de ansiedade.",
+      "main_indications": "Depression and anxiety disorders.",
       "reference_query": "paroxetine",
       "markets": [
         "US"
       ]
     },
     {
-      "name": "Sulfato ferroso",
+      "name": "Ferrous sulfate",
       "active_ingredients": [
-        "Sulfato ferroso"
+        "Ferrous sulfate"
       ],
-      "main_indications": "Prevenção e tratamento da deficiência de ferro e da anemia ferropriva.",
+      "main_indications": "Prevention and treatment of iron deficiency and iron-deficiency anemia.",
       "reference_query": "ferrous sulfate",
       "markets": [
         "US",
@@ -1178,11 +1178,11 @@
       ]
     },
     {
-      "name": "Dipirona",
+      "name": "Metamizole",
       "active_ingredients": [
-        "Dipirona"
+        "Metamizole"
       ],
-      "main_indications": "Dor e febre.",
+      "main_indications": "Pain and fever.",
       "reference_query": "dipyrone",
       "markets": [
         "BR"
@@ -1193,7 +1193,7 @@
       "active_ingredients": [
         "Paracetamol"
       ],
-      "main_indications": "Dor e febre.",
+      "main_indications": "Pain and fever.",
       "reference_query": "acetaminophen",
       "markets": [
         "BR"
@@ -1204,7 +1204,7 @@
       "active_ingredients": [
         "Enalapril"
       ],
-      "main_indications": "Hipertensão arterial e insuficiência cardíaca.",
+      "main_indications": "Hypertension and heart failure.",
       "reference_query": "enalapril",
       "markets": [
         "BR"
@@ -1215,273 +1215,273 @@
       "active_ingredients": [
         "Captopril"
       ],
-      "main_indications": "Hipertensão arterial e insuficiência cardíaca.",
+      "main_indications": "Hypertension and heart failure.",
       "reference_query": "captopril",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Glibenclamida",
+      "name": "Glibenclamide",
       "active_ingredients": [
-        "Glibenclamida"
+        "Glibenclamide"
       ],
-      "main_indications": "Diabetes tipo 2.",
+      "main_indications": "Type 2 diabetes.",
       "reference_query": "glyburide",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Gliclazida",
+      "name": "Gliclazide",
       "active_ingredients": [
-        "Gliclazida"
+        "Gliclazide"
       ],
-      "main_indications": "Diabetes tipo 2.",
+      "main_indications": "Type 2 diabetes.",
       "reference_query": "gliclazide",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Glimepirida",
+      "name": "Glimepiride",
       "active_ingredients": [
-        "Glimepirida"
+        "Glimepiride"
       ],
-      "main_indications": "Diabetes tipo 2.",
+      "main_indications": "Type 2 diabetes.",
       "reference_query": "glimepiride",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Insulina humana NPH",
+      "name": "NPH human insulin",
       "active_ingredients": [
-        "Insulina humana"
+        "Human insulin"
       ],
-      "main_indications": "Controle da glicemia no diabetes mellitus.",
+      "main_indications": "Glycemic control in diabetes mellitus.",
       "reference_query": "human insulin isophane",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Insulina humana regular",
+      "name": "Regular human insulin",
       "active_ingredients": [
-        "Insulina humana"
+        "Human insulin"
       ],
-      "main_indications": "Controle da glicemia no diabetes mellitus.",
+      "main_indications": "Glycemic control in diabetes mellitus.",
       "reference_query": "human insulin regular",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Loratadina",
+      "name": "Loratadine",
       "active_ingredients": [
-        "Loratadina"
+        "Loratadine"
       ],
-      "main_indications": "Rinite alérgica e urticária.",
+      "main_indications": "Allergic rhinitis and urticaria.",
       "reference_query": "loratadine",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Dexclorfeniramina",
+      "name": "Dexchlorpheniramine",
       "active_ingredients": [
-        "Dexclorfeniramina"
+        "Dexchlorpheniramine"
       ],
-      "main_indications": "Sintomas de doenças alérgicas.",
+      "main_indications": "Symptoms of allergic diseases.",
       "reference_query": "dexchlorpheniramine",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Desloratadina",
+      "name": "Desloratadine",
       "active_ingredients": [
-        "Desloratadina"
+        "Desloratadine"
       ],
-      "main_indications": "Rinite alérgica e urticária.",
+      "main_indications": "Allergic rhinitis and urticaria.",
       "reference_query": "desloratadine",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Fexofenadina",
+      "name": "Fexofenadine",
       "active_ingredients": [
-        "Fexofenadina"
+        "Fexofenadine"
       ],
-      "main_indications": "Rinite alérgica e urticária.",
+      "main_indications": "Allergic rhinitis and urticaria.",
       "reference_query": "fexofenadine",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Budesonida",
+      "name": "Budesonide",
       "active_ingredients": [
-        "Budesonida"
+        "Budesonide"
       ],
-      "main_indications": "Asma, rinite alérgica ou determinadas doenças inflamatórias intestinais, conforme apresentação.",
+      "main_indications": "Asthma, allergic rhinitis or certain inflammatory bowel diseases, depending on the formulation.",
       "reference_query": "budesonide",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Budesonida + Formoterol",
+      "name": "Budesonide + Formoterol",
       "active_ingredients": [
-        "Budesonida",
+        "Budesonide",
         "Formoterol"
       ],
-      "main_indications": "Controle da asma e manutenção do tratamento da doença pulmonar obstrutiva crônica, conforme apresentação.",
+      "main_indications": "Asthma control and maintenance treatment of chronic obstructive pulmonary disease, depending on the formulation.",
       "reference_query": "budesonide formoterol",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Ipratrópio",
+      "name": "Ipratropium",
       "active_ingredients": [
-        "Ipratrópio"
+        "Ipratropium"
       ],
-      "main_indications": "Broncoespasmo associado à doença pulmonar obstrutiva crônica; outras indicações dependem da apresentação.",
+      "main_indications": "Bronchospasm associated with chronic obstructive pulmonary disease; other indications depend on the formulation.",
       "reference_query": "ipratropium",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Prednisolona",
+      "name": "Prednisolone",
       "active_ingredients": [
-        "Prednisolona"
+        "Prednisolone"
       ],
-      "main_indications": "Doenças inflamatórias, alérgicas e autoimunes responsivas a corticosteroides.",
+      "main_indications": "Inflammatory, allergic and autoimmune diseases responsive to corticosteroids.",
       "reference_query": "prednisolone",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Dexametasona",
+      "name": "Dexamethasone",
       "active_ingredients": [
-        "Dexametasona"
+        "Dexamethasone"
       ],
-      "main_indications": "Doenças inflamatórias, alérgicas e autoimunes responsivas a corticosteroides.",
+      "main_indications": "Inflammatory, allergic and autoimmune diseases responsive to corticosteroids.",
       "reference_query": "dexamethasone",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Naproxeno",
+      "name": "Naproxen",
       "active_ingredients": [
-        "Naproxeno"
+        "Naproxen"
       ],
-      "main_indications": "Dor e inflamação em condições musculoesqueléticas e articulares.",
+      "main_indications": "Pain and inflammation in musculoskeletal and joint conditions.",
       "reference_query": "naproxen",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Nimesulida",
+      "name": "Nimesulide",
       "active_ingredients": [
-        "Nimesulida"
+        "Nimesulide"
       ],
-      "main_indications": "Dor e inflamação, conforme indicação aprovada no Brasil.",
+      "main_indications": "Pain and inflammation, per the indication approved in Brazil.",
       "reference_query": "nimesulide",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Cetoprofeno",
+      "name": "Ketoprofen",
       "active_ingredients": [
-        "Cetoprofeno"
+        "Ketoprofen"
       ],
-      "main_indications": "Dor e inflamação em condições musculoesqueléticas e articulares.",
+      "main_indications": "Pain and inflammation in musculoskeletal and joint conditions.",
       "reference_query": "ketoprofen",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Butilbrometo de escopolamina",
+      "name": "Hyoscine butylbromide",
       "active_ingredients": [
-        "Butilbrometo de escopolamina"
+        "Hyoscine butylbromide"
       ],
-      "main_indications": "Espasmos e cólicas dos tratos gastrointestinal, biliar ou urinário.",
+      "main_indications": "Spasms and colic of the gastrointestinal, biliary or urinary tract.",
       "reference_query": "hyoscine butylbromide",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Butilbrometo de escopolamina + Dipirona",
+      "name": "Hyoscine butylbromide + Metamizole",
       "active_ingredients": [
-        "Butilbrometo de escopolamina",
-        "Dipirona"
+        "Hyoscine butylbromide",
+        "Metamizole"
       ],
-      "main_indications": "Dor associada a espasmos e cólicas, conforme indicação aprovada.",
+      "main_indications": "Pain associated with spasms and colic, per the approved indication.",
       "reference_query": "hyoscine butylbromide dipyrone",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Metoclopramida",
+      "name": "Metoclopramide",
       "active_ingredients": [
-        "Metoclopramida"
+        "Metoclopramide"
       ],
-      "main_indications": "Náuseas, vômitos e condições específicas de motilidade gastrointestinal.",
+      "main_indications": "Nausea, vomiting and specific gastrointestinal motility conditions.",
       "reference_query": "metoclopramide",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Domperidona",
+      "name": "Domperidone",
       "active_ingredients": [
-        "Domperidona"
+        "Domperidone"
       ],
-      "main_indications": "Náuseas e vômitos, conforme indicação aprovada no Brasil.",
+      "main_indications": "Nausea and vomiting, per the indication approved in Brazil.",
       "reference_query": "domperidone",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Dimenidrinato",
+      "name": "Dimenhydrinate",
       "active_ingredients": [
-        "Dimenidrinato"
+        "Dimenhydrinate"
       ],
-      "main_indications": "Prevenção e tratamento de náuseas, vômitos e cinetose.",
+      "main_indications": "Prevention and treatment of nausea, vomiting and motion sickness.",
       "reference_query": "dimenhydrinate",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Simeticona",
+      "name": "Simethicone",
       "active_ingredients": [
-        "Simeticona"
+        "Simethicone"
       ],
-      "main_indications": "Alívio dos sintomas associados ao excesso de gases gastrointestinais.",
+      "main_indications": "Relief of symptoms associated with excess gastrointestinal gas.",
       "reference_query": "simethicone",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Loperamida",
+      "name": "Loperamide",
       "active_ingredients": [
-        "Loperamida"
+        "Loperamide"
       ],
-      "main_indications": "Controle sintomático de determinadas formas de diarreia.",
+      "main_indications": "Symptomatic control of certain forms of diarrhea.",
       "reference_query": "loperamide",
       "markets": [
         "BR"
@@ -1492,165 +1492,165 @@
       "active_ingredients": [
         "Lactulose"
       ],
-      "main_indications": "Constipação intestinal e encefalopatia hepática.",
+      "main_indications": "Constipation and hepatic encephalopathy.",
       "reference_query": "lactulose",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Bisacodil",
+      "name": "Bisacodyl",
       "active_ingredients": [
-        "Bisacodil"
+        "Bisacodyl"
       ],
-      "main_indications": "Constipação intestinal e preparo intestinal em situações específicas.",
+      "main_indications": "Constipation and bowel preparation in specific situations.",
       "reference_query": "bisacodyl",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Sais de reidratação oral",
+      "name": "Oral rehydration salts",
       "active_ingredients": [
-        "Glicose",
-        "Cloreto de sódio",
-        "Cloreto de potássio",
-        "Citrato de sódio"
+        "Glucose",
+        "Sodium chloride",
+        "Potassium chloride",
+        "Sodium citrate"
       ],
-      "main_indications": "Reposição de água e eletrólitos na desidratação associada à diarreia.",
+      "main_indications": "Water and electrolyte replacement in dehydration associated with diarrhea.",
       "reference_query": "oral rehydration salts",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Sulfametoxazol + Trimetoprima",
+      "name": "Sulfamethoxazole + Trimethoprim",
       "active_ingredients": [
-        "Sulfametoxazol",
-        "Trimetoprima"
+        "Sulfamethoxazole",
+        "Trimethoprim"
       ],
-      "main_indications": "Infecções por microrganismos sensíveis à associação.",
+      "main_indications": "Infections caused by organisms susceptible to the combination.",
       "reference_query": "sulfamethoxazole trimethoprim",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Ciprofloxacino",
+      "name": "Ciprofloxacin",
       "active_ingredients": [
-        "Ciprofloxacino"
+        "Ciprofloxacin"
       ],
-      "main_indications": "Infecções bacterianas por microrganismos sensíveis.",
+      "main_indications": "Bacterial infections caused by susceptible organisms.",
       "reference_query": "ciprofloxacin",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Levofloxacino",
+      "name": "Levofloxacin",
       "active_ingredients": [
-        "Levofloxacino"
+        "Levofloxacin"
       ],
-      "main_indications": "Infecções bacterianas por microrganismos sensíveis.",
+      "main_indications": "Bacterial infections caused by susceptible organisms.",
       "reference_query": "levofloxacin",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Nitrofurantoína",
+      "name": "Nitrofurantoin",
       "active_ingredients": [
-        "Nitrofurantoína"
+        "Nitrofurantoin"
       ],
-      "main_indications": "Infecções urinárias por microrganismos sensíveis.",
+      "main_indications": "Urinary tract infections caused by susceptible organisms.",
       "reference_query": "nitrofurantoin",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Metronidazol",
+      "name": "Metronidazole",
       "active_ingredients": [
-        "Metronidazol"
+        "Metronidazole"
       ],
-      "main_indications": "Infecções por bactérias anaeróbias e determinados protozoários.",
+      "main_indications": "Infections caused by anaerobic bacteria and certain protozoa.",
       "reference_query": "metronidazole",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Fluconazol",
+      "name": "Fluconazole",
       "active_ingredients": [
-        "Fluconazol"
+        "Fluconazole"
       ],
-      "main_indications": "Infecções fúngicas por microrganismos sensíveis, incluindo determinadas candidíases.",
+      "main_indications": "Fungal infections caused by susceptible organisms, including certain forms of candidiasis.",
       "reference_query": "fluconazole",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Nistatina",
+      "name": "Nystatin",
       "active_ingredients": [
-        "Nistatina"
+        "Nystatin"
       ],
-      "main_indications": "Candidíase, conforme local de uso e apresentação.",
+      "main_indications": "Candidiasis, depending on the site of use and formulation.",
       "reference_query": "nystatin",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Miconazol",
+      "name": "Miconazole",
       "active_ingredients": [
-        "Miconazol"
+        "Miconazole"
       ],
-      "main_indications": "Infecções fúngicas superficiais, conforme apresentação.",
+      "main_indications": "Superficial fungal infections, depending on the formulation.",
       "reference_query": "miconazole",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Cetoconazol tópico",
+      "name": "Topical ketoconazole",
       "active_ingredients": [
-        "Cetoconazol"
+        "Ketoconazole"
       ],
-      "main_indications": "Micoses superficiais e dermatite seborreica, conforme apresentação tópica.",
+      "main_indications": "Superficial mycoses and seborrheic dermatitis, depending on the topical formulation.",
       "reference_query": "ketoconazole",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Albendazol",
+      "name": "Albendazole",
       "active_ingredients": [
-        "Albendazol"
+        "Albendazole"
       ],
-      "main_indications": "Infecções por determinados helmintos.",
+      "main_indications": "Infections caused by certain helminths.",
       "reference_query": "albendazole",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Mebendazol",
+      "name": "Mebendazole",
       "active_ingredients": [
-        "Mebendazol"
+        "Mebendazole"
       ],
-      "main_indications": "Infecções intestinais por determinados helmintos.",
+      "main_indications": "Intestinal infections caused by certain helminths.",
       "reference_query": "mebendazole",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Ivermectina",
+      "name": "Ivermectin",
       "active_ingredients": [
-        "Ivermectina"
+        "Ivermectin"
       ],
-      "main_indications": "Determinadas parasitoses, incluindo estrongiloidíase e escabiose, conforme indicação aprovada.",
+      "main_indications": "Certain parasitic infections, including strongyloidiasis and scabies, per the approved indication.",
       "reference_query": "ivermectin",
       "markets": [
         "BR"
@@ -1661,7 +1661,7 @@
       "active_ingredients": [
         "Aciclovir"
       ],
-      "main_indications": "Infecções por herpes simples e varicela-zóster, conforme apresentação.",
+      "main_indications": "Herpes simplex and varicella-zoster infections, depending on the formulation.",
       "reference_query": "acyclovir",
       "markets": [
         "BR"
@@ -1672,40 +1672,40 @@
       "active_ingredients": [
         "Diazepam"
       ],
-      "main_indications": "Transtornos de ansiedade, espasmos musculares e condições convulsivas específicas.",
+      "main_indications": "Anxiety disorders, muscle spasms and specific seizure conditions.",
       "reference_query": "diazepam",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Carbamazepina",
+      "name": "Carbamazepine",
       "active_ingredients": [
-        "Carbamazepina"
+        "Carbamazepine"
       ],
-      "main_indications": "Determinadas formas de epilepsia e neuralgia do trigêmeo.",
+      "main_indications": "Certain forms of epilepsy and trigeminal neuralgia.",
       "reference_query": "carbamazepine",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Valproato de sódio",
+      "name": "Sodium valproate",
       "active_ingredients": [
-        "Valproato de sódio"
+        "Sodium valproate"
       ],
-      "main_indications": "Epilepsia e outras indicações específicas da apresentação.",
+      "main_indications": "Epilepsy and other formulation-specific indications.",
       "reference_query": "sodium valproate",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Risperidona",
+      "name": "Risperidone",
       "active_ingredients": [
-        "Risperidona"
+        "Risperidone"
       ],
-      "main_indications": "Esquizofrenia e episódios de mania no transtorno bipolar; outras indicações dependem da apresentação.",
+      "main_indications": "Schizophrenia and manic episodes in bipolar disorder; other indications depend on the formulation.",
       "reference_query": "risperidone",
       "markets": [
         "BR"
@@ -1716,19 +1716,19 @@
       "active_ingredients": [
         "Haloperidol"
       ],
-      "main_indications": "Determinados transtornos psicóticos e outras indicações específicas.",
+      "main_indications": "Certain psychotic disorders and other specific indications.",
       "reference_query": "haloperidol",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Etinilestradiol + Levonorgestrel",
+      "name": "Ethinylestradiol + Levonorgestrel",
       "active_ingredients": [
-        "Etinilestradiol",
+        "Ethinylestradiol",
         "Levonorgestrel"
       ],
-      "main_indications": "Contracepção hormonal.",
+      "main_indications": "Hormonal contraception.",
       "reference_query": "ethinyl estradiol levonorgestrel",
       "markets": [
         "BR"
@@ -1739,96 +1739,96 @@
       "active_ingredients": [
         "Levonorgestrel"
       ],
-      "main_indications": "Contracepção, incluindo contracepção de emergência em apresentações específicas.",
+      "main_indications": "Contraception, including emergency contraception in specific formulations.",
       "reference_query": "levonorgestrel",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Medroxiprogesterona",
+      "name": "Medroxyprogesterone",
       "active_ingredients": [
-        "Medroxiprogesterona"
+        "Medroxyprogesterone"
       ],
-      "main_indications": "Contracepção ou determinados distúrbios menstruais, conforme apresentação.",
+      "main_indications": "Contraception or certain menstrual disorders, depending on the formulation.",
       "reference_query": "medroxyprogesterone",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Cianocobalamina",
+      "name": "Cyanocobalamin",
       "active_ingredients": [
-        "Cianocobalamina"
+        "Cyanocobalamin"
       ],
-      "main_indications": "Deficiência de vitamina B12.",
+      "main_indications": "Vitamin B12 deficiency.",
       "reference_query": "cyanocobalamin",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Carbonato de cálcio",
+      "name": "Calcium carbonate",
       "active_ingredients": [
-        "Carbonato de cálcio"
+        "Calcium carbonate"
       ],
-      "main_indications": "Suplementação de cálcio ou alívio da acidez gástrica, conforme apresentação.",
+      "main_indications": "Calcium supplementation or relief of gastric acidity, depending on the formulation.",
       "reference_query": "calcium carbonate",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Carbonato de cálcio + Colecalciferol",
+      "name": "Calcium carbonate + Cholecalciferol",
       "active_ingredients": [
-        "Carbonato de cálcio",
-        "Colecalciferol"
+        "Calcium carbonate",
+        "Cholecalciferol"
       ],
-      "main_indications": "Suplementação de cálcio e vitamina D em situações específicas.",
+      "main_indications": "Calcium and vitamin D supplementation in specific situations.",
       "reference_query": "calcium carbonate cholecalciferol",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Cloreto de sódio nasal",
+      "name": "Nasal sodium chloride",
       "active_ingredients": [
-        "Cloreto de sódio"
+        "Sodium chloride"
       ],
-      "main_indications": "Higiene e umidificação nasal.",
+      "main_indications": "Nasal hygiene and moisturizing.",
       "reference_query": "sodium chloride nasal",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Hidrocortisona tópica",
+      "name": "Topical hydrocortisone",
       "active_ingredients": [
-        "Hidrocortisona"
+        "Hydrocortisone"
       ],
-      "main_indications": "Dermatoses inflamatórias e pruriginosas responsivas a corticosteroides tópicos.",
+      "main_indications": "Inflammatory and pruritic dermatoses responsive to topical corticosteroids.",
       "reference_query": "hydrocortisone",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Dexpantenol tópico",
+      "name": "Topical dexpanthenol",
       "active_ingredients": [
-        "Dexpantenol"
+        "Dexpanthenol"
       ],
-      "main_indications": "Cuidados da pele e tratamento de irritações cutâneas, conforme apresentação.",
+      "main_indications": "Skin care and treatment of skin irritation, depending on the formulation.",
       "reference_query": "dexpanthenol",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Acetilcisteína",
+      "name": "Acetylcysteine",
       "active_ingredients": [
-        "Acetilcisteína"
+        "Acetylcysteine"
       ],
-      "main_indications": "Fluidificação de secreções respiratórias; tratamento de intoxicação por paracetamol em apresentações específicas.",
+      "main_indications": "Thinning of respiratory secretions; treatment of paracetamol poisoning in specific formulations.",
       "reference_query": "acetylcysteine",
       "markets": [
         "BR"
@@ -1839,18 +1839,18 @@
       "active_ingredients": [
         "Ambroxol"
       ],
-      "main_indications": "Alívio de condições respiratórias com secreção espessa, conforme indicação aprovada.",
+      "main_indications": "Relief of respiratory conditions with thick secretions, per the approved indication.",
       "reference_query": "ambroxol",
       "markets": [
         "BR"
       ]
     },
     {
-      "name": "Clortalidona",
+      "name": "Chlortalidone",
       "active_ingredients": [
-        "Clortalidona"
+        "Chlortalidone"
       ],
-      "main_indications": "Hipertensão arterial e edema.",
+      "main_indications": "Hypertension and edema.",
       "reference_query": "chlorthalidone",
       "markets": [
         "BR"

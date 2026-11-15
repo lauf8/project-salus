@@ -1,33 +1,33 @@
-# Monitoramento de saúde
+# Health monitoring
 
-O astronauta autenticado abre o painel de monitoramento como página inicial. O perfil de astronauta também é reconhecido pelo vínculo `astronaut` de contas anteriores. Médicos acessam o painel pelo menu e escolhem a missão e o astronauta autorizado. A interface usa os componentes e a paleta azul existentes, SVG nativo e Recharts.
+An astronaut opens the monitoring dashboard as the home page. The astronaut profile is also recognized through the `astronaut` membership of earlier accounts. Physicians reach the dashboard from the menu and choose the mission and the authorized astronaut. The interface uses the existing components and blue palette, native SVG and Recharts.
 
-Os registros de monitoramento são independentes dos resultados de exames. O astronauta pode acrescentar medições próprias, mas continua sem autorização para modificar exames pré-missão. Observações de monitoramento são preservadas: não há endpoints de edição ou exclusão.
+Monitoring records are independent of exam results. Astronauts can add their own measurements, but still cannot change pre-mission exams. Monitoring observations are preserved: there are no edit or delete endpoints.
 
-## Dados e permissões
+## Data and permissions
 
-Cada observação contém astronauta, missão opcional, indicador, valores, coleta em UTC, registro em UTC, origem, responsável, observação opcional e identificação de referência pré-missão. Pressão arterial usa sistólica e diastólica na mesma linha. Sono usa minutos inteiros; o formulário e a apresentação usam horas e minutos. Início e fim da sessão de sono são preservados e a duração é derivada, sem aceitar duração contraditória.
+Each observation contains the astronaut, an optional mission, the indicator, values, collection time in UTC, recording time in UTC, source, responsible person, an optional note and the pre-mission reference flag. Blood pressure uses systolic and diastolic on the same row. Sleep uses whole minutes; the form and display use hours and minutes. Sleep session start and end are preserved and the duration is derived, without accepting a contradictory duration.
 
-O backend valida formato, domínio das escalas, campos incompatíveis, datas com fuso, coleta futura e pares obrigatórios. Esses limites validam os dados; não classificam risco clínico.
+The backend validates format, scale domains, incompatible fields, dates with a time zone, future collection times and required pairs. These limits validate the data; they do not classify clinical risk.
 
-O astronauta lê e registra apenas os próprios dados. Um médico com vínculo `flight_surgeon` pode consultar e registrar dados de outro astronauta da mesma missão, sempre com `mission_id` explícito. Um administrador da missão não recebe acesso clínico por ser administrador. AVPU e referências pré-missão exigem outro médico de voo autorizado. Médicos que também são astronautas não podem registrar AVPU em si mesmos.
+Astronauts read and record only their own data. A physician with the `flight_surgeon` membership can view and record data of another astronaut in the same mission, always with an explicit `mission_id`. A mission administrator does not get clinical access for being an administrator. AVPU and pre-mission references require another authorized flight surgeon. Physicians who are also astronauts cannot record AVPU for themselves.
 
-A API reconhece `self_report`, `manual_measurement` e `device`. Não existe fonte de dispositivos no repositório; a criação com `device` é rejeitada até haver integração. A interface permite autorrelato e medição manual.
+The API recognizes `self_report`, `manual_measurement` and `device`. There is no device source in the repository; creation with `device` is rejected until an integration exists. The interface allows self-reports and manual measurements.
 
 ## Endpoints
 
-Todos usam a autenticação bearer JWT existente e o prefixo `/v1`.
+All use the `/v1` prefix.
 
-| Método | Caminho | Uso |
+| Method | Path | Use |
 | --- | --- | --- |
-| GET | `/health/context` | Elegibilidade própria e astronautas sob acompanhamento nas missões autorizadas |
-| POST | `/health/astronauts/{user_id}/observations` | Acrescentar observação validada |
-| GET | `/health/astronauts/{user_id}/summary` | Os 11 indicadores, leitura atual, anterior, referência, variações e permissões |
-| GET | `/health/astronauts/{user_id}/history` | Histórico paginado por indicador e período |
+| GET | `/health/context` | Own eligibility and astronauts followed in authorized missions |
+| POST | `/health/astronauts/{user_id}/observations` | Add a validated observation |
+| GET | `/health/astronauts/{user_id}/summary` | The 11 indicators, current and previous reading, reference, changes and permissions |
+| GET | `/health/astronauts/{user_id}/history` | Paginated history per indicator and period |
 
-`user_id` identifica `users.id`, não `mission_members.id`. O histórico exige `indicator` e aceita `mission_id`, `start`, `end`, `page` e `per_page` (máximo 100). Datas devem incluir fuso. Sem período, consulta os últimos 30 dias. A interface percorre todas as páginas e oferece 24 horas, 7 dias e 30 dias. Sem missão, o próprio astronauta consulta seu conjunto de observações; consultas médicas exigem uma missão e não incluem observações fora dela.
+`user_id` identifies `users.id`, not `mission_members.id`. The history requires `indicator` and accepts `mission_id`, `start`, `end`, `page` and `per_page` (maximum 100). Dates must include a time zone. Without a period, it returns the last 30 days. The interface reads every page and offers 24 hours, 7 days and 30 days. Without a mission, astronauts see their own set of observations; physician queries require a mission and do not include observations outside it.
 
-Exemplo de corpo para frequência cardíaca:
+Example body for heart rate:
 
 ```json
 {
@@ -40,26 +40,26 @@ Exemplo de corpo para frequência cardíaca:
 }
 ```
 
-Indicadores: `heart_rate`, `blood_pressure`, `respiratory_rate`, `oxygen_saturation`, `body_temperature`, `consciousness`, `sleep_duration`, `sleep_quality`, `fatigue`, `mood`, `attention`.
+Indicators: `heart_rate`, `blood_pressure`, `respiratory_rate`, `oxygen_saturation`, `body_temperature`, `consciousness`, `sleep_duration`, `sleep_quality`, `fatigue`, `mood`, `attention`.
 
-Para pressão arterial, envie `systolic` e `diastolic` sem `value`. Para AVPU, envie `category` com `alert`, `voice`, `pain` ou `unresponsive`. Para atenção, `better`, `usual` ou `worse`. Para sono, envie `value` em minutos ou o par `sleep_started_at`/`sleep_ended_at`. A origem de AVPU deve ser `manual_measurement`.
+For blood pressure, send `systolic` and `diastolic` without `value`. For AVPU, send `category` with `alert`, `voice`, `pain` or `unresponsive`. For attention, `better`, `usual` or `worse`. For sleep, send `value` in minutes or the `sleep_started_at`/`sleep_ended_at` pair. The AVPU source must be `manual_measurement`.
 
-## Referências e tendências
+## References and trends
 
-Os exames pré-missão existentes têm resumo clínico em texto; não oferecem medidas estruturadas que possam ser comparadas com segurança. Não há extração automática desse texto. Um médico de voo autorizado pode registrar uma observação com `is_preflight_reference=true`, vinculada à missão e coletada antes do início efetivo, ou do lançamento previsto enquanto não há início efetivo.
+Existing pre-mission exams have a text clinical summary; they do not offer structured measurements that can be compared safely. That text is not extracted automatically. An authorized flight surgeon can record an observation with `is_preflight_reference=true`, linked to the mission and collected before the actual start, or before the planned launch while there is no actual start.
 
-O resumo usa a referência mais recente do mesmo indicador e missão, anterior ou igual à coleta da leitura atual. As variações numéricas são diferenças absolutas, mantendo as duas componentes da pressão arterial. AVPU e atenção oferecem sequências, sem converter categorias em pontuações. Ausências são retornadas como `null` ou listas vazias e exibidas como “Sem dados”.
+The summary uses the most recent reference of the same indicator and mission, earlier than or equal to the collection of the current reading. Numeric changes are absolute differences, keeping both blood pressure components. AVPU and attention offer sequences, without converting categories into scores. Missing values are returned as `null` or empty lists and shown as “No data”.
 
-Histórico e resumo usam `collected_at`, depois `recorded_at` e ID para desempate. Um registro retroativo não substitui uma coleta mais recente. As tendências descrevem aumento, redução, estabilidade ou variação em sentidos diferentes das duas pressões, sem diagnosticar ou sugerir limites clínicos.
+History and summary use `collected_at`, then `recorded_at` and ID as tie-breakers. A backdated record does not replace a more recent collection. Trends describe increase, decrease, stability or changes in different directions for the two blood pressure values, without diagnosing or suggesting clinical limits.
 
-Os gráficos preservam todos os pontos, sem médias ou interpolação. Intervalos sem observações recebem pontos nulos em janelas de 1 hora, 6 horas ou 1 dia, conforme o período. A duração dessas janelas é uma regra de apresentação explícita, sem presumir frequência clínica de coleta. A tabela conserva valores e datas de cada observação. As linhas usam `connectNulls=false`, conforme a [API do Recharts](https://recharts.github.io/en-US/api/Line/).
+Charts keep every point, without averages or interpolation. Intervals without observations get null points in 1-hour, 6-hour or 1-day windows, depending on the period. The window length is an explicit display rule and does not assume a clinical collection frequency. The table keeps the values and dates of each observation. Lines use `connectNulls=false`, as in the [Recharts API](https://recharts.github.io/en-US/api/Line/).
 
-## Execução
+## Run
 
-Em uma instalação com histórico de migrations íntegro:
+In an installation with an intact migration history:
 
 ```sh
-cd NASA
+cd back
 docker compose up --build -d
 docker compose exec -T api alembic upgrade head
 cd ../front
@@ -67,16 +67,16 @@ npm install
 npm run dev
 ```
 
-O Vite encaminha `/api` para a API na porta 8000. Abra a porta informada pelo Vite (5173, ou a próxima disponível).
+Vite forwards `/api` to the API on port 8000. Open the port Vite reports (5173, or the next available one).
 
-A base original desta máquina continua com a revisão ausente `7efe7ee6f54f`. Ela não foi alterada. A instância usada nesta implementação é `nasa-front-validation-api`, na porta 8000, com o banco separado `nasa_front_validation_20261111`. A migration de saúde também foi verificada no banco separado `nasa_health_migration_20261111`, com upgrade, downgrade e novo upgrade, preservando o usuário anterior.
+The original database on the development machine still has the missing revision `7efe7ee6f54f`. It was not changed. The instance used for this implementation was `nasa-front-validation-api`, on port 8000, with the separate database `nasa_front_validation_20261111`. The health migration was also verified in the separate database `nasa_health_migration_20261111`, with upgrade, downgrade and a new upgrade, preserving the earlier user.
 
-## Verificação
+## Verification
 
-Backend, em banco de desenvolvimento separado e migrado:
+Backend, in a separate, migrated development database:
 
 ```sh
-cd NASA
+cd back
 docker compose exec -T api pip install pytest
 docker compose exec -T -e PGDATABASE=nasa_front_validation_20261111 api alembic upgrade head
 docker compose exec -T -e PGDATABASE=nasa_front_validation_20261111 api alembic check
@@ -89,25 +89,24 @@ Frontend:
 cd front
 npm test
 npm run build
-npx playwright install chromium
 HEALTH_TEST_URL=http://127.0.0.1:5174 npm run test:health:e2e
 ```
 
-O teste de navegador exige backend e Vite ativos. Cria contas e uma missão fictícias no banco da API local. Use banco separado. As capturas são gravadas em `/tmp/nasa-health-e2e` ou em `HEALTH_TEST_ARTIFACTS`. Para usar Chrome instalado, defina `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+The browser test requires the backend and Vite to be running. It creates fictional accounts and a mission in the local API database. Use a separate database. Screenshots are written to `/tmp/nasa-health-e2e` or to `HEALTH_TEST_ARTIFACTS`. To use an installed Chrome, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
-## Arquivos desta implementação
+## Files of this implementation
 
 Backend:
 
-- `NASA/app/models/health.py`
-- `NASA/app/schemas/health.py`
-- `NASA/app/services/health_service.py`
-- `NASA/app/routers/health.py`
-- `NASA/app/main.py`
-- `NASA/alembic/env.py`
-- `NASA/alembic/versions/f718293a4b5c_add_health_observations.py`
-- `NASA/tests/test_health_postgres.py`
-- `NASA/README.md`
+- `back/app/models/health.py`
+- `back/app/schemas/health.py`
+- `back/app/services/health_service.py`
+- `back/app/routers/health.py`
+- `back/app/main.py`
+- `back/alembic/env.py`
+- `back/alembic/versions/f718293a4b5c_add_health_observations.py`
+- `back/tests/test_health_postgres.py`
+- `back/README.md`
 
 Frontend:
 
@@ -121,30 +120,30 @@ Frontend:
 - `front/package-lock.json`
 - `front/README.md`
 
-Documentação: `HEALTH_MONITORING.md`.
+Documentation: `HEALTH_MONITORING.md`.
 
-## Estruturas ainda ausentes
+## Structures still missing
 
-Não existem dispositivos conectados, valores estruturados nos resultados pré-missão nem regras clínicas configuradas e validadas. Esses pontos permanecem explícitos: sem simular sensores, extrair referências de texto ou emitir alertas clínicos. A acumulação de papéis de astronauta e médico na mesma missão ainda não existe no módulo pré-missão; o monitoramento reconhece o perfil duplo da conta, mas mantém a exigência de outro avaliador para AVPU.
+There are no connected devices, no structured values in pre-mission results and no configured, validated clinical rules. These gaps stay explicit: sensors are not simulated, references are not extracted from text and clinical alerts are not issued from them. Holding both the astronaut and physician roles in the same mission does not exist yet in the pre-mission module; monitoring recognizes the account's dual profile but still requires another assessor for AVPU.
 
-## Resultado da verificação desta implementação
+## Verification result of this implementation
 
-- 89 testes do backend aprovados, com 6 testes opcionais de conhecimento desativados.
-- Testes do frontend e build de produção aprovados.
-- Teste real de navegador aprovado no desktop e em 390 px: login inicial do astronauta, 11 hotspots/cartões, seleção por teclado, registro dos 11 indicadores, duas séries de pressão arterial, sono em horas/minutos e por sessão, coleta retroativa, filtro de 24 horas, linha do tempo categórica, avaliação AVPU por médico autorizado e bloqueio entre astronautas.
-- Nenhum erro JavaScript durante o fluxo verificado.
-- Upgrade, downgrade e novo upgrade da migration preservaram o usuário anterior no banco isolado.
-- `alembic check` não encontrou diferenças entre o schema migrado e os modelos.
+- 89 backend tests passed, with 6 optional knowledge tests disabled.
+- Frontend tests and the production build passed.
+- A real browser test passed on desktop and at 390 px: initial astronaut access, 11 hotspots and cards, keyboard selection, recording of the 11 indicators, two blood pressure series, sleep in hours and minutes and by session, backdated collection, the 24-hour filter, the categorical timeline, AVPU assessment by an authorized physician and blocking between astronauts.
+- No JavaScript errors during the verified flow.
+- Upgrade, downgrade and a new upgrade of the migration preserved the earlier user in the isolated database.
+- `alembic check` found no differences between the migrated schema and the models.
 
-Capturas locais: `/tmp/nasa-health-e2e/desktop.png` e `/tmp/nasa-health-e2e/mobile.png`.
+Local screenshots: `/tmp/nasa-health-e2e/desktop.png` and `/tmp/nasa-health-e2e/mobile.png`.
 
-## Demonstração com dados fictícios
+## Demonstration with fictional data
 
-O comando abaixo cria contas de demonstração e 468 observações para os 11 indicadores, incluindo referências pré-missão, histórico de 30 dias e lacunas. Uma nova execução não duplica as observações. O script aceita apenas bancos com `validation`, `demo` ou `test` no nome.
+The command below creates demonstration accounts and 468 observations for the 11 indicators, including pre-mission references, a 30-day history and gaps. Running it again does not duplicate observations. The script only accepts databases with `validation`, `demo` or `test` in the name.
 
 ```sh
-cd NASA
+cd back
 docker compose exec -T -e PGDATABASE=nasa_front_validation_20261111 api python -m scripts.seed_health_demo
 ```
 
-Acesse http://localhost:5174 com `astronauta.demo@example.com` e senha `NasaDemo2026!`. Para a visão médica, use `medica.demo@example.com` com a mesma senha e selecione a missão de demonstração e o astronauta. Todos os registros gerados são identificados como fictícios. O script está em `NASA/scripts/seed_health_demo.py`.
+Select the demonstration astronaut (`astronauta.demo@example.com`) or the demonstration physician (`medica.demo@example.com`) with the **Profile** and **User** selectors, then choose the demonstration mission and the astronaut. All generated records are labeled as fictional. Their names and notes are kept as originally created so that repeated runs do not duplicate them. The script is in `back/scripts/seed_health_demo.py`.

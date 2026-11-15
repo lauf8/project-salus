@@ -100,8 +100,8 @@ def test_acute_confusion_and_rest_context():
     result = evaluate_reading(observation('oxygen_saturation', 91, signal_quality='poor', supplemental_oxygen=True), profile_for())[0]
     assert result['severity'] == 'critical'
     assert result['verification_required'] is True
-    assert 'imediatamente' in result['reason']
-    assert 'oxigênio suplementar' in result['reason']
+    assert 'immediately' in result['reason']
+    assert 'supplemental oxygen' in result['reason']
 
 
 def count(session, model):
@@ -148,9 +148,9 @@ def test_replay_escalation_acknowledgment_quality_and_resolution(records):
     assert error.value.status_code == 403
     history = alerts.history(astronaut.id, mission.id, current.id, 1, 100)['data']
     assert {'created', 'acknowledged', 'escalated', 'measurement_added'} <= {event.action for event in history}
-    assert any('não encerra' in event.reason for event in history)
+    assert any('neither closes' in event.reason for event in history)
     medical = HealthAlertService(session, doctor)
-    resolved = medical.resolve(astronaut.id, mission.id, current.id, AlertResolve(note='Verificação concluída pela equipe médica'))
+    resolved = medical.resolve(astronaut.id, mission.id, current.id, AlertResolve(note='Verification completed by the medical team'))
     assert resolved.status == 'resolved'
     assert active(records) == []
     create(records, 'oxygen_saturation', 91)
@@ -182,7 +182,7 @@ def test_stale_unknown_and_evaluated_states(records):
     create(records, 'heart_rate', 75, signal_quality='good')
     heart = next(item for item in HealthService(session, astronaut).summary(astronaut.id, mission.id).indicators if item.indicator == 'heart_rate')
     assert heart.measurement_status == 'evaluated'
-    assert any('Falta contexto' in note for note in heart.evaluation_notes)
+    assert any('Activity context is missing' in note for note in heart.evaluation_notes)
 
 
 @pytest.mark.parametrize('indicator,value,days,category', [('sleep_duration', 400, 2, None), ('sleep_quality', 2, 2, None), ('mood', 2, 3, None), ('fatigue', 8, 2, None), ('attention', None, 2, 'worse')])
@@ -223,7 +223,7 @@ def test_mood_gap_latest_daily_value_and_poor_signal(records):
 def test_mission_timezone_and_sleep_night_anchors(records):
     session, doctor, astronaut, outsider, mission = records
     settings = HealthAlertService(session, doctor)
-    settings.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='America/Bahia', emergency_channel='Canal médico 3', approval_note='Configuração de simulação aprovada'))
+    settings.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='America/Bahia', emergency_channel='Medical channel 3', approval_note='Simulation configuration approved'))
     base = (datetime.now(timezone.utc) - timedelta(days=5)).replace(hour=23, minute=0, second=0, microsecond=0)
     create(records, 'fatigue', 8, collected_at=base)
     create(records, 'fatigue', 8, collected_at=base + timedelta(hours=2))
@@ -249,7 +249,7 @@ def test_unit_normalization_original_values_and_custom_goals(records):
     assert abs(glucose.value - 54.0546) < 0.00001
     assert next(item for item in active(records) if item.indicator == 'blood_glucose').severity == 'urgent'
     settings = HealthAlertService(session, doctor)
-    settings.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', oxygen_thresholds={'normal_min': 94, 'attention_min': 90, 'urgent_min': 88}, high_glucose_thresholds={'fasting': {'attention': 126, 'urgent': 200, 'critical': 300}}, emergency_channel='Canal médico', approval_note='Metas aprovadas para a simulação'))
+    settings.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', oxygen_thresholds={'normal_min': 94, 'attention_min': 90, 'urgent_min': 88}, high_glucose_thresholds={'fasting': {'attention': 126, 'urgent': 200, 'critical': 300}}, emergency_channel='Medical channel', approval_note='Targets approved for the simulation'))
     create(records, 'oxygen_saturation', 91, supplemental_oxygen=True)
     oxygen = next(item for item in active(records) if item.indicator == 'oxygen_saturation')
     assert oxygen.severity == 'attention'
@@ -259,17 +259,17 @@ def test_unit_normalization_original_values_and_custom_goals(records):
     create(records, 'blood_glucose', 200, glucose_context='fasting')
     assert next(item for item in active(records) if item.rule_id == 'high_blood_glucose_fasting').severity == 'urgent'
     with pytest.raises(HTTPException) as error:
-        settings.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', approval_note='Versão antiga'))
+        settings.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', approval_note='Old version'))
     assert error.value.status_code == 409
 
 
 def test_profile_visibility_permissions_and_critical_channel(records):
     session, doctor, astronaut, outsider, mission = records
     medical = HealthAlertService(session, doctor)
-    medical.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', emergency_channel='Voz médica 7', approval_note='Aprovado'))
+    medical.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', emergency_channel='Medical voice 7', approval_note='Approved'))
     create(records, 'blood_glucose', 53)
     alert = active(records)[0]
-    assert 'Voz médica 7' in alert.protocol_message
+    assert 'Medical voice 7' in alert.protocol_message
     assert alert.can_acknowledge is True and alert.can_resolve is False
     assert medical.list_alerts(astronaut.id, mission.id, 'active', 1, 20)['data'][0].can_resolve is True
     for actor in (outsider,):
@@ -289,7 +289,7 @@ def test_profile_visibility_permissions_and_critical_channel(records):
 ])
 def test_settings_validation(values):
     with pytest.raises(ValidationError):
-        AlertSettingsUpdate(expected_revision=0, approval_note='Aprovado', **values)
+        AlertSettingsUpdate(expected_revision=0, approval_note='Approved', **values)
 
 
 def test_resolved_trend_does_not_reopen_for_unrelated_backdated_reading(records):
@@ -298,7 +298,7 @@ def test_resolved_trend_does_not_reopen_for_unrelated_backdated_reading(records)
     create(records, 'sleep_quality', 1, collected_at=base)
     create(records, 'sleep_quality', 1, collected_at=base + timedelta(days=1))
     alert = active(records)[0]
-    HealthAlertService(session, doctor).resolve(astronaut.id, mission.id, alert.id, AlertResolve(note='Avaliação médica registrada'))
+    HealthAlertService(session, doctor).resolve(astronaut.id, mission.id, alert.id, AlertResolve(note='Medical assessment recorded'))
     create(records, 'sleep_quality', 5, collected_at=base - timedelta(days=5))
     assert active(records) == []
 
@@ -306,16 +306,16 @@ def test_resolved_trend_does_not_reopen_for_unrelated_backdated_reading(records)
 def test_active_alert_uses_current_emergency_channel_and_preserves_rule_snapshot(records):
     session, doctor, astronaut, outsider, mission = records
     service = HealthAlertService(session, doctor)
-    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', emergency_channel='Canal 1', approval_note='Aprovado'))
+    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', emergency_channel='Channel 1', approval_note='Approved'))
     create(records, 'oxygen_saturation', 91)
     alert = active(records)[0]
     old_version = alert.rule_version
-    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=1, timezone='UTC', emergency_channel='Canal 2', approval_note='Canal atualizado'))
+    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=1, timezone='UTC', emergency_channel='Channel 2', approval_note='Channel updated'))
     alert = active(records)[0]
     assert alert.rule_version == old_version
-    assert 'Canal 2' in alert.protocol_message
+    assert 'Channel 2' in alert.protocol_message
     stored = session.get(HealthAlert, alert.id)
-    assert stored.profile_snapshot['emergency_channel'] == 'Canal 1'
+    assert stored.profile_snapshot['emergency_channel'] == 'Channel 1'
 
 
 def test_backdated_equal_severity_does_not_replace_current_trigger(records):
@@ -352,11 +352,11 @@ def test_simulation_v1_and_custom_targets_are_not_overwritten():
 def test_reassessment_preserves_previous_profile_and_original_measurement(records):
     session, doctor, astronaut, outsider, mission = records
     service = HealthAlertService(session, doctor)
-    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, profile_id='simulation-v1', timezone='UTC', approval_note='Perfil original'))
+    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, profile_id='simulation-v1', timezone='UTC', approval_note='Original profile'))
     saved = create(records, 'blood_glucose', 400, glucose_context='fasting')
     original_id = saved.id
     assert active(records) == []
-    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=1, profile_id='simulation-v2', timezone='UTC', high_glucose_thresholds={context: {'urgent': 300} for context in ('fasting','after_meal','unknown')}, approval_note='Perfil atualizado de simulação'))
+    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=1, profile_id='simulation-v2', timezone='UTC', high_glucose_thresholds={context: {'urgent': 300} for context in ('fasting','after_meal','unknown')}, approval_note='Updated simulation profile'))
     service.evaluate(saved, preserve_previous=True)
     session.commit()
     alert = active(records)[0]
@@ -378,7 +378,7 @@ def test_normal_glucose_auto_resolves_noncritical_alert(records, acknowledged):
     assert active(records) == []
     resolved = session.get(HealthAlert, alert.id)
     assert resolved.status == 'resolved'
-    assert 'automaticamente' in resolved.resolution_note
+    assert 'automatically' in resolved.resolution_note
     events = service.history(astronaut.id, mission.id, alert.id, 1, 100)['data']
     assert events[0].action == 'auto_resolved'
     assert events[0].observation.id == normal.id
@@ -392,7 +392,7 @@ def test_poor_context_stale_and_backdated_readings_do_not_auto_resolve(records):
     create(records, 'blood_glucose', 100, collected_at=datetime.now(timezone.utc) - timedelta(days=1))
     assert len(active(records)) == 1
     service = HealthAlertService(session, doctor)
-    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', high_glucose_thresholds={'fasting': {'urgent': 300}}, approval_note='Metas específicas'))
+    service.update_settings(mission.id, AlertSettingsUpdate(expected_revision=0, timezone='UTC', high_glucose_thresholds={'fasting': {'urgent': 300}}, approval_note='Specific targets'))
     create(records, 'blood_glucose', 100, glucose_context='unknown')
     assert len(active(records)) == 1
     create(records, 'blood_glucose', 100, glucose_context='fasting')

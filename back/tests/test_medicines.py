@@ -70,10 +70,10 @@ def ingredient(call, name):
 def test_medicine_composition_crud_search_and_pagination(catalog_api):
     call, people, mission_id = catalog_api
     first, second = ingredient(call, 'Ingredient A'), ingredient(call, 'Ingredient B')
-    created = call('doctor', 'POST', '/medicines', {'name': '  Combination  ', 'active_ingredient_ids': [first, second], 'main_indications': 'Indicação de teste'}, 201)
+    created = call('doctor', 'POST', '/medicines', {'name': '  Combination  ', 'active_ingredient_ids': [first, second], 'main_indications': 'Test indication'}, 201)
     path = f"/medicines/{created['id']}"
     assert created['name'] == 'Combination'
-    assert created['main_indications'] == 'Indicação de teste'
+    assert created['main_indications'] == 'Test indication'
     assert [row['id'] for row in created['active_ingredients']] == [first, second]
     result = call('astronaut', 'GET', '/medicines?search=comb&per_page=1')
     assert result['pagination']['total'] == 1

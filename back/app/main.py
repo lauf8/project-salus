@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
     async with httpx.AsyncClient() as client:
         provider: AiProvider = OpenAiCompatibleProvider(client, settings)
         app.state.ai_provider = provider
-        # Cliente síncrono do NASA DONKI (as rotas da API são síncronas).
+        # Synchronous NASA DONKI client (the API routes are synchronous).
         with httpx.Client() as donki_http_client:
             app.state.donki_http_client = donki_http_client
             yield
