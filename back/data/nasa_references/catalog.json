@@ -182,6 +182,35 @@
       "page_count": 117,
       "size_bytes": 1291477,
       "downloaded_at": "2026-11-15T00:32:01.774516+00:00"
+    },
+    {
+      "file": "apollo-8-mission-report-feb-1969.pdf",
+      "title": "Apollo 8 Mission Report — February 1969",
+      "source_url": "https://ntrs.nasa.gov/api/citations/19700033031/downloads/19700033031.pdf",
+      "source_record_url": "https://ntrs.nasa.gov/citations/19700033031",
+      "requested_source_url": "https://www.nasa.gov/wp-content/uploads/static/history/afj/ap08fj/pdf/a08-missionreport.pdf",
+      "requested_source_status": "HTTP 404 verified during landing-page implementation; same official report retrieved from NASA NTRS",
+      "revision": "MSC-PA-R-69-1; February 1969 (cover); NASA NTRS publication date 1969-02-01",
+      "topics": [
+        "mission_history",
+        "medical_history"
+      ],
+      "query": "Apollo 8 Borman inflight illness medical flight controller recorded crew report",
+      "sha256": "da1ad9834b9d6906931bc28717be29a01f74a6de99151d86ceb165ef37157d03",
+      "page_count": 295,
+      "size_bytes": 11219267,
+      "downloaded_at": "2026-11-15T14:02:36.589397+00:00",
+      "verified_sections": [
+        {
+          "section": "8.3 Medical Observations — Inflight illness",
+          "printed_pages": "8-3–8-4",
+          "pdf_pages": [
+            220,
+            221
+          ]
+        }
+      ],
+      "usage": "Historical context for the product overview. Not imported into the live RAG corpus as part of this change."
     }
   ]
 }

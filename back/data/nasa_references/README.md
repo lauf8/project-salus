@@ -36,3 +36,9 @@ The actual import was verified with the real Ollama `all-minilm` model, 384 dime
 The catalog now also contains the original **NASA-STD-3001 Volume 1, Revision C**, **OCHMO-TB-033 Spaceflight Experience and Medical Care, Revision D**, **HRP Behavioral Health Evidence Report (2025)** and **HRP Team Cooperation and Psychosocial Adaptation Evidence Report (2022)**. Their exact URLs, revisions, checksums and page counts are pinned in `catalog.json`. These are the retained source revisions, not a claim that each is the current NASA standard.
 
 The complete catalog has **12 PDFs, 583 pages and 5,358 indexed passages**. All 12 were verified against local originals and searched with the real `all-minilm` model at 384 dimensions. Dense tables and contents pages in three PDFs required conservative chunk subdivision to fit the embedding context. Page provenance and original PDF bytes are retained. See `CLINICAL_RECORDS.md` for individual reports and physician review.
+
+## Apollo 8 historical context
+
+The original [Apollo 8 Mission Report, February 1969](apollo-8-mission-report-feb-1969.pdf) is retained for the product overview. The cover identifies MSC-PA-R-69-1. Section 8.3, printed pages 8-3–8-4 (PDF pages 220–221), describes the Commander’s inflight illness, the recorded crew report and the chief medical flight controller’s conversation with him. The landing page does not infer an illness cause or an emotional state.
+
+The supplied NASA Flight Journal PDF URL returned HTTP 404 when checked. The same report was downloaded from the official [NASA NTRS record](https://ntrs.nasa.gov/citations/19700033031). The catalog records both URLs, the February 1969 revision/date, SHA-256 and 295-page count. This historical report is not imported into the live recommendation corpus by the landing-page work.

@@ -1,0 +1,212 @@
+{
+  "encoding": "Lossless WebP at original dimensions and aspect ratio",
+  "assets": [
+    {
+      "asset": "front/public/overview/latest-measurements.webp",
+      "original": "img/Screenshot From 2026-11-15 10-17-44.png",
+      "width": 1472,
+      "height": 694,
+      "bytes": 36580,
+      "original_sha256": "460388ca560d2c2a497e31c8c658a8aa87197574bbc0224aacb1fe84c087da3a",
+      "asset_sha256": "ab1d52651d184c557fe4cb4a369e95ff9f9d4cd0a6b1a29f99afa02a0fc29ed3",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/body-map.webp",
+      "original": "img/Screenshot From 2026-11-15 10-18-56.png",
+      "width": 623,
+      "height": 553,
+      "bytes": 53848,
+      "original_sha256": "39247120edbbd4c3f7bda1ee09d8333c634dfe85e9d22c51592eddb4c5ac3c6f",
+      "asset_sha256": "2d1ef67da77c2459bf64ac9d29fd170b53103af7a7f69fac26bdcd9a23382b44",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/crew-overview.webp",
+      "original": "img/Screenshot From 2026-11-15 10-18-06.png",
+      "width": 1456,
+      "height": 685,
+      "bytes": 29658,
+      "original_sha256": "ad38fe32f7847e6bed5b1f5c9ada424b459d4eabebf7525ce3f42e60f96f7a2f",
+      "asset_sha256": "f026a6ff8f3c26acf6c1f422e0d40696f604556aef31b5c66d3ec5974a79ebae",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/critical-heart-rate-alert.webp",
+      "original": "img/Screenshot From 2026-11-15 10-12-06.png",
+      "width": 496,
+      "height": 322,
+      "bytes": 12388,
+      "original_sha256": "18004b2d401a1abc2aa79ecf6715a59b8f7716dd0319297d2ffc7ed0341bf6b7",
+      "asset_sha256": "8a49945717aa52fd64d590bac29dc4ef0d54c466a191ecdc0aa0cea2a3e3c068",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/measurement-history.webp",
+      "original": "img/Screenshot From 2026-11-15 10-12-32.png",
+      "width": 1435,
+      "height": 785,
+      "bytes": 25068,
+      "original_sha256": "c65c140f9019326f56579e5fa5a743d6ecbfd5415bdd0506a19807412b6d2f58",
+      "asset_sha256": "eb6b0b9ddadd4e4a77f91d9e0ba73e9eca34556c3b95309c9944019dcfffdf83",
+      "redactions": [
+        [
+          784,
+          182,
+          980,
+          225
+        ],
+        [
+          784,
+          310,
+          980,
+          352
+        ],
+        [
+          784,
+          438,
+          980,
+          478
+        ],
+        [
+          784,
+          565,
+          980,
+          606
+        ],
+        [
+          784,
+          692,
+          980,
+          735
+        ]
+      ],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/predictive-summary.webp",
+      "original": "img/Screenshot From 2026-11-15 10-13-46.png",
+      "width": 1456,
+      "height": 374,
+      "bytes": 21710,
+      "original_sha256": "2f20de5dc7e3567cd56fc40dd736ece8777c54ee4eb98f2b8cf99382fd6eba6d",
+      "asset_sha256": "ac3275fdc30ac4367081dc3ea86d2ebada8a3bf4d3a88a248635ef3665b5ec2e",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/mission-risks.webp",
+      "original": "img/Screenshot From 2026-11-15 10-14-21.png",
+      "width": 1429,
+      "height": 754,
+      "bytes": 28644,
+      "original_sha256": "272fd77a4712288b604a8d4aa9eba4c114124e8e3fa0193c3be4501657550522",
+      "asset_sha256": "696c48ba6cbfc24d75aa07746a8ddf60b9cfa3a7a7bc233c466c8fc227a01597",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/food-inventory.webp",
+      "original": "img/Screenshot From 2026-11-15 10-16-09.png",
+      "width": 1429,
+      "height": 736,
+      "bytes": 19896,
+      "original_sha256": "6238555b5f4360751d2281748febd8fae578106ac1c9261518587e087e000227",
+      "asset_sha256": "1119cb9a36111dd335160dee1b5104388dd83a1f69564a52bc31b34518dd07b2",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/nutrient-details.webp",
+      "original": "img/Screenshot From 2026-11-15 10-16-28.png",
+      "width": 1402,
+      "height": 368,
+      "bytes": 18998,
+      "original_sha256": "ef88f161ffbbf9c7f1ffa660a7d8de603fd7e34c42cec96f164cd2944f201426",
+      "asset_sha256": "692527c537ab53f60c45ceb3464a9dfdeb8ad70616482674e2b6c1e67ee35027",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/medicines-catalog.webp",
+      "original": "img/Screenshot From 2026-11-15 10-17-00.png",
+      "width": 1454,
+      "height": 572,
+      "bytes": 22280,
+      "original_sha256": "2da59d566e74505d8a0200a27b7ad9fde3b8485d14f82669f4bba533f16fe084",
+      "asset_sha256": "1110dfc28d0fe45c51ad4713c811fe61d89b5f96d3553a5534a2a729bd999902",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/pending-cardiovascular-review.webp",
+      "original": "img/Screenshot From 2026-11-15 10-38-52.png",
+      "width": 1414,
+      "height": 430,
+      "bytes": 32846,
+      "original_sha256": "841c8f5c835908befba3c857923b7e779063253e072c946f577275899f336fe6",
+      "asset_sha256": "0555e5286d792f2e37b550d6c1850b7b6b303e8f5d24963ff3c91a139d703942",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/pending-rest-review.webp",
+      "original": "img/Screenshot From 2026-11-15 10-39-09.png",
+      "width": 1383,
+      "height": 503,
+      "bytes": 39166,
+      "original_sha256": "602aa9c92b224b2a2d1ac872ccbcfdd5deba23002d8d062e4f5283f5a7d1044d",
+      "asset_sha256": "2f453e5d69bd8cf32a817778502b2b9027e22b1eef13c3b9e794e17b90fd527c",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/heart-rate-detail.webp",
+      "original": "img/Screenshot From 2026-11-15 10-10-20.png",
+      "width": 549,
+      "height": 252,
+      "bytes": 10026,
+      "original_sha256": "e899a50aadd19b0df7648a5ef919719385eb427e69d583ffa8f76dd5674b8b95",
+      "asset_sha256": "230183481940d54576837aacfc7d29273db4cedb71fd22325d83121191948fcb",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/mood-detail.webp",
+      "original": "img/Screenshot From 2026-11-15 10-11-07.png",
+      "width": 470,
+      "height": 205,
+      "bytes": 10280,
+      "original_sha256": "596905d4012f7603b4aa18cd9f1ef78989b707b4837bba8a99781bd02fd9837f",
+      "asset_sha256": "0ddf6d46d2d67b4fa76507372c0b4df84e5ed50c3d47267daff0096103761cb4",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/sleep-quality-detail.webp",
+      "original": "img/Screenshot From 2026-11-15 10-11-26.png",
+      "width": 470,
+      "height": 205,
+      "bytes": 9492,
+      "original_sha256": "afd8246c2afec873220dfe82131b6065e26c8108ec8e2809767d84c67f7b00da",
+      "asset_sha256": "76c6ac19e0ff266788080e7a68b941a2523d62f9ccbbc12de1dfa25425a35b47",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    },
+    {
+      "asset": "front/public/overview/fatigue-detail.webp",
+      "original": "img/Screenshot From 2026-11-15 10-11-31.png",
+      "width": 470,
+      "height": 205,
+      "bytes": 9790,
+      "original_sha256": "c5efb2b3e8f2d950d02e510ea3b05a7fd18ef97e72d9137a42a6f5ceb0a53c64",
+      "asset_sha256": "38301b686a90fcafa4f74db55557e7546d796869fd557c60126eba3507dce608",
+      "redactions": [],
+      "review": "Original opened at native resolution. Fictional demonstration data; no personal emails or patient identifiers. Recorder names masked in history; notes match seed_exploration.py fixture."
+    }
+  ]
+}
