@@ -31,15 +31,15 @@ class HealthAlertService(PreflightService):
         observation.evaluation_status = 'insufficient_quality' if observation.signal_quality == 'poor' else 'evaluated'
         notes = []
         if observation.activity == 'unknown' and observation.indicator in ('heart_rate', 'respiratory_rate'):
-            notes.append('Falta contexto de atividade; as faixas de repouso não foram aplicadas. Leituras extremas exigem verificação imediata.')
+            notes.append('Activity context is missing; resting ranges were not applied. Extreme readings require immediate verification.')
         if observation.signal_quality == 'poor':
-            notes.append('Qualidade insuficiente. Repita a medição; uma leitura extrema exige verificação imediata. Alertas abertos são preservados.')
+            notes.append('Insufficient quality. Repeat the measurement; an extreme reading requires immediate verification. Open alerts are preserved.')
         elif observation.signal_quality == 'unknown':
-            notes.append('Qualidade do sinal não informada.')
+            notes.append('Signal quality not provided.')
         if observation.supplemental_oxygen is True:
-            notes.append('Em uso de oxigênio suplementar.')
+            notes.append('On supplemental oxygen.')
         if observation.indicator == 'blood_glucose' and observation.glucose_context not in profile['high_glucose_thresholds']:
-            notes.append('Não há regra de glicemia alta configurada para este contexto alimentar. A regra de glicemia baixa permanece ativa.')
+            notes.append('No high glucose rule is configured for this meal context. The low glucose rule remains active.')
         observation.evaluation_notes = notes
         self.session.add(observation)
         readings = evaluate_reading(observation, profile)
@@ -97,15 +97,15 @@ class HealthAlertService(PreflightService):
         for alert in active:
             related = alert.indicator == observation.indicator or (alert.rule_id == 'acute_consciousness' and observation.indicator in ('attention', 'consciousness'))
             if related and alert.id not in handled:
-                reason = 'Nova medição associada. O alerta permanece ativo até uma leitura válida fora da faixa ou resolução médica.'
+                reason = 'New measurement linked. The alert remains active until a valid reading outside the range or a medical resolution.'
                 action = 'measurement_added'
                 if observation.signal_quality == 'poor':
-                    reason = 'Qualidade insuficiente; a medição não encerra nem reduz o alerta aberto.'
+                    reason = 'Insufficient quality; the measurement neither closes nor lowers the open alert.'
                 elif self.normalizes_rule(alert, observation, profile):
                     if alert.severity == 'critical':
-                        reason = 'A nova medição está fora da faixa que gerou o alerta crítico. O evento anterior ainda exige resolução explícita pelo médico de voo.'
+                        reason = 'The new measurement is outside the range that raised the critical alert. The previous event still requires explicit resolution by the flight surgeon.'
                     else:
-                        reason = 'Alerta encerrado automaticamente após nova medição válida fora da faixa da regra.'
+                        reason = 'Alert closed automatically after a new valid measurement outside the rule range.'
                         alert.status = 'resolved'
                         alert.resolved_at = datetime.now(timezone.utc)
                         alert.resolved_by_user_id = self.user.id
@@ -163,8 +163,8 @@ class HealthAlertService(PreflightService):
                 channel = settings.emergency_channel
         message = None
         if alert.severity == 'critical':
-            message = 'Siga o protocolo de emergência e avise a equipe médica.'
-            message += f' Canal da missão: {channel}.' if channel else ' Canal de emergência não configurado; use o canal operacional da missão.'
+            message = 'Follow the emergency protocol and notify the medical team.'
+            message += f' Mission channel: {channel}.' if channel else ' Emergency channel not configured; use the mission operational channel.'
         latest = self.session.exec(select(HealthObservation).join(HealthAlertObservation, HealthAlertObservation.observation_id == HealthObservation.id).where(HealthAlertObservation.alert_id == alert.id).order_by(HealthObservation.collected_at.desc(), HealthObservation.id.desc())).first()
         awaiting_review = alert.status != 'resolved' and alert.severity == 'critical' and latest is not None and self.normalizes_rule(alert, latest, self.profile(latest.mission_id))
         data = alert.model_dump()
@@ -199,7 +199,7 @@ class HealthAlertService(PreflightService):
         can_resolve = self.authorize(astronaut_id, mission_id)
         alert = self._get(HealthAlert, alert_id)
         if alert.astronaut_id != astronaut_id or (mission_id is not None and alert.mission_id != mission_id):
-            raise HTTPException(404, 'Alerta não encontrado neste prontuário')
+            raise HTTPException(404, 'Alert not found in this medical record')
         return alert, can_resolve
 
     def history(self, astronaut_id, mission_id, alert_id, page, per_page):
@@ -216,21 +216,21 @@ class HealthAlertService(PreflightService):
         alert, can_resolve = self.get_alert(astronaut_id, mission_id, alert_id)
         self.session.refresh(alert)
         if alert.status == 'resolved':
-            raise HTTPException(409, 'Um alerta resolvido não pode ser reconhecido')
+            raise HTTPException(409, 'A resolved alert cannot be acknowledged')
         if alert.status == 'open':
             alert.status = 'acknowledged'
             alert.acknowledged_at = datetime.now(timezone.utc)
             alert.acknowledged_by_user_id = self.user.id
             alert.updated_at = alert.acknowledged_at
             self.session.add(alert)
-            self.event(alert, 'acknowledged', 'Alerta visto. Reconhecer não significa resolver.')
+            self.event(alert, 'acknowledged', 'Alert seen. Acknowledging does not mean resolving.')
             self.session.flush()
         return self.response(alert, can_resolve)
 
     @transactional
     def resolve(self, astronaut_id, mission_id, alert_id, payload):
         if not self.authorize(astronaut_id, mission_id):
-            raise HTTPException(403, 'A resolução exige o médico de voo autorizado da missão')
+            raise HTTPException(403, 'Resolution requires the authorized mission flight surgeon')
         self.session.exec(select(User).where(User.id == astronaut_id).with_for_update()).one()
         alert, _ = self.get_alert(astronaut_id, mission_id, alert_id)
         self.session.refresh(alert)
@@ -267,7 +267,7 @@ class HealthAlertService(PreflightService):
         settings = self.session.get(HealthAlertSettings, mission_id)
         revision = settings.revision if settings else 0
         if revision != payload.expected_revision:
-            raise HTTPException(409, 'A configuração foi alterada; atualize a tela antes de salvar')
+            raise HTTPException(409, 'The configuration was changed; refresh the screen before saving')
         settings = settings or HealthAlertSettings(mission_id=mission_id)
         values = payload.model_dump(exclude={'expected_revision'})
         if 'high_glucose_thresholds' not in payload.model_fields_set:

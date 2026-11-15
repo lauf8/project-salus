@@ -16,7 +16,7 @@ class OxygenThresholds(InputModel):
     @model_validator(mode='after')
     def validate_order(self):
         if not self.urgent_min < self.attention_min < self.normal_min:
-            raise ValueError('Os limites de SpO₂ devem ser crescentes: crítico, urgente e atenção')
+            raise ValueError('SpO₂ limits must increase: critical, urgent and attention')
         return self
 
 
@@ -29,7 +29,7 @@ class HighGlucoseThresholds(InputModel):
     def validate_order(self):
         values = [value for value in (self.attention, self.urgent, self.critical) if value is not None]
         if not values or values != sorted(set(values)):
-            raise ValueError('Informe ao menos um limite crescente de glicemia alta')
+            raise ValueError('Provide at least one increasing high glucose limit')
         return self
 
 
@@ -47,7 +47,7 @@ class AlertSettingsUpdate(InputModel):
         try:
             ZoneInfo(self.timezone)
         except (ZoneInfoNotFoundError, ValueError):
-            raise ValueError('Informe um fuso IANA válido, como America/Bahia')
+            raise ValueError('Provide a valid IANA time zone, such as America/Bahia')
         return self
 
 

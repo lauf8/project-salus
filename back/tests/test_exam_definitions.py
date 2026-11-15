@@ -15,8 +15,8 @@ pytestmark = pytest.mark.skipif(__import__('os').getenv('PREFLIGHT_POSTGRES_TEST
 
 def definition(case, code='blood_panel'):
     return case['call']('doctor', 'POST', '/exams', {
-        'exam_type_id': case['exam_type']['id'], 'code': code, 'name': 'Exame de sangue',
-        'source_url': 'https://www.nasa.gov/reference', 'source_section': 'Referência de teste', 'source_page': 19,
+        'exam_type_id': case['exam_type']['id'], 'code': code, 'name': 'Blood test',
+        'source_url': 'https://www.nasa.gov/reference', 'source_section': 'Test reference', 'source_page': 19,
         'fields': [
             {'code': 'hemoglobin', 'label': 'Hemoglobina', 'type': 'number', 'unit': 'g/dL', 'required': True},
             {'code': 'fasting', 'label': 'Em jejum', 'type': 'boolean'},
@@ -34,7 +34,7 @@ def assigned(case, record):
 
 
 def realization():
-    return {'performed_at': (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(), 'summary': 'Laudo de teste', 'structured_values': {'hemoglobin': 14.5, 'fasting': False, 'finding': 'absent', 'date': '2026-01-01'}, 'reference_ranges': {'hemoglobin': 'Conforme laboratório'}, 'laboratory': 'Laboratório de teste', 'performer_name': 'Profissional de teste', 'sample_identifier': 'sample_001', 'method': 'Método informado', 'report_reference': 'report_001'}
+    return {'performed_at': (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(), 'summary': 'Test report', 'structured_values': {'hemoglobin': 14.5, 'fasting': False, 'finding': 'absent', 'date': '2026-01-01'}, 'reference_ranges': {'hemoglobin': 'As per laboratory'}, 'laboratory': 'Test laboratory', 'performer_name': 'Profissional de teste', 'sample_identifier': 'sample_001', 'method': 'Reported method', 'report_reference': 'report_001'}
 
 
 def update_payload(record, **changes):
@@ -46,11 +46,11 @@ def test_catalog_crud_search_pagination_and_protected_deletion(case):
     record = definition(case)
     assert record['revision'] == 1
     assert call('astronaut', 'GET', f"/exams/{record['id']}")['name'] == record['name']
-    assert call('doctor', 'GET', '/exams?search=sangue&per_page=1')['pagination']['total'] == 1
+    assert call('doctor', 'GET', '/exams?search=blood&per_page=1')['pagination']['total'] == 1
     assert call('doctor', 'GET', '/exams?search=other')['data'] == []
     other = definition(case, 'other_panel')
     assert call('doctor', 'GET', '/exams?per_page=1')['pagination']['has_next']
-    changed = call('doctor', 'PATCH', f"/exams/{record['id']}", update_payload(record, name='Exame revisado'))
+    changed = call('doctor', 'PATCH', f"/exams/{record['id']}", update_payload(record, name='Revised exam'))
     assert changed['revision'] == 2
     call('doctor', 'PATCH', f"/exams/{record['id']}", update_payload(record), 409)
     assigned(case, changed)
@@ -77,7 +77,7 @@ def test_multiple_exams_per_type_and_snapshots_preserve_history(case):
     assert result['exam_snapshot']['fields'][0]['code'] == 'hemoglobin'
     assert result['exam_snapshot']['revision'] == 1
     assert result['structured_values']['fasting'] is False
-    assert result['reference_ranges']['hemoglobin'] == 'Conforme laboratório'
+    assert result['reference_ranges']['hemoglobin'] == 'As per laboratory'
     call('doctor', 'PATCH', f"{base}/exam-results/{result['id']}", {'structured_values': {'hemoglobin': 15}})
     call('doctor', 'POST', f"{base}/exam-results/{result['id']}/reviews", {'decision': 'accepted'}, 201)
     accepted = call('astronaut', 'GET', f"{base}/astronauts/{case['astronaut']['id']}/exam-types/{record['exam_type_id']}/latest-accepted?exam_id={exam['id']}")
@@ -105,10 +105,10 @@ def test_collection_dates_reference_ranges_and_partial_correction(case):
     body = realization() | {'collected_at': (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()}
     result = call('doctor', 'POST', path, body, 201)
     result_path = f"{case['base']}/exam-results/{result['id']}"
-    corrected = call('doctor', 'PATCH', result_path, {'summary': 'Correção de resumo'})
+    corrected = call('doctor', 'PATCH', result_path, {'summary': 'Summary correction'})
     assert corrected['structured_values'] == body['structured_values']
     call('doctor', 'PATCH', result_path, {'structured_values': {}}, 422)
-    assert call('astronaut', 'GET', result_path)['summary'] == 'Correção de resumo'
+    assert call('astronaut', 'GET', result_path)['summary'] == 'Summary correction'
     assert call('astronaut', 'GET', result_path)['structured_values'] == body['structured_values']
 
 
@@ -142,7 +142,7 @@ def test_catalog_and_requirement_validation(case):
         call('doctor', 'POST', '/exams', create | {'code': 'new_exam'} | changes, 404 if 'exam_type_id' in changes else 422)
     call('doctor', 'POST', '/exams', create, 409)
     call('doctor', 'POST', f"{case['base']}/exam-requirements", {'exam_type_id': record['exam_type_id'], 'exam_definition_id': 9999999, 'due_days_before_launch': 1}, 404)
-    other_type = call('doctor', 'POST', '/exam-types', {'code': 'other_type', 'name': 'Outro tipo'}, 201)
+    other_type = call('doctor', 'POST', '/exam-types', {'code': 'other_type', 'name': 'Other type'}, 201)
     call('doctor', 'POST', f"{case['base']}/exam-requirements", {'exam_type_id': other_type['id'], 'exam_definition_id': record['id'], 'due_days_before_launch': 1}, 422)
     with pytest.raises(IntegrityError):
         with case['session'].begin_nested():
@@ -154,10 +154,10 @@ def test_seed_is_valid_idempotent_and_preserves_customizations(case):
     session = case['session']
     assert seed(session) == len(EXAMS)
     record = session.exec(select(ExamDefinition).where(ExamDefinition.code == EXAMS[0]['code'])).one()
-    record.name = 'Personalizado pelo médico'
+    record.name = 'Customized by the physician'
     session.add(record)
     session.flush()
     assert seed(session) == 0
-    assert record.name == 'Personalizado pelo médico'
+    assert record.name == 'Customized by the physician'
     for item in session.exec(select(ExamDefinition)).all():
         assert ExamCreate.model_validate({key: value for key, value in item.model_dump().items() if key not in {'id', 'revision'}})

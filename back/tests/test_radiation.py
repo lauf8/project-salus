@@ -1,5 +1,5 @@
-"""Fluxo de radiação: atividade da tripulação, SEP em EVA, acompanhamento de 48 h,
-sintomas, alertas, fluxo de prótons (NOAA SWPC e simulado), doses e linha do tempo."""
+"""Radiation flow: crew activity, SEP during EVA, 48 h follow-up,
+symptoms, alerts, proton flux (NOAA SWPC and simulated), doses and timeline."""
 
 import json
 from datetime import datetime, timedelta, timezone
@@ -87,7 +87,7 @@ def radiation_api():
         session.flush()
         people[name] = user.id
     mission = Mission(
-        name='Missão de outubro', status='completed', planned_launch_at=datetime(2024, 10, 20, tzinfo=UTC),
+        name='October mission', status='completed', planned_launch_at=datetime(2024, 10, 20, tzinfo=UTC),
         started_at=datetime(2024, 10, 20, tzinfo=UTC), ended_at=datetime(2024, 11, 5, tzinfo=UTC),
     )
     session.add(mission)
@@ -111,7 +111,7 @@ def radiation_api():
     try:
         with TestClient(app) as client:
             def call(method, path, payload=None, expected=200, actor='doctor', params=None):
-                # Acesso público: a identidade é escolhida pelos cabeçalhos, sem token.
+                # Public access: the identity is chosen through headers, without a token.
                 headers = {'X-Public-User': str(people[actor]), 'X-Public-Profile': PROFILES[actor]}
                 response = client.request(method, '/v1' + path, json=payload, params=params, headers=headers)
                 assert response.status_code == expected, response.text
@@ -138,7 +138,7 @@ def active_alerts(call, base, actor='doctor', **params):
     return call('GET', f'{base}/alerts', actor=actor, params=params)['data']
 
 
-# --- Funções puras -------------------------------------------------------------------------------
+# --- Pure functions ------------------------------------------------------------------------------
 
 def test_swpc_parsing_and_simulated_profile():
     assert parse_swpc_reading({'time_tag': '2024-10-26T19:05:00Z', 'satellite': 18, 'flux': 12.5, 'energy': '>=10 MeV'}) == (
@@ -151,7 +151,7 @@ def test_swpc_parsing_and_simulated_profile():
     assert simulated_flux(16, 1000, 4, 12) < simulated_flux(8, 1000, 4, 12) < 1000
 
 
-# --- Atividade e SEP -----------------------------------------------------------------------------
+# --- Activity and SEP ----------------------------------------------------------------------------
 
 def test_sep_sync_opens_48h_window_only_for_crew_on_eva(radiation_api):
     call, session, people, base, _ = radiation_api
@@ -168,12 +168,12 @@ def test_sep_sync_opens_48h_window_only_for_crew_on_eva(radiation_api):
     assert follow_up['astronaut_id'] == people['eva'] and follow_up['was_on_eva'] is True
     assert follow_up['event_activity_id'] == SEP['sepID'] and follow_up['status'] == 'open'
     assert follow_up['opened_at'].startswith('2024-10-26T19:02') and follow_up['window_ends_at'].startswith('2024-10-28T19:02')
-    assert follow_up['window_active'] is False  # a janela de 2024 já passou
+    assert follow_up['window_active'] is False  # the 2024 window has passed
 
     alerts = active_alerts(call, base)
     assert [(alert['rule_id'], alert['severity'], alert['astronaut_id']) for alert in alerts] == [('sep_during_eva', 'urgent', people['eva'])]
 
-    # Nova sincronização não duplica acompanhamento nem alerta.
+    # A new synchronization does not duplicate the follow-up or the alert.
     call('POST', '/space-weather/sync', OCTOBER)
     assert len(session.exec(select(RadiationFollowUp)).all()) == 1
     assert len(session.exec(select(RadiationAlert)).all()) == 1
@@ -184,7 +184,7 @@ def test_eva_recorded_after_sep_import_also_opens_follow_up(radiation_api):
     call('POST', '/space-weather/sync', OCTOBER)
     assert call('GET', f'{base}/follow-ups') == []
 
-    # EVA aberta (sem fim) que começou 1 h antes do SEP; o administrador registra.
+    # Open EVA (no end) that started 1 h before the SEP; the administrator records it.
     activity = call('POST', f'{base}/crew-activities', {
         'astronaut_id': people['eva'], 'activity_type': 'eva', 'started_at': iso(SEP_TIME - timedelta(hours=1)),
     }, expected=201, actor='admin')
@@ -206,15 +206,15 @@ def test_activity_validation_and_permissions(radiation_api):
     call('POST', f'{base}/crew-activities', payload, actor='outsider', expected=404)
     call('POST', f'{base}/crew-activities', {**payload, 'astronaut_id': people['doctor']}, expected=404)
     call('POST', f'{base}/crew-activities', {**payload, 'ended_at': iso(SEP_TIME)}, expected=422)
-    call('POST', f'{base}/crew-activities', {**payload, 'started_at': '2024-10-01T00:00:00Z'}, expected=422)  # antes da missão
-    call('POST', f'{base}/crew-activities', {**payload, 'started_at': '2024-10-26T19:02:00'}, expected=422)  # sem fuso
+    call('POST', f'{base}/crew-activities', {**payload, 'started_at': '2024-10-01T00:00:00Z'}, expected=422)  # before the mission
+    call('POST', f'{base}/crew-activities', {**payload, 'started_at': '2024-10-26T19:02:00'}, expected=422)  # without time zone
     call('POST', f'{base}/crew-activities', payload, expected=201, actor='eva')
     call('POST', f'{base}/crew-activities', {**payload, 'activity_type': 'storm_shelter'}, expected=409)  # sobreposta
     listed = call('GET', f'{base}/crew-activities', actor='iva')
     assert listed['pagination']['total'] == 1
 
 
-# --- Sintomas e alertas -----------------------------------------------------------------------------
+# --- Symptoms and alerts ----------------------------------------------------------------------------
 
 def test_symptom_reports_raise_prodromal_alerts(radiation_api):
     call, _, people, base, _ = radiation_api
@@ -239,25 +239,25 @@ def test_symptom_reports_raise_prodromal_alerts(radiation_api):
         'sep_during_eva': 'urgent', 'late_symptoms': 'attention',
     }
     assert 'EVA' in alerts['skin_reaction']['reason']
-    # Ordem: crítico primeiro.
+    # Order: critical first.
     assert active_alerts(call, base)[0]['rule_id'] == 'prodromal_vomiting'
     assert active_alerts(call, base, actor='iva') == []
 
-    # Astronauta reconhece, mas só o médico de voo resolve.
+    # The astronaut acknowledges, but only the flight surgeon resolves.
     vomiting = alerts['prodromal_vomiting']
     assert vomiting['can_resolve'] is False
     acknowledged = call('POST', f"{base}/alerts/{vomiting['id']}/acknowledge", actor='eva')
     assert acknowledged['status'] == 'acknowledged'
     call('POST', f"{base}/alerts/{vomiting['id']}/acknowledge", actor='iva', expected=403)
     call('POST', f"{base}/alerts/{vomiting['id']}/resolve", {'note': 'Avaliado'}, actor='eva', expected=403)
-    resolved = call('POST', f"{base}/alerts/{vomiting['id']}/resolve", {'note': 'Avaliado, sem sinais de dose alta'})
+    resolved = call('POST', f"{base}/alerts/{vomiting['id']}/resolve", {'note': 'Assessed, no signs of high dose'})
     assert resolved['status'] == 'resolved' and resolved['can_resolve'] is False
     call('POST', f"{base}/alerts/{vomiting['id']}/acknowledge", expected=409)
 
-    # Encerramento pelo médico de voo.
+    # Closure by the flight surgeon.
     close = f"{base}/follow-ups/{follow_up['id']}/close"
-    call('POST', close, {'status': 'completed', 'notes': 'Sem sintomas novos'}, actor='eva', expected=403)
-    closed = call('POST', close, {'status': 'completed', 'notes': 'Sem sintomas novos'})
+    call('POST', close, {'status': 'completed', 'notes': 'No new symptoms'}, actor='eva', expected=403)
+    closed = call('POST', close, {'status': 'completed', 'notes': 'No new symptoms'})
     assert closed['status'] == 'completed' and closed['closed_at'] is not None
     call('POST', reports, {'symptoms': ['nausea']}, actor='eva', expected=409)
 
@@ -287,7 +287,7 @@ def test_health_observation_with_radiation_symptom_feeds_open_follow_up(radiatio
     assert follow_up['reports'][0]['observation_id'] is not None
     assert {alert['rule_id'] for alert in active_alerts(call, base)} >= {'prodromal_vomiting', 'prodromal_symptoms'}
 
-    # Sintomas de radiação numa medição sem acompanhamento aberto não geram relato.
+    # Radiation symptoms in a measurement without an open follow-up do not create a report.
     call('POST', f"/health/astronauts/{people['iva']}/observations", {
         'mission_id': mission.id, 'indicator': 'fatigue', 'value': 3, 'source': 'self_report',
         'collected_at': iso(datetime.now(UTC) - timedelta(minutes=5)), 'symptoms': ['nausea'],
@@ -295,7 +295,7 @@ def test_health_observation_with_radiation_symptom_feeds_open_follow_up(radiatio
     assert len(session.exec(select(RadiationSymptomReport)).all()) == 1
 
 
-# --- Fluxo de prótons ---------------------------------------------------------------------------------
+# --- Proton flux ------------------------------------------------------------------------------------
 
 def test_swpc_import_is_idempotent_and_flags_flux_during_eva(radiation_api):
     call, session, people, base, swpc = radiation_api
@@ -334,7 +334,7 @@ def test_simulated_flux_and_doses_raise_dose_limit_alerts(radiation_api):
     call('POST', '/radiation/proton-flux/simulate', {**simulation, 'event_activity_id': FLARE['flrID']}, expected=422)
     flux = call('POST', '/radiation/proton-flux/simulate', simulation)
     assert flux['stored_count'] == 49 and flux['peak_at'].startswith('2024-10-26T21:02')
-    # Pico ≥ S3 durante a EVA: o alerta do SEP sobe para crítico.
+    # Peak ≥ S3 during the EVA: the SEP alert rises to critical.
     severities = {alert['rule_id']: alert['severity'] for alert in active_alerts(call, base)}
     assert severities == {'sep_during_eva': 'critical', 'proton_flux_during_eva': 'critical'}
 
@@ -344,11 +344,11 @@ def test_simulated_flux_and_doses_raise_dose_limit_alerts(radiation_api):
     result = call('POST', f'{base}/doses/simulate', window)
     assert result['readings_used'] == 49 and len(result['records']) == 10
     skin = {record['astronaut_id']: record['dose'] for record in result['records'] if record['organ'] == 'skin'}
-    # A EVA (4 h após o SEP, inclusive o pico) recebe mais dose que a IVA o dia todo.
+    # The EVA (4 h after the SEP, including the peak) receives more dose than IVA all day.
     assert skin[people['eva']] > skin[people['iva']] > 0
     assert all(record['source'] == 'simulation' for record in result['records'])
 
-    # Repetir a simulação substitui os registros.
+    # Repeating the simulation replaces the records.
     call('POST', f'{base}/doses/simulate', window)
     assert len(session.exec(select(RadiationDoseRecord)).all()) == 10
 
@@ -382,7 +382,7 @@ def test_manual_dose_records_and_visibility(radiation_api):
     assert [(alert['rule_id'], alert['severity']) for alert in alerts] == [('dose_limit', 'urgent')]  # 200/250 = 80%
     call('POST', f'{base}/doses', {**dose, 'dose': 60}, expected=201)
     alerts = active_alerts(call, base, actor='iva')
-    # 260/250 no período de 30 dias (escalou, sem duplicar) e 260/500 em 1 ano.
+    # 260/250 in the 30-day period (escalated, without duplicating) and 260/500 in 1 year.
     assert [(alert['severity'], alert['details']['period']) for alert in alerts] == [('critical', '30_day'), ('attention', '1_year')]
 
     assert call('GET', f'{base}/doses', actor='iva')['pagination']['total'] == 2
@@ -392,7 +392,7 @@ def test_manual_dose_records_and_visibility(radiation_api):
     assert call('GET', f'{base}/doses', params={'astronaut_id': people['iva']})['pagination']['total'] == 2
 
 
-# --- Linha do tempo ---------------------------------------------------------------------------------
+# --- Timeline -------------------------------------------------------------------------------------
 
 def test_timeline_builds_flare_cme_sep_chain(radiation_api):
     call, _, people, base, _ = radiation_api

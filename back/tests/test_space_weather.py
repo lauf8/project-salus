@@ -23,7 +23,7 @@ from app.providers.donki import DonkiClient, DonkiSettings
 from app.services.space_weather_service import date_windows, flare_peak_flux, linked_event_type, normalize_event, parse_donki_time
 
 
-# Cadeia real de outubro de 2024 (formato do DONKI), reduzida aos campos usados.
+# Real October 2024 chain (DONKI format), reduced to the fields used.
 FLARE = {
     'flrID': '2024-10-26T06:32:00-FLR-001', 'catalog': 'M2M_CATALOG',
     'instruments': [{'displayName': 'GOES-P: EXIS 1.0-8.0'}],
@@ -53,7 +53,7 @@ OLD_FLARE = {**FLARE, 'flrID': '2023-01-10T00:00:00-FLR-001', 'beginTime': '2023
 
 
 class FakeDonki:
-    """Simula a API do DONKI e registra as chamadas."""
+    """Simulates the DONKI API and records the calls."""
 
     def __init__(self):
         self.data = {'FLR': [FLARE, OLD_FLARE], 'CME': [CME], 'SEP': [SEP]}
@@ -94,7 +94,7 @@ def space_weather_api():
         session.flush()
         people[name] = user.id
     mission = Mission(
-        name='Missão de outubro', status='completed',
+        name='October mission', status='completed',
         planned_launch_at=datetime(2024, 10, 20, tzinfo=timezone.utc),
         started_at=datetime(2024, 10, 20, tzinfo=timezone.utc), ended_at=datetime(2024, 11, 5, tzinfo=timezone.utc),
     )
@@ -116,7 +116,7 @@ def space_weather_api():
     try:
         with TestClient(app) as client:
             def call(method, path, payload=None, expected=200, actor='doctor', params=None):
-                # Acesso público: a identidade é escolhida pelos cabeçalhos, sem token.
+                # Public access: the identity is chosen through headers, without a token.
                 headers = {'X-Public-User': str(people[actor]), 'X-Public-Profile': PROFILES[actor]}
                 response = client.request(method, '/v1/space-weather' + path, json=payload, params=params, headers=headers)
                 assert response.status_code == expected, response.text
@@ -132,14 +132,14 @@ def space_weather_api():
 OCTOBER = {'start_date': '2024-10-01', 'end_date': '2024-11-14'}
 
 
-# --- Funções de normalização ---------------------------------------------------------------
+# --- Normalization functions ---------------------------------------------------------------
 
 def test_parse_donki_time_and_helpers():
     assert parse_donki_time('2024-10-26T19:02Z') == datetime(2024, 10, 26, 19, 2, tzinfo=timezone.utc)
     assert parse_donki_time('2024-10-26T19:02:30-03:00') == datetime(2024, 10, 26, 22, 2, 30, tzinfo=timezone.utc)
-    assert parse_donki_time('') is None and parse_donki_time('não é data') is None and parse_donki_time(None) is None
+    assert parse_donki_time('') is None and parse_donki_time('not a date') is None and parse_donki_time(None) is None
     assert linked_event_type('2024-10-28T04:13:00-IPS-001') == 'IPS'
-    assert linked_event_type('sem-tipo') is None
+    assert linked_event_type('no-type') is None
     assert flare_peak_flux('X1.8') == pytest.approx(1.8e-4)
     assert flare_peak_flux('m2') == pytest.approx(2e-5)
     assert flare_peak_flux('C') == pytest.approx(1e-6)
@@ -154,7 +154,7 @@ def test_normalize_uses_most_accurate_cme_analysis_and_skips_incomplete_items():
     assert normalize_event('SEP', {'eventTime': '2024-10-26T19:02Z'}) is None
     assert normalize_event('SEP', {'sepID': 'x', 'eventTime': None}) is None
     flare, _ = normalize_event('FLR', {**FLARE, 'endTime': '2024-10-26T06:00Z'})
-    assert flare['end_time'] is None  # fim anterior ao início é descartado
+    assert flare['end_time'] is None  # an end before the start is discarded
 
 
 # --- API -----------------------------------------------------------------------------------
@@ -166,7 +166,7 @@ def test_sync_imports_events_links_and_uses_windows(space_weather_api):
     assert {key: (run['status'], run['fetched_count'], run['created_count']) for key, run in runs.items()} == {
         'FLR': ('success', 1, 1), 'CME': ('success', 1, 1), 'SEP': ('success', 1, 1),
     }
-    # 45 dias -> 2 janelas de 30 dias para cada tipo, sempre com a chave configurada.
+    # 45 days -> 2 windows of 30 days for each type, always with the configured key.
     assert len(fake.calls) == 6 and {call_[3] for call_ in fake.calls} == {'TEST_KEY'}
 
     flare = session.exec(select(SpaceWeatherEvent).where(SpaceWeatherEvent.event_type == 'FLR')).one()
@@ -219,7 +219,7 @@ def test_lists_events_with_filters_and_mission_window(space_weather_api):
     assert [item['event_type'] for item in call('GET', '/events', params={'event_type': 'SEP'})['data']] == ['SEP']
     recent = call('GET', '/events', params={'start': '2024-01-01T00:00:00Z'})
     assert recent['pagination']['total'] == 3
-    call('GET', '/events', params={'start': '2024-01-01T00:00:00'}, expected=422)  # sem fuso
+    call('GET', '/events', params={'start': '2024-01-01T00:00:00'}, expected=422)  # without time zone
 
     in_mission = call('GET', f'/missions/{mission.id}/events', actor='astronaut')
     assert {item['activity_id'] for item in in_mission['data']} == {FLARE['flrID'], CME['activityID'], SEP['sepID']}
@@ -234,7 +234,7 @@ def test_sync_permissions_and_validation(space_weather_api):
     call('POST', '/sync', {'start_date': '2024-02-01', 'end_date': '2024-01-01'}, expected=422)
     call('POST', '/sync', {**OCTOBER, 'event_types': ['GST']}, expected=422)
     call('POST', '/sync', {**OCTOBER, 'event_types': ['SEP', 'SEP']}, expected=422)
-    # Dados públicos: qualquer usuário autenticado pode consultar.
+    # Public data: any authenticated user can query.
     call('GET', '/events', actor='astronaut')
 
 
@@ -256,4 +256,4 @@ def test_exposure_limits(space_weather_api):
     call, *_ = space_weather_api
     limits = call('GET', '/exposure-limits', actor='astronaut')
     assert limits == [{'profile_id': 'nasa-sp-2009-3405-table-5-1', 'organ': 'bfo', 'period': '30_day', 'value': 250.0, 'unit': 'mGy-Eq', 'source_reference': 'Tabela 5-1'}]
-    assert call('GET', '/exposure-limits', params={'profile_id': 'outro'}) == []
+    assert call('GET', '/exposure-limits', params={'profile_id': 'other'}) == []

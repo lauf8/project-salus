@@ -11,7 +11,7 @@ def seed(session):
     for code, name in EXAM_TYPES:
         record = session.exec(select(ExamType).where(ExamType.code == code)).first()
         if record is None:
-            record = ExamType(code=code, name=name, description='Catálogo baseado na referência NASA OCHMO-STD-100.1A, Rev. A.')
+            record = ExamType(code=code, name=name, description='Catalog based on the NASA OCHMO-STD-100.1A, Rev. A reference.')
             session.add(record)
             session.flush()
         types[code] = record

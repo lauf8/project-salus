@@ -9,8 +9,8 @@ from app.schemas.preflight import InputModel, OutputModel
 EventType = Literal['FLR', 'CME', 'SEP']
 HealthRelevance = Literal['precursor', 'exposure']
 
-# Cap. 5 do NASA SP-2009-3405: flares e CMEs antecedem/acompanham os SEPs;
-# os prótons do SEP é que podem causar dose relevante.
+# NASA SP-2009-3405 chapter 5: flares and CMEs precede or accompany SEPs;
+# it is the SEP protons that can cause a relevant dose.
 HEALTH_RELEVANCE: dict[str, HealthRelevance] = {'FLR': 'precursor', 'CME': 'precursor', 'SEP': 'exposure'}
 MAX_SYNC_DAYS = 366
 
@@ -23,11 +23,11 @@ class SyncRequest(InputModel):
     @model_validator(mode='after')
     def check_range(self):
         if self.end_date < self.start_date:
-            raise ValueError('end_date deve ser igual ou posterior a start_date')
+            raise ValueError('end_date must be equal to or after start_date')
         if (self.end_date - self.start_date).days + 1 > MAX_SYNC_DAYS:
-            raise ValueError(f'O intervalo máximo por sincronização é de {MAX_SYNC_DAYS} dias')
+            raise ValueError(f'The maximum interval per synchronization is {MAX_SYNC_DAYS} days')
         if len(set(self.event_types)) != len(self.event_types):
-            raise ValueError('event_types não pode ter tipos repetidos')
+            raise ValueError('event_types cannot have repeated types')
         return self
 
 

@@ -6,7 +6,7 @@ import {
   buildChartData,
 } from "../src/health-indicators.js";
 
-test("todos os indicadores têm identificador e hotspot próprios", () => {
+test("every indicator has its own identifier and hotspot", () => {
   assert.equal(indicators.length, 12);
   assert.equal(new Set(indicators.map((item) => item.id)).size, 12);
   assert.equal(
@@ -14,7 +14,7 @@ test("todos os indicadores têm identificador e hotspot próprios", () => {
     12,
   );
 });
-test("ausência de dados e escalas são exibidas sem classificações clínicas", () => {
+test("missing data and scales are shown without clinical classifications", () => {
   for (const indicator of indicators)
     assert.equal(formatValue(null, indicator), "No data");
   assert.equal(
@@ -46,7 +46,7 @@ test("ausência de dados e escalas são exibidas sem classificações clínicas"
     "4 · Good",
   );
 });
-test("gráfico mantém pontos brutos e lacunas sem interpolar ou agregar observações", () => {
+test("chart keeps raw points and gaps without interpolating or aggregating observations", () => {
   const start = Date.parse("2026-01-01T00:00:00Z"),
     hour = 3600000;
   const rows = [
@@ -66,7 +66,7 @@ test("gráfico mantém pontos brutos e lacunas sem interpolar ou agregar observa
   assert.equal(points.filter((point) => point.value === null).length, 3);
 });
 
-test("glicemia usa mg/dL e mantém valores numéricos no histórico", () => {
+test("glucose uses mg/dL and keeps numeric values in the history", () => {
   const indicator = indicators.find((item) => item.id === "blood_glucose");
   assert.equal(indicator.unit, "mg/dL");
   assert.ok(indicator.min > 0);

@@ -198,10 +198,10 @@ npm run dev
 
 Open http://localhost:5173.
 
-The interface opens without a password. Use the two selectors at the top right, **Perfil** (profile) and **Usuário** (user), to choose who you are. For example:
+The interface opens without a password. Use the **Profile** and **User** selectors at the top right to choose who you are. For example:
 
-- **Perfil: Mission administrator → Usuário: Rafael Andrade** sees all 50 demonstration missions.
-- **Perfil: Physician → Usuário: Helena Monteiro** sees crew health, clinical records and predictions.
+- **Profile: Mission administrator → User: Rafael Andrade** sees all 50 demonstration missions.
+- **Profile: Physician → User: Helena Monteiro** sees crew health, clinical records and predictions.
 
 Each profile only sees what its role allows. See [USER_ACCESS.md](USER_ACCESS.md) for the full permission model.
 

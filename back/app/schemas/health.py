@@ -12,10 +12,11 @@ Indicator = Literal['heart_rate', 'blood_pressure', 'respiratory_rate', 'oxygen_
 Source = Literal['self_report', 'manual_measurement', 'device']
 Symptom = Literal[tuple(SYMPTOM_LABELS)]
 UNITS = {
-    'heart_rate': 'bpm', 'blood_pressure': 'mmHg', 'respiratory_rate': 'respirações/min',
+    'heart_rate': 'bpm', 'blood_pressure': 'mmHg', 'respiratory_rate': 'breaths/min',
     'blood_glucose': 'mg/dL', 'oxygen_saturation': '%', 'body_temperature': '°C', 'consciousness': 'AVPU',
     'sleep_duration': 'min', 'sleep_quality': '1–5', 'fatigue': '0–10', 'mood': '1–5', 'attention': None,
 }
+LEGACY_UNITS = {'respiratory_rate': ('respirações/min',)}
 
 
 class ObservationCreate(InputModel):
@@ -63,67 +64,67 @@ class ObservationCreate(InputModel):
         elif self.indicator == 'sleep_duration' and unit == 'h':
             if self.value is not None:
                 self.value = round(self.value * 60, 6)
-        elif unit != canonical:
-            raise ValueError('Unidade não suportada para este indicador')
+        elif unit != canonical and unit not in LEGACY_UNITS.get(self.indicator, ()):
+            raise ValueError('Unsupported unit for this indicator')
         self.unit = canonical
         if self.value is not None and self.value < 0:
-            raise ValueError('O valor normalizado não pode ser negativo')
+            raise ValueError('The normalized value cannot be negative')
         if len(self.symptoms) != len(set(self.symptoms)):
-            raise ValueError('Não repita os sintomas')
+            raise ValueError('Do not repeat symptoms')
         self.symptoms = sorted(self.symptoms)
         if self.symptoms:
             if self.symptoms_status == 'absent':
-                raise ValueError('Sintomas presentes não podem ser marcados como ausentes')
+                raise ValueError('Present symptoms cannot be marked as absent')
             self.symptoms_status = 'present'
         elif self.symptoms_status == 'present':
-            raise ValueError('Selecione os sintomas presentes')
+            raise ValueError('Select the present symptoms')
         if self.acute_confusion is not None and self.indicator not in ('attention', 'consciousness'):
-            raise ValueError('Confusão aguda deve ser registrada em atenção ou consciência')
+            raise ValueError('Acute confusion must be recorded under attention or consciousness')
         for name in ('collected_at', 'sleep_started_at', 'sleep_ended_at'):
             timestamp = getattr(self, name)
             if timestamp is not None:
                 setattr(self, name, timestamp.astimezone(timezone.utc))
         if self.collected_at > datetime.now(timezone.utc):
-            raise ValueError('O horário da coleta não pode estar no futuro')
+            raise ValueError('The collection time cannot be in the future')
         if self.source == 'device':
-            raise ValueError('Não existe integração de dispositivo configurada')
+            raise ValueError('No device integration is configured')
         if self.indicator == 'consciousness' and self.source != 'manual_measurement':
-            raise ValueError('AVPU exige avaliação manual por outra pessoa autorizada')
+            raise ValueError('AVPU requires a manual assessment by another authorized person')
         if self.is_preflight_reference and self.mission_id is None:
-            raise ValueError('A referência pré-missão exige uma missão')
+            raise ValueError('The pre-mission reference requires a mission')
         if self.sleep_started_at or self.sleep_ended_at:
             if self.indicator != 'sleep_duration' or not (self.sleep_started_at and self.sleep_ended_at):
-                raise ValueError('Informe início e fim somente para uma sessão de sono')
+                raise ValueError('Provide start and end only for a sleep session')
             if self.sleep_ended_at <= self.sleep_started_at or self.sleep_ended_at > self.collected_at:
-                raise ValueError('O fim do sono deve ser posterior ao início e não pode exceder a coleta')
+                raise ValueError('Sleep end must be after the start and cannot exceed the collection time')
             duration = int((self.sleep_ended_at - self.sleep_started_at).total_seconds() // 60)
             if duration < 1:
-                raise ValueError('A sessão deve durar pelo menos um minuto')
+                raise ValueError('The session must last at least one minute')
             if self.value is not None and self.value != duration:
-                raise ValueError('A duração informada difere da sessão de sono')
+                raise ValueError('The given duration differs from the sleep session')
             self.value = duration
         if self.indicator == 'blood_pressure':
             if self.systolic is None or self.diastolic is None or self.systolic <= self.diastolic:
-                raise ValueError('Informe sistólica e diastólica juntas, com sistólica maior que diastólica')
+                raise ValueError('Provide systolic and diastolic together, with systolic greater than diastolic')
             if self.value is not None or self.category is not None:
-                raise ValueError('Pressão arterial aceita apenas sistólica e diastólica')
+                raise ValueError('Blood pressure accepts only systolic and diastolic')
         elif self.indicator in ('consciousness', 'attention'):
             options = ('alert', 'voice', 'pain', 'unresponsive') if self.indicator == 'consciousness' else ('better', 'usual', 'worse')
             if self.category not in options or any(v is not None for v in (self.value, self.systolic, self.diastolic)):
-                raise ValueError('Selecione uma categoria válida para o indicador')
+                raise ValueError('Select a valid category for the indicator')
         else:
             if self.value is None or any(v is not None for v in (self.category, self.systolic, self.diastolic)):
-                raise ValueError('Informe um valor numérico para o indicador')
+                raise ValueError('Provide a numeric value for the indicator')
             if self.indicator in ('heart_rate', 'respiratory_rate', 'body_temperature', 'blood_glucose') and self.value <= 0:
-                raise ValueError('O valor deve ser maior que zero')
+                raise ValueError('The value must be greater than zero')
             if self.indicator == 'oxygen_saturation' and self.value > 100:
-                raise ValueError('A saturação deve estar entre 0 e 100%')
+                raise ValueError('Saturation must be between 0 and 100%')
             if self.indicator in ('sleep_quality', 'mood', 'fatigue', 'sleep_duration') and not float(self.value).is_integer():
-                raise ValueError('Este indicador exige um número inteiro')
+                raise ValueError('This indicator requires an integer')
             if self.indicator in ('sleep_quality', 'mood') and not 1 <= self.value <= 5:
-                raise ValueError('A escala vai de 1 a 5')
+                raise ValueError('The scale goes from 1 to 5')
             if self.indicator == 'fatigue' and not 0 <= self.value <= 10:
-                raise ValueError('A escala de fadiga vai de 0 a 10')
+                raise ValueError('The fatigue scale goes from 0 to 10')
         return self
 
 

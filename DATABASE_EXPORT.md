@@ -1,39 +1,41 @@
-# Exportação do banco da aplicação
+# Application database export
 
-O preparo troca rótulos de demonstração por nomes ficcionais plausíveis, mantendo a origem gerada em um registro externo. Não atribui autenticidade clínica ou histórica aos dados. Os documentos de referência e códigos técnicos de protocolos/origens permanecem originais.
+The preparation replaces demonstration labels with plausible fictional names and keeps the generated origin in an external record. It does not give the data clinical or historical authenticity. Reference documents and technical protocol/origin codes stay as originally recorded.
 
-O banco ativo mantém 56 missões: 50 do histórico gerado e 6 anteriores. As novas missões vão de Aurora 01 a Cruzeiro 05. Na interface, Rafael Andrade tem o perfil Mission administrator e Helena Monteiro tem o perfil Physician.
+The active database keeps 56 missions: 50 from the generated history and 6 earlier ones. The new missions go from Aurora 01 to Cruzeiro 05. In the interface, Rafael Andrade has the Mission administrator profile and Helena Monteiro has the Physician profile.
 
-## Preparar nomes
+## Prepare names
 
-Em `back/`, faça primeiro um backup do banco e execute:
+From `back/`, first back up the database, then run:
 
 ```bash
 docker compose exec -T -e SALUS_SYNTHETIC_ENV=development api python -m scripts.prepare_database_export
 ```
 
-O script usa `data/synthetic_missions_public/manifest.json` para conferir os 50 IDs e registra a relação entre nomes anteriores e atuais em `data/synthetic_missions_public/presentation.json`. O registro fica fora do banco e contém a configuração original e a origem dos dados. Repetições conferem os IDs/nomes e não recriam nem renomeiam novamente o conjunto. O gerador `--publish` também usa esse registro para evitar duplicação após a troca dos nomes. Preserve esses arquivos ao continuar o desenvolvimento.
+The script uses `data/synthetic_missions_public/manifest.json` to check the 50 IDs and records the mapping between previous and current names in `data/synthetic_missions_public/presentation.json`. The record stays outside the database and contains the original configuration and the data origin. Repeated runs check the IDs and names and do not recreate or rename the set again. The `--publish` generator also uses this record to avoid duplication after the names change. Keep these files when you continue development.
 
-Os nomes de tripulantes são determinísticos e os contatos usam o domínio reservado `crew.salus.example`. As substituições em snapshots JSON preservam valores numéricos, datas e referências por ID. Fontes documentais não são reescritas. Campos técnicos como `profile_id`, `rule_version`, códigos e origem de telemetria são preservados. O preparo exige ambiente de desenvolvimento/teste e é transacional.
+Crew names are deterministic and contacts use the reserved domain `crew.salus.example`. Replacements in JSON snapshots preserve numeric values, dates and ID references. Documentary sources are not rewritten. Technical fields such as `profile_id`, `rule_version`, codes and telemetry origin are preserved. The preparation requires a development or test environment and is transactional.
 
-## Exportar
+The generated names are proper names (for example `Atlântico 03` or `João Almeida`). The script matches them exactly on repeated runs, so they are not translated.
 
-O pacote local está em `back/exports/`. Essa pasta é ignorada pelo Git. Para repetir a exportação, substitua `SEU_BANCO` pelo banco configurado na API:
+## Export
+
+The local package is in `back/exports/`. To repeat the export, replace `YOUR_DATABASE` with the database configured for the API:
 
 ```bash
 mkdir -p exports
-docker compose exec -T -e SOURCE_DATABASE=SEU_BANCO db sh -c 'pg_dump -U "$POSTGRES_USER" --no-owner --no-acl --schema=public -Fc "$SOURCE_DATABASE"' > exports/salus_database.dump
+docker compose exec -T -e SOURCE_DATABASE=YOUR_DATABASE db sh -c 'pg_dump -U "$POSTGRES_USER" --no-owner --no-acl --schema=public -Fc "$SOURCE_DATABASE"' > exports/salus_database.dump
 ```
 
-A exportação inclui todas as tabelas e registros do schema da aplicação, sequências, funções, índices, constraints, PDFs, passagens e revisão Alembic. Schemas auxiliares de validação ficam fora, evitando duplicar o histórico. Credenciais de ambiente não são exportadas. Os registros de usuários e permissões existentes fazem parte do banco solicitado.
+The export includes every table and record of the application schema, sequences, functions, indexes, constraints, PDFs, passages and the Alembic revision. Auxiliary validation schemas are left out, which avoids duplicating the history. Environment credentials are not exported. The existing user and permission records are part of the requested database.
 
-O pacote `salus_database_20261115.zip` contém o dump PostgreSQL, instruções de restauração, hashes SHA-256, o manifesto externo de origem e o resultado da verificação de restauração.
+The `salus_database_20261115.zip` package contains the PostgreSQL dump, restore instructions, SHA-256 hashes, the external origin manifest and the result of the restore check.
 
-## Verificações executadas
+## Checks performed
 
-- A API retornou HTTP 200 e as 50 missões com os novos nomes para Rafael Andrade; as 6 missões anteriores continuam presentes.
-- Comparação com o backup: 189.691 registros, 62 tabelas, sem alterações nos valores numéricos, datas de origem, chaves, vínculos ou binários. O horário de enriquecimento automático das recomendações pelo worker foi excluído dessa comparação.
-- O dump foi restaurado em outro banco PostgreSQL e conferido com os 50 IDs, nomes e saldos do histórico e com as 56 missões totais.
-- Testes: `tests/test_database_export.py` e `tests/test_synthetic_missions.py`, com `PREDICTIVE_POSTGRES_TESTS=1`: 9 aprovados. Compilação Python e `git diff --check` passaram.
+- The API returned HTTP 200 and the 50 missions with the new names for Rafael Andrade; the 6 earlier missions are still present.
+- Comparison with the backup: 189,691 records in 62 tables, with no changes to numeric values, source dates, keys, links or binaries. The time of the worker's automatic recommendation enrichment was excluded from this comparison.
+- The dump was restored into another PostgreSQL database and checked against the 50 IDs, names and balances of the history and the 56 total missions.
+- Tests: `tests/test_database_export.py` and `tests/test_synthetic_missions.py`, with `PREDICTIVE_POSTGRES_TESTS=1`: 9 passed. Python compilation and `git diff --check` passed.
 
-A correspondência de nomes e os desfechos esperados permanecem fora das entradas do recomendador. As métricas anteriores continuam sendo verificações funcionais com dados gerados, não validação clínica.
+The name mapping and the expected outcomes stay out of the recommender inputs. The earlier metrics remain functional checks with generated data, not clinical validation.

@@ -103,7 +103,7 @@ def test_profile_admin_guards_and_inactive_accounts(access_api):
     nurse_body={name:nurse[name] for name in (*PROFILE_FIELDS,'is_active')}
     call('PUT',f'/users/{users["nurse"]}/profiles',{**nurse_body,'is_nurse':False,'is_observer':True},actor='observer',expected=409)
     call('PUT',f'/users/{users["nurse"]}/profiles',{**nurse_body,'is_active':False},actor='observer')
-    call('GET','/users/me',actor='nurse',expected=404)  # conta inativa não pode ser selecionada
+    call('GET','/users/me',actor='nurse',expected=404)  # an inactive account cannot be selected
     audit=call('GET','/users/access-audit',actor='observer')
     assert audit['data'] and all('hashed_password' not in item for item in audit['data'])
     call('GET','/users/access-audit',actor='admin',expected=403)

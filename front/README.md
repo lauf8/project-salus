@@ -1,82 +1,83 @@
-# Project Salus · Sistema de Monitoramento
+# Project Salus · Monitoring System
 
-Frontend React 19 e Vite para o backend FastAPI deste repositório. Interface em português, responsiva, com autenticação, missões, membros, catálogo de exames, requisitos, checklist, agendamento, resultados, correções e revisões.
+React 19 and Vite frontend for the FastAPI backend in this repository. The interface is in English and responsive, covering missions, members, exam catalog, requirements, checklist, scheduling, results, corrections and reviews, plus health, mental health, nutrition, radiation, mission risks and Predictive Intelligence.
 
-## Executar
+## Run
 
-Na raiz do backend (`..`), inicie a API:
+From the backend folder (`../back`), start the API:
 
 ```sh
 docker compose up --build -d
 ```
 
-Nesta pasta:
+From this folder:
 
 ```sh
 npm install
 npm run dev
 ```
 
-Abra http://localhost:5173. O proxy do Vite encaminha `/api` para `http://localhost:8000`, sem exigir alteração de CORS. Não há dados fictícios ou credenciais pré-configuradas: crie uma conta na tela de cadastro.
+Open http://localhost:5173. The Vite proxy forwards `/api` to `http://localhost:8000`, so no CORS change is needed. The landing page is at http://localhost:5173/overview (see [LANDING_PAGE.md](../LANDING_PAGE.md)).
 
-## Verificação
+## Verification
 
 ```sh
 npm test
+npm run typecheck
 npm run build
 ```
 
-O build estático fica em `dist`. Em produção, configure o servidor/reverse proxy para encaminhar `/api/*` à API, removendo o prefixo `/api`. O proxy de desenvolvimento não é incluído no build. `npm run preview` serve apenas os arquivos compilados.
+The static build is in `dist`. In production, configure the server or reverse proxy to forward `/api/*` to the API, removing the `/api` prefix. The development proxy is not part of the build. `npm run preview` only serves the compiled files.
 
-## Sessão e permissões
+## Access and permissions
 
-O JWT fica no `sessionStorage` da aba; a sessão é limpa na expiração ou em respostas 401. Sair chama o endpoint de revogação antes de limpar a sessão. Como não existe `/me`, o nome do usuário é obtido pelo diretório de usuários e pelo `sub` do token. O token decodificado serve apenas para apresentação; a API valida todas as permissões.
+The interface opens without login. The **Profile** and **User** selectors at the top choose the active identity, and the choice is saved in this browser. The API still checks every permission. See [USER_ACCESS.md](../USER_ACCESS.md).
 
-Administradores gerenciam missão, membros, requisitos e agendamentos. Médicos de voo registram, corrigem e revisam resultados. Astronautas consultam o próprio histórico. Tipos de exame seguem as permissões do backend, com exibição de erros 403. O estado do checklist vem exclusivamente do backend. Datas locais dos formulários são enviadas em UTC com fuso. Listagens paginadas são percorridas integralmente; missões, catálogo e diretório têm paginação visual.
+Administrators manage the mission, members, requirements and scheduling. Flight surgeons record, correct and review results. Astronauts view their own history. Exam types follow the backend permissions, and 403 errors are shown. The checklist state comes only from the backend. Local form dates are sent in UTC with a time zone. Paginated listings are read in full; missions, catalog and directory have visual pagination.
 
-Fontes do Google Fonts são opcionais, com fallback para fontes do sistema. A aplicação não depende de serviços externos para acessar os dados.
+Google Fonts are optional, with a fallback to system fonts. The application does not depend on external services to access its data.
 
-A identidade visual usa a logo do Project Salus em `public/salus.png`, exibida na barra lateral e como ícone da aba. A imagem mantém sua proporção original.
+The visual identity uses the Project Salus logo in `public/salus.png`, shown in the sidebar and as the tab icon. The image keeps its original aspect ratio.
 
-No cadastro, selecione Astronauta, Médico ou ambos. Os perfis são salvos na conta e exibidos no diretório. O login usa e-mail e senha. Os perfis cadastrais não concedem acesso clínico: o administrador continua atribuindo o papel de cada pessoa na missão.
+Account profiles do not grant clinical access on their own: the administrator still assigns each person's role in the mission.
 
-Alterações em exames, requisitos, catálogo e agendamentos exigem perfil Médico e autorização na missão. Astronautas sem perfil médico têm acesso de leitura aos próprios exames. Resultados e revisões permanecem protegidos contra exclusão.
+Changes to exams, requirements, catalog and scheduling require the Physician profile and mission authorization. Astronauts without the physician profile can read their own exams. Results and reviews remain protected against deletion.
 
-## Painel de saúde
+## Health dashboard
 
-O painel é a página inicial do astronauta, com 11 indicadores, mapa corporal SVG, registro manual, gráficos Recharts e histórico categórico. Médicos acompanham astronautas das missões em que atuam como médicos de voo. Veja [execução, permissões, endpoints e verificação](../HEALTH_MONITORING.md).
+The dashboard is the astronaut's home page, with 11 indicators, a body map, manual recording, Recharts charts and categorical history. Physicians follow astronauts of the missions where they are flight surgeons. See [running, permissions, endpoints and verification](../HEALTH_MONITORING.md).
 
-## Exames e resultados estruturados
+## Exams and structured results
 
-A tela **Exames** permite buscar, listar, consultar os campos e cadastrar ou editar
-exames vinculados aos tipos existentes. Somente médicos com permissão de catálogo
-recebem ações de escrita. Cada exame define campos numéricos, texto curto ou
-longo, seleção, sim/não e data, com unidades e obrigatoriedade.
+The **Exams** screen lets you search, list, view fields, and create or edit
+exams linked to the existing types. Only physicians with catalog permission get
+write actions. Each exam defines numeric, short or long text, selection, yes/no
+and date fields, with units and required flags.
 
-Em **Missões → Requisitos**, o médico escolhe um exame cadastrado e define sua
-antecedência em relação ao lançamento. Em **Checklist de monitoramento → Histórico**,
-o médico de voo registra os valores, as referências do laboratório, os dados da
-coleta e do laudo, e realiza a revisão. O astronauta consulta apenas os próprios
-resultados. As mesmas restrições são verificadas pelo backend.
+In the mission requirements, the physician chooses a registered exam and sets
+how long before launch it is due. In the monitoring checklist history, the
+flight surgeon records the values, laboratory references, collection and report
+data, and performs the review. Astronauts only see their own results. The
+backend checks the same restrictions.
 
-O formulário e o histórico usam a versão dos campos guardada na atribuição do
-exame. Alterar o catálogo não reescreve resultados anteriores. Resultados já
-revisados permanecem imutáveis e podem ser substituídos por uma nova realização.
-O fluxo continua sendo de exames pré-voo: a data de realização deve anteceder o
-início da missão quando ele estiver configurado.
+The form and the history use the field version stored when the exam was
+assigned. Changing the catalog does not rewrite earlier results. Reviewed
+results stay immutable and can be replaced by a new performance of the exam.
+The flow remains a preflight exam flow: the performance date must be before the
+mission start when it is set.
 
-O catálogo inicial e sua migration estão no backend. Execute na pasta `NASA`:
+The initial catalog and its migration are in the backend. Run from `back/`:
 
 ```bash
 docker compose exec -T api alembic upgrade head
 docker compose exec -T api python -m scripts.seed_exam_catalog
 ```
 
-O seed adiciona 29 definições baseadas no documento NASA OCHMO-STD-100.1A, Rev. A,
-e preserva cadastros já existentes. Nenhum resultado clínico é simulado pelo seed.
-As referências e páginas aparecem nas telas; unidades e campos são adaptações
-para registro, e os intervalos de referência são preenchidos conforme o laudo.
+The seed adds 29 definitions based on NASA OCHMO-STD-100.1A, Rev. A, and keeps
+existing records. The seed does not simulate any clinical result. References and
+pages appear on screen; units and fields are adapted for recording, and reference
+ranges are filled in from the laboratory report.
 
-`npm test` verifica a serialização dos resultados, a renderização dos campos e
-do histórico, a compatibilidade com resultados antigos e a ação de cadastro
-conforme a permissão. `npm run build` valida o bundle completo.
+`npm test` checks result serialization, rendering of fields and history,
+compatibility with legacy results and the create action according to permission.
+`npm run build` validates the complete bundle.

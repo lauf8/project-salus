@@ -1,9 +1,8 @@
-"""Clima espacial (NASA DONKI) e exposição à radiação.
+"""Space weather (NASA DONKI) and radiation exposure.
 
-Cria eventos FLR/CME/SEP e suas ligações, histórico de sincronizações, fluxo de
-prótons, atividade da tripulação (IVA/EVA/abrigo), limites de dose, registros de
-dose e acompanhamento pós-evento. Carrega o perfil de limites da Tabela 5-1 do
-NASA SP-2009-3405.
+Creates FLR/CME/SEP events and their links, synchronization history, proton
+flux, crew activity (IVA/EVA/shelter), dose limits, dose records and post-event
+follow-up. Loads the limits profile from Table 5-1 of NASA SP-2009-3405.
 """
 
 from alembic import op
@@ -19,7 +18,7 @@ depends_on = None
 ORGANS = "'lens', 'skin', 'bfo', 'heart', 'cns', 'cns_z_ge_10'"
 TYPES = "'FLR', 'CME', 'SEP'"
 LIMIT_PROFILE = 'nasa-sp-2009-3405-table-5-1'
-LIMIT_SOURCE = 'NASA SP-2009-3405 (2009), cap. 5, Tabela 5-1. Valores históricos; confira o NASA-STD-3001 vigente.'
+LIMIT_SOURCE = 'NASA SP-2009-3405 (2009), chapter 5, Table 5-1. Historical values; check the current NASA-STD-3001.'
 TABLE_5_1 = [
     ('lens', '30_day', 1000, 'mGy-Eq'), ('lens', '1_year', 2000, 'mGy-Eq'), ('lens', 'career', 4000, 'mGy-Eq'),
     ('skin', '30_day', 1500, 'mGy-Eq'), ('skin', '1_year', 3000, 'mGy-Eq'), ('skin', 'career', 6000, 'mGy-Eq'),
@@ -201,6 +200,6 @@ def downgrade():
     connection = op.get_bind()
     for table in ('radiation_follow_ups', 'radiation_dose_records', 'crew_activities'):
         if connection.execute(sa.text(f'SELECT EXISTS (SELECT 1 FROM {table})')).scalar():
-            raise RuntimeError(f'Preserve os registros de {table} antes de reverter esta migration')
+            raise RuntimeError(f'Preserve the {table} records before reverting this migration')
     for table in TABLES:
         op.drop_table(table)

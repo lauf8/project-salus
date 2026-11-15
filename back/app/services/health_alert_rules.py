@@ -11,11 +11,11 @@ from app.schemas.health import UNITS
 
 SEVERITY_RANK = {'attention': 1, 'urgent': 2, 'critical': 3}
 INDICATOR_NAMES = {
-    'heart_rate': 'Frequência cardíaca', 'respiratory_rate': 'Frequência respiratória',
-    'oxygen_saturation': 'Saturação de oxigênio', 'body_temperature': 'Temperatura corporal',
-    'blood_pressure': 'Pressão arterial', 'blood_glucose': 'Glicemia',
-    'sleep_duration': 'Duração do sono', 'sleep_quality': 'Qualidade do sono',
-    'mood': 'Humor', 'fatigue': 'Fadiga', 'attention': 'Mudanças de atenção', 'consciousness': 'Estado de consciência',
+    'heart_rate': 'Heart rate', 'respiratory_rate': 'Respiratory rate',
+    'oxygen_saturation': 'Oxygen saturation', 'body_temperature': 'Body temperature',
+    'blood_pressure': 'Blood pressure', 'blood_glucose': 'Blood glucose',
+    'sleep_duration': 'Sleep duration', 'sleep_quality': 'Sleep quality',
+    'mood': 'Mood', 'fatigue': 'Fatigue', 'attention': 'Changes in attention', 'consciousness': 'Level of consciousness',
 }
 
 
@@ -54,30 +54,30 @@ def matches(value, band):
 
 def band_reason(band):
     symbols = {'gt': '>', 'gte': '≥', 'lt': '<', 'lte': '≤'}
-    return ' e '.join(f'{symbols[key]} {limit:g}' for key, limit in band.items() if key in symbols)
+    return ' and '.join(f'{symbols[key]} {limit:g}' for key, limit in band.items() if key in symbols)
 
 
 def display_reading(observation):
     name = INDICATOR_NAMES[observation.indicator]
     if observation.indicator == 'blood_pressure':
-        return f'{name} de {observation.systolic:g}/{observation.diastolic:g} mmHg.'
+        return f'{name} of {observation.systolic:g}/{observation.diastolic:g} mmHg.'
     if observation.value is not None:
-        return f'{name} de {observation.value:g} {observation.unit or UNITS[observation.indicator] or "pontos"}.'
-    category = {'alert': 'alerta', 'voice': 'responde apenas à voz', 'pain': 'responde apenas à dor', 'unresponsive': 'não responde', 'better': 'melhor que o habitual', 'usual': 'habitual', 'worse': 'pior que o habitual'}.get(observation.category, observation.category)
+        return f'{name} of {observation.value:g} {observation.unit or UNITS[observation.indicator] or "points"}.'
+    category = {'alert': 'alert', 'voice': 'responds only to voice', 'pain': 'responds only to pain', 'unresponsive': 'unresponsive', 'better': 'better than usual', 'usual': 'usual', 'worse': 'worse than usual'}.get(observation.category, observation.category)
     return f'{name}: {category}.'
 
 
 def finding(rule_id, severity, observation, reason, verification=False, sources=None):
     notes = []
     if observation.signal_quality == 'poor':
-        notes.append('Qualidade insuficiente; verifique a medição imediatamente. O alerta inicial não aguarda confirmação.')
+        notes.append('Insufficient quality; verify the measurement immediately. The initial alert does not wait for confirmation.')
         verification = True
     if observation.supplemental_oxygen is True:
-        notes.append('Medição com uso de oxigênio suplementar.')
+        notes.append('Measurement taken on supplemental oxygen.')
     if observation.activity == 'exercise':
-        notes.append('Medição durante exercício.')
+        notes.append('Measurement taken during exercise.')
     if observation.activity == 'unknown' and observation.indicator in ('heart_rate', 'respiratory_rate'):
-        notes.append('Atividade desconhecida; confirme o contexto de repouso.')
+        notes.append('Unknown activity; confirm the resting context.')
     if severity in ('urgent', 'critical'):
         verification = True
     return {'rule_id': rule_id, 'severity': severity, 'reason': ' '.join([display_reading(observation), reason, *notes]), 'verification_required': verification, 'sources': sources or [observation], 'trigger_observation': observation}
@@ -97,34 +97,34 @@ def evaluate_reading(observation, profile):
         if rule.get('rest_only') and observation.activity != 'rest':
             extreme = band['severity'] == 'critical'
             if extreme and (observation.activity == 'unknown' or observation.signal_quality == 'poor'):
-                results.append(finding(rule['id'] + '_verification', 'urgent', observation, 'Leitura extrema sem contexto de repouso confirmado. Verifique a medição imediatamente.', True))
+                results.append(finding(rule['id'] + '_verification', 'urgent', observation, 'Extreme reading without a confirmed resting context. Verify the measurement immediately.', True))
             continue
-        results.append(finding(rule['id'], band['severity'], observation, f'Faixa {band_reason(band)} configurada para este perfil.'))
+        results.append(finding(rule['id'], band['severity'], observation, f'Range {band_reason(band)} configured for this profile.'))
     if indicator == 'oxygen_saturation':
         targets = profile['oxygen_thresholds']
         value = observation.value
         if value < targets['normal_min']:
             severity = 'critical' if value < targets['urgent_min'] else 'urgent' if value < targets['attention_min'] else 'attention'
             threshold = targets['urgent_min'] if severity == 'critical' else targets['attention_min'] if severity == 'urgent' else targets['normal_min']
-            results.append(finding('low_oxygen_saturation', severity, observation, f'Abaixo do limite de {threshold:g}% configurado para este perfil.'))
+            results.append(finding('low_oxygen_saturation', severity, observation, f'Below the {threshold:g}% limit configured for this profile.'))
     if indicator == 'blood_pressure':
         rule = profile['high_pressure']
         if observation.systolic > rule['systolic_gt'] or observation.diastolic > rule['diastolic_gt']:
             symptoms = set(observation.symptoms) & set(rule['symptoms'])
             severity = 'critical' if observation.symptoms_status == 'present' and symptoms else 'urgent'
-            context = 'Sintomas registrados: ' + ', '.join(SYMPTOM_LABELS[key] for key in sorted(symptoms)) + '.' if symptoms else 'Sintomas desconhecidos; registre os sintomas e uma nova medição.' if observation.symptoms_status == 'unknown' else 'Sintomas de alarme informados como ausentes; registre uma nova medição.'
-            results.append(finding('very_high_blood_pressure', severity, observation, f"Sistólica > {rule['systolic_gt']} ou diastólica > {rule['diastolic_gt']} mmHg configuradas para este perfil. {context}"))
+            context = 'Recorded symptoms: ' + ', '.join(SYMPTOM_LABELS[key] for key in sorted(symptoms)) + '.' if symptoms else 'Symptoms unknown; record the symptoms and a new measurement.' if observation.symptoms_status == 'unknown' else 'Warning symptoms reported as absent; record a new measurement.'
+            results.append(finding('very_high_blood_pressure', severity, observation, f"Systolic > {rule['systolic_gt']} or diastolic > {rule['diastolic_gt']} mmHg configured for this profile. {context}"))
     if indicator == 'blood_glucose':
         thresholds = profile['high_glucose_thresholds'].get(observation.glucose_context, {})
         triggered = [severity for severity, threshold in thresholds.items() if threshold is not None and observation.value >= threshold]
         if triggered:
             severity = max(triggered, key=SEVERITY_RANK.get)
-            context = {'fasting': 'em jejum', 'after_meal': 'após refeição', 'unknown': 'sem contexto alimentar'}[observation.glucose_context]
-            source = 'pela equipe médica' if profile.get('approved_by_user_id') else 'no perfil de simulação'
-            results.append(finding('high_blood_glucose_' + observation.glucose_context, severity, observation, f'Valor {context} ≥ {thresholds[severity]:g} mg/dL configurado {source}.'))
+            context = {'fasting': 'while fasting', 'after_meal': 'after a meal', 'unknown': 'without meal context'}[observation.glucose_context]
+            source = 'by the medical team' if profile.get('approved_by_user_id') else 'in the simulation profile'
+            results.append(finding('high_blood_glucose_' + observation.glucose_context, severity, observation, f'Value {context} ≥ {thresholds[severity]:g} mg/dL configured {source}.'))
     if indicator in ('consciousness', 'attention'):
         if observation.acute_confusion is True or (indicator == 'consciousness' and observation.category in profile['consciousness']['critical_categories']):
-            reason = 'Confusão de início recente registrada.' if observation.acute_confusion is True else 'Resposta à voz, à dor ou ausência de resposta registrada.'
+            reason = 'Recent-onset confusion recorded.' if observation.acute_confusion is True else 'Response to voice, response to pain or no response recorded.'
             results.append(finding('acute_consciousness', profile['consciousness']['acute_confusion_severity'], observation, reason))
     return results
 
@@ -152,7 +152,7 @@ def evaluate_trend(observation, rows, profile):
             continue
         if all(row is not None and (row.category in rule['categories'] if 'categories' in rule else matches(row.value, rule)) for row in sequence):
             latest = sequence[0]
-            period = 'noites' if rule.get('night') else 'dias'
-            criteria = 'alteração em relação ao habitual' if 'categories' in rule else band_reason(rule) + (' minutos' if observation.indicator == 'sleep_duration' else ' pontos')
-            results.append(finding(rule['id'], 'attention', latest, f'{criteria} em {rule["days"]} {period} consecutivos no fuso {profile["timezone"]}. Um registro válido por {"noite" if rule.get("night") else "dia"}.', sources=list(reversed(sequence))))
+            period = 'nights' if rule.get('night') else 'days'
+            criteria = 'change from usual' if 'categories' in rule else band_reason(rule) + (' minutes' if observation.indicator == 'sleep_duration' else ' points')
+            results.append(finding(rule['id'], 'attention', latest, f'{criteria} on {rule["days"]} consecutive {period} in time zone {profile["timezone"]}. One valid record per {"night" if rule.get("night") else "day"}.', sources=list(reversed(sequence))))
     return results

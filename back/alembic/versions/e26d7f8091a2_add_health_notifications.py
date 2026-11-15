@@ -26,5 +26,5 @@ def upgrade():
 
 def downgrade():
     if op.get_bind().execute(sa.text('SELECT EXISTS (SELECT 1 FROM health_notifications)')).scalar():
-        raise RuntimeError('Preserve o histórico de notificações antes de reverter esta migration')
+        raise RuntimeError('Preserve the notification history before reverting this migration')
     op.drop_table('health_notifications')

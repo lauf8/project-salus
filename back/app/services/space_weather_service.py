@@ -1,4 +1,4 @@
-"""Importação de eventos do NASA DONKI e consultas de clima espacial."""
+"""NASA DONKI event import and space weather queries."""
 
 import re
 from datetime import date, datetime, timedelta, timezone
@@ -22,10 +22,10 @@ FLARE_CLASS = re.compile(r'^\s*([ABCMX])\s*(\d+(?:\.\d+)?)?', re.IGNORECASE)
 FLARE_BASE_FLUX = {'A': 1e-8, 'B': 1e-7, 'C': 1e-6, 'M': 1e-5, 'X': 1e-4}
 
 
-# --- Normalização das respostas do DONKI -------------------------------------------------
+# --- DONKI response normalization ----------------------------------------------------------
 
 def parse_donki_time(value) -> datetime | None:
-    """Converte '2024-10-26T19:02Z' (formato do DONKI) em datetime UTC."""
+    """Converts '2024-10-26T19:02Z' (DONKI format) to a UTC datetime."""
     if not value or not isinstance(value, str):
         return None
     text = value.strip()
@@ -39,13 +39,13 @@ def parse_donki_time(value) -> datetime | None:
 
 
 def linked_event_type(activity_id: str) -> str | None:
-    """Extrai o tipo do identificador DONKI, ex.: '2024-10-26T15:34:00-IPS-001' -> 'IPS'."""
+    """Extracts the type from a DONKI identifier, e.g. '2024-10-26T15:34:00-IPS-001' -> 'IPS'."""
     match = LINKED_TYPE.search(activity_id or '')
     return match.group(1).upper() if match else None
 
 
 def flare_peak_flux(class_type) -> float | None:
-    """Classe GOES -> pico de fluxo de raios X (1–8 Å) em W/m². Ex.: 'X1.9' -> 1.9e-4."""
+    """GOES class -> peak X-ray flux (1–8 Å) in W/m². E.g. 'X1.9' -> 1.9e-4."""
     match = FLARE_CLASS.match(class_type or '')
     if not match:
         return None
@@ -78,9 +78,9 @@ def _best_cme_analysis(analyses) -> dict | None:
 
 
 def normalize_event(event_type: str, item: dict) -> tuple[dict, list[str]] | None:
-    """Transforma um item do DONKI em campos do modelo e lista de IDs ligados.
+    """Turns a DONKI item into model fields and a list of linked IDs.
 
-    Retorna None quando faltam identificador ou data inicial (o item é ignorado).
+    Returns None when the identifier or start date is missing (the item is skipped).
     """
     activity_id = next((item.get(key) for key in ID_FIELDS[event_type] if item.get(key)), None)
     start_time = parse_donki_time(item.get(START_FIELDS[event_type]))
@@ -145,7 +145,7 @@ def normalize_event(event_type: str, item: dict) -> tuple[dict, list[str]] | Non
 
 
 def date_windows(start: date, end: date, size_days: int = SYNC_WINDOW_DAYS):
-    """Divide o intervalo em janelas para não sobrecarregar a API."""
+    """Splits the interval into windows to avoid overloading the API."""
     cursor = start
     while cursor <= end:
         window_end = min(cursor + timedelta(days=size_days - 1), end)
@@ -159,25 +159,25 @@ def _utc(value: datetime | None) -> datetime | None:
     return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
 
 
-# --- Serviço -------------------------------------------------------------------------------
+# --- Service -------------------------------------------------------------------------------
 
 class SpaceWeatherService(PreflightService):
     def __init__(self, session: Session, user: User | None, donki: DonkiClient | None = None):
         super().__init__(session, user)
         self.donki = donki
 
-    # Sincronização --------------------------------------------------------------------------
+    # Synchronization ------------------------------------------------------------------------
 
     def sync(self, start: date, end: date, event_types: list[str], check_permission: bool = True) -> list[SyncRunResponse]:
-        """Busca FLR/CME/SEP no DONKI e grava/atualiza os eventos e suas ligações.
+        """Fetches FLR/CME/SEP from DONKI and stores or updates the events and their links.
 
-        Cada tipo é gravado numa transação própria. Falhas de rede ficam registradas
-        em space_weather_sync_runs e não desfazem os tipos já importados.
+        Each type is stored in its own transaction. Network failures are recorded
+        in space_weather_sync_runs and do not undo types already imported.
         """
         if check_permission:
             self._catalog_writer()
         if self.donki is None:
-            raise RuntimeError('DonkiClient não configurado')
+            raise RuntimeError('DonkiClient is not configured')
 
         runs = []
         for event_type in event_types:
@@ -203,7 +203,7 @@ class SpaceWeatherService(PreflightService):
                 created, updated, rows = self._store(event_type, items)
                 run.created_count, run.updated_count = created, updated
                 if event_type == 'SEP':
-                    # Abre a janela de 48 h para quem estava em EVA (mesma transação).
+                    # Opens the 48 h window for crew who were on EVA (same transaction).
                     from app.services.radiation_service import RadiationService
                     RadiationService(self.session, self.user).process_seps(rows)
                 run.finished_at = datetime.now(timezone.utc)
@@ -220,7 +220,7 @@ class SpaceWeatherService(PreflightService):
         for item in items:
             result = normalize_event(event_type, item)
             if result is not None:
-                # Janelas consecutivas podem repetir um evento; vale a última versão.
+                # Consecutive windows can repeat an event; the latest version wins.
                 normalized[result[0]['activity_id']] = result
 
         created = updated = 0
@@ -235,7 +235,7 @@ class SpaceWeatherService(PreflightService):
                 created += 1
             else:
                 if row.event_type != event_type:
-                    raise HTTPException(409, f'O identificador {activity_id} já está registrado como {row.event_type}')
+                    raise HTTPException(409, f'Identifier {activity_id} is already registered as {row.event_type}')
                 if row.raw != fields['raw']:
                     updated += 1
                 for key, value in fields.items():
@@ -244,7 +244,7 @@ class SpaceWeatherService(PreflightService):
                 self.session.add(row)
                 self.session.flush()
 
-            # O DONKI pode revisar as ligações; a lista atual substitui a anterior.
+            # DONKI can revise links; the current list replaces the previous one.
             self.session.exec(delete(SpaceWeatherEventLink).where(SpaceWeatherEventLink.event_id == row.id))
             for target in linked:
                 self.session.add(SpaceWeatherEventLink(event_id=row.id, linked_activity_id=target, linked_event_type=linked_event_type(target)))
@@ -264,12 +264,12 @@ class SpaceWeatherService(PreflightService):
     def get_event(self, activity_id: str) -> EventDetailResponse:
         row = self.session.exec(select(SpaceWeatherEvent).where(SpaceWeatherEvent.activity_id == activity_id)).first()
         if row is None:
-            raise HTTPException(404, 'Evento de clima espacial não encontrado')
+            raise HTTPException(404, 'Space weather event not found')
         return self._detail(row)
 
     def mission_events(self, mission_id: int, event_type, page, per_page):
-        """Eventos que se sobrepõem ao período da missão (início efetivo ou lançamento
-        previsto até o fim, ou até agora se a missão está aberta)."""
+        """Events overlapping the mission period (actual start or planned launch
+        until the end, or until now if the mission is open)."""
         mission, _ = self._access(mission_id)
         start = _utc(mission.started_at or mission.planned_launch_at)
         end = _utc(mission.ended_at) or datetime.now(timezone.utc)
@@ -301,7 +301,7 @@ class SpaceWeatherService(PreflightService):
         return statement
 
     def _detail(self, row: SpaceWeatherEvent) -> EventDetailResponse:
-        """Evento com as ligações nos dois sentidos (A -> B e B -> A), sem repetição."""
+        """Event with links in both directions (A -> B and B -> A), without repetition."""
         outgoing = self.session.exec(select(SpaceWeatherEventLink).where(SpaceWeatherEventLink.event_id == row.id)).all()
         incoming = self.session.exec(
             select(SpaceWeatherEvent.activity_id).join(SpaceWeatherEventLink, SpaceWeatherEventLink.event_id == SpaceWeatherEvent.id)
@@ -322,6 +322,6 @@ class SpaceWeatherService(PreflightService):
                 stored=event is not None,
                 event=EventResponse.model_validate(event) if event else None,
             ))
-        # IDs do DONKI começam com o horário do evento, então a ordem textual é cronológica.
+        # DONKI IDs start with the event time, so text order is chronological.
         linked.sort(key=lambda item: item.activity_id)
         return EventDetailResponse(**EventResponse.model_validate(row).model_dump(), linked_events=linked)

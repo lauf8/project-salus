@@ -29,7 +29,7 @@ NOTE = 'DEMO: dados fictícios, sem validade clínica.'
 
 
 def inventory(session):
-    print('\nTabelas e quantidade de registros:')
+    print('\nTables and record counts:')
     quote = engine.dialect.identifier_preparer.quote
     for name in sorted(inspect(engine).get_table_names()):
         count = session.exec(text(f'SELECT count(*) FROM {quote(name)}')).scalar_one()
@@ -54,7 +54,7 @@ def seed():
                     is_astronaut=astronaut, is_physician=physician,
                 ))
             elif (user.is_astronaut, user.is_physician) != (astronaut, physician):
-                raise RuntimeError(f'Conta {email} já existe com outros perfis; nenhum perfil foi alterado.')
+                raise RuntimeError(f'Account {email} already exists with other profiles; no profile was changed.')
             users.append(user)
         demo, astronaut, doctor, coordinator = users
         for label, owner, surgeon, target in (
@@ -126,19 +126,19 @@ def seed():
             states = clinical.checklist(mission.id, member.id, 1, 100)['data']
             assert {row.state for row in states} == {'pending', 'scheduled', 'awaiting_review', 'repeat_requested', 'completed'}
             assert len(health.summary(target.id, mission.id).indicators) == 11
-            print(f'Missão {mission.id}: {label}; cinco estados de checklist e onze indicadores verificados.')
+            print(f'Mission {mission.id}: {label}; five checklist states and eleven indicators verified.')
         inventory(session)
-        print(f'\nLogin: {EMAIL}\nSenha inicial para contas novas: {PASSWORD}')
-        print('Contas existentes mantêm suas senhas. Nenhum dado anterior foi removido.')
+        print(f'\nLogin: {EMAIL}\nInitial password for new accounts: {PASSWORD}')
+        print('Existing accounts keep their passwords. No previous data was removed.')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--apply', action='store_true', help='Adicionar dados fictícios ao banco configurado')
+    parser.add_argument('--apply', action='store_true', help='Add fictional data to the configured database')
     args = parser.parse_args()
     if args.apply:
         seed()
     else:
         with Session(engine) as session:
             inventory(session)
-        print('Use --apply para adicionar a demonstração.')
+        print('Use --apply to add the demonstration.')

@@ -1,71 +1,71 @@
-# Medicamentos e alergias
+# Medications and allergies
 
-O prontuário usa o usuário do astronauta como identidade clínica. As alergias referenciam `users.id` por `crew_member_id`, independentemente da missão. O campo `users.allergy_screening_completed` começa como `false`, inclusive para usuários existentes. A missão informa o contexto de autorização do médico de voo, sem limitar as alergias àquela missão.
+The medical record uses the astronaut's user as the clinical identity. Allergies reference `users.id` through `crew_member_id`, regardless of the mission. The `users.allergy_screening_completed` field starts as `false`, including for existing users. The mission provides the flight surgeon's authorization context, without limiting allergies to that mission.
 
-Os catálogos podem ser consultados por usuários autenticados. Sua edição exige médico vinculado a uma missão como `mission_admin` ou `flight_surgeon`, conforme o cadastro de tipos de exame. O astronauta consulta as próprias alergias. A consulta por terceiros e a edição exigem médico de voo vinculado à missão do astronauta, informado em `mission_id`.
+Authenticated users can view the catalogs. Editing them requires a physician assigned to a mission as `mission_admin` or `flight_surgeon`, as for exam types. Astronauts view their own allergies. Viewing by others and editing require the flight surgeon assigned to the astronaut's mission, given in `mission_id`.
 
-## Rotas
+## Routes
 
-Todas as rotas têm prefixo `/v1` e exigem autenticação.
+All routes use the `/v1` prefix and require authentication.
 
-| Recurso | Operações |
+| Resource | Operations |
 | --- | --- |
-| `/medicines` | GET paginado, POST |
+| `/medicines` | Paginated GET, POST |
 | `/medicines/{medicine_id}` | GET, PATCH, DELETE |
-| `/active-ingredients` | GET paginado, POST |
+| `/active-ingredients` | Paginated GET, POST |
 | `/active-ingredients/{ingredient_id}` | GET, PATCH, DELETE |
-| `/health/astronauts/{crew_member_id}/allergies` | GET, PUT; parâmetro opcional `mission_id` |
+| `/health/astronauts/{crew_member_id}/allergies` | GET, PUT; optional `mission_id` parameter |
 
-As listagens aceitam `search`, `page` e `per_page` (máximo 100) e retornam `data` e `pagination`.
+Listings accept `search`, `page` and `per_page` (maximum 100) and return `data` and `pagination`.
 
-POST e PATCH de medicamento aceitam `name` e `active_ingredient_ids`. A composição é retornada como `active_ingredients`, contendo IDs e nomes. No PATCH, omitir a composição a preserva; enviar `[]` a remove. Nome e composição são salvos na mesma transação.
+Medication POST and PATCH accept `name` and `active_ingredient_ids`. The composition is returned as `active_ingredients`, with IDs and names. In PATCH, omitting the composition keeps it; sending `[]` removes it. Name and composition are saved in the same transaction.
 
-PUT de alergias exige `allergy_screening_completed` e aceita `active_ingredient_ids` (lista vazia por padrão). Essa operação substitui o registro completo na mesma transação. IDs duplicados ou inexistentes são rejeitados. A exclusão de princípio ativo em uso retorna HTTP 409.
+The allergies PUT requires `allergy_screening_completed` and accepts `active_ingredient_ids` (empty list by default). This operation replaces the complete record in the same transaction. Duplicate or nonexistent IDs are rejected. Deleting an active ingredient in use returns HTTP 409.
 
-## Telas
+## Screens
 
-A navegação inclui Medicamentos e Princípios ativos, com busca, paginação, cadastro e edição. O medicamento permite selecionar vários princípios ativos. A seção Alergias está no monitoramento e em Missões → Prontuário · alergias. Os controles de escrita seguem as permissões retornadas pelo backend.
+Navigation includes Medications and Active ingredients, with search, pagination, creation and editing. A medication can have several active ingredients. The Allergies section is in health monitoring and in the mission medical record. Write controls follow the permissions returned by the backend.
 
-Triagem aberta sempre aparece como “Triagem pendente”. Triagem concluída aparece como “Alergias registradas” quando há itens e “Nenhuma alergia conhecida” quando não há.
+Open screening always appears as “Screening pending”. Completed screening appears as “Allergies recorded” when there are items and “No known allergies” when there are none.
 
 ## Migration
 
-Na pasta `NASA`, com o ambiente Docker configurado:
+From `back/`, with the Docker environment configured:
 
 ```sh
 docker compose exec -T api alembic upgrade head
 ```
 
-Fora do Docker, com as variáveis `PGUSER`, `PGPASSWORD`, `PGHOST`, `PGPORT` e `PGDATABASE` configuradas:
+Outside Docker, with `PGUSER`, `PGPASSWORD`, `PGHOST`, `PGPORT` and `PGDATABASE` set:
 
 ```sh
 alembic upgrade head
 ```
 
-A revisão é `a8293b4c5d6e`, posterior a `f718293a4b5c`.
+The revision is `a8293b4c5d6e`, after `f718293a4b5c`.
 
-## Verificação
+## Verification
 
-Na pasta `NASA`, com as dependências do backend e pytest instalados:
+From `back/`, with the backend dependencies and pytest installed:
 
 ```sh
 python -m pytest -q
 python -m pytest -q tests/test_medicine_service.py tests/test_medicines.py
 ```
 
-Os testes de serviços usam SQLite com chaves estrangeiras habilitadas e cobrem composição múltipla, edição, rollback, busca, paginação, validação, permissões, triagem e bloqueio de exclusão. Os testes de API cobrem esses fluxos via HTTP, e o teste de migration verifica a triagem inicial pendente em registros existentes. Os testes PostgreSQL existentes exigem um banco isolado e migrado e `PREFLIGHT_POSTGRES_TESTS=1`.
+Service tests use SQLite with foreign keys enabled and cover multiple ingredients, editing, rollback, search, pagination, validation, permissions, screening and deletion blocking. API tests cover these flows over HTTP, and the migration test checks that existing records start with pending screening. The existing PostgreSQL tests require an isolated, migrated database and `PREFLIGHT_POSTGRES_TESTS=1`.
 
-Na pasta `front`:
+From `front/`:
 
 ```sh
 npm test
 npm run build
 ```
 
-Os testes de alergias verificam as quatro combinações de estado da triagem e presença de alergias.
+The allergy tests check the four combinations of screening state and presence of allergies.
 
-## Catálogo inicial e principais indicações
+## Initial catalog and main indications
 
-A revisão `b93a4c5d6e7f` adiciona `medicines.main_indications` como texto opcional. O campo é aceito no POST/PATCH de medicamento, retornado nas consultas e editável no frontend. No PATCH, omitir preserva o valor e enviar `null` o limpa.
+Revision `b93a4c5d6e7f` adds `medicines.main_indications` as optional text. The field is accepted in medication POST/PATCH, returned in queries and editable in the frontend. In PATCH, omitting it keeps the value and sending `null` clears it.
 
-O catálogo e sua procedência estão em `NASA/data/common_medicines.json` e `NASA/data/README.md`. A seleção reúne 100 itens por país, com 161 medicamentos e 160 princípios ativos distintos após deduplicação. A lista brasileira é uma seleção de uso comum, não um ranking oficial.
+The catalog and its provenance are in `back/data/common_medicines.json` and `back/data/README.md`. The selection has 100 items per country, with 161 medications and 160 distinct active ingredients after deduplication. The Brazilian list is a selection of common use, not an official ranking. Names and indications are in English; revision `5b3c4d5e6f72` converts databases seeded with the earlier Portuguese catalog.

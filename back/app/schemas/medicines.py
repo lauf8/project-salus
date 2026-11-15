@@ -14,7 +14,7 @@ class IngredientIds(InputModel):
     def validate_ids(self):
         ids = self.active_ingredient_ids
         if any(value <= 0 for value in ids) or len(ids) != len(set(ids)):
-            raise ValueError('Informe IDs positivos de princípios ativos sem duplicações')
+            raise ValueError('Provide positive active ingredient IDs without duplicates')
         return self
 
 

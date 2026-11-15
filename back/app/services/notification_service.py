@@ -38,7 +38,7 @@ class NotificationService(PreflightService):
         if mission_id is None:
             missions = self.session.exec(select(Mission).join(MissionMember, MissionMember.mission_id == Mission.id).where(MissionMember.user_id == alert.astronaut_id, MissionMember.role == 'astronaut', Mission.ended_at.is_(None))).all()
             if len(missions) != 1:
-                self.delivery_note(observation, 'Notificação não direcionada: selecione a missão da coleta para identificar o médico de voo responsável.')
+                self.delivery_note(observation, 'Notification not routed: select the collection mission to identify the responsible flight surgeon.')
                 return 0
             mission_id = missions[0].id
         mission = self.session.get(Mission, mission_id)
@@ -50,7 +50,7 @@ class NotificationService(PreflightService):
             User.is_physician == True, User.id != alert.astronaut_id,
         )).all()
         if not recipients:
-            self.delivery_note(observation, 'Notificação não direcionada: a missão não possui outro médico com perfil médico e papel de médico de voo.')
+            self.delivery_note(observation, 'Notification not routed: the mission has no other physician with the physician profile and flight surgeon role.')
         created = 0
         astronaut = self.session.get(User, alert.astronaut_id)
         for recipient in recipients:
@@ -62,8 +62,8 @@ class NotificationService(PreflightService):
                 continue
             self.session.add(HealthNotification(
                 recipient_user_id=recipient.id, mission_id=mission_id, alert_id=alert.id,
-                observation_id=observation.id, title=f'Alerta crítico · {astronaut.name}',
-                message=f'{alert.reason} Verifique o prontuário da missão {mission.name} e siga o protocolo de emergência.',
+                observation_id=observation.id, title=f'Critical alert · {astronaut.name}',
+                message=f'{alert.reason} Check the medical record for mission {mission.name} and follow the emergency protocol.',
             ))
             created += 1
         self.session.flush()
@@ -76,7 +76,7 @@ class NotificationService(PreflightService):
 
     def visible(self, mission_id=None):
         if not self.user.is_physician:
-            raise HTTPException(403, 'As notificações clínicas são destinadas aos médicos de voo')
+            raise HTTPException(403, 'Clinical notifications are intended for flight surgeons')
         doctor = aliased(MissionMember)
         crew = aliased(MissionMember)
         astronaut = aliased(User)
@@ -119,7 +119,7 @@ class NotificationService(PreflightService):
     def read(self, notification_id):
         notification = self.session.exec(self.visible().where(HealthNotification.id == notification_id)).first()
         if notification is None:
-            raise HTTPException(404, 'Notificação não encontrada')
+            raise HTTPException(404, 'Notification not found')
         if notification.read_at is None:
             notification.read_at = datetime.now(timezone.utc)
             self.session.add(notification)

@@ -29,14 +29,14 @@ def health_path(case):
 ])
 def test_self_registration_and_summary(case, indicator, values):
     call, path = case['call'], health_path(case)
-    payload = observation(indicator, mission_id=case['mid'], note='Observação fictícia', **values)
+    payload = observation(indicator, mission_id=case['mid'], note='Fictional observation', **values)
     created = call('astronaut', 'POST', path + '/observations', payload, 201)
     summary = call('astronaut', 'GET', path + '/summary')
     assert len(summary['indicators']) == 12
     item = next(item for item in summary['indicators'] if item['indicator'] == indicator)
     assert item['latest']['id'] == created['id']
     assert item['latest']['recorded_by_user_id'] == case['people']['astronaut']
-    assert item['latest']['note'] == 'Observação fictícia'
+    assert item['latest']['note'] == 'Fictional observation'
     history = call('astronaut', 'GET', path + f'/history?indicator={indicator}')
     assert history['data'][0]['id'] == created['id']
     empty = next(item for item in summary['indicators'] if item['indicator'] != indicator)
@@ -151,7 +151,7 @@ def test_physician_astronaut_cannot_self_assess_avpu(case):
     session.add(doctor)
     session.commit()
     path = f"/health/astronauts/{doctor.id}"
-    # O médico é flight_surgeon na missão, não astronauta: registra para si sem vínculo de missão.
+    # The physician is flight_surgeon on the mission, not an astronaut: records for themself without a mission membership.
     call('doctor', 'POST', path + '/observations', observation(value=70), 201)
     call('doctor', 'POST', path + '/observations', observation('consciousness', category='alert'), 403)
 
@@ -162,8 +162,8 @@ def test_context_uses_mission_authorization_and_legacy_astronaut_membership(case
     astronaut.is_astronaut = False
     session.add(astronaut)
     session.commit()
-    # Sem nenhum perfil, o usuário não pode ser escolhido no acesso público (USER_ACCESS.md),
-    # mas o vínculo legado de astronauta continua valendo para a supervisão médica.
+    # Without any profile, the user cannot be selected in public access (USER_ACCESS.md),
+    # but the legacy astronaut membership still applies for medical supervision.
     response = case['client'].get('/v1/health/context', headers={'X-Public-User': str(astronaut.id), 'X-Public-Profile': 'is_astronaut'})
     assert response.status_code == 422
     supervised = call('doctor', 'GET', '/health/context')['supervised_astronauts']
@@ -174,7 +174,7 @@ def test_context_uses_mission_authorization_and_legacy_astronaut_membership(case
 
 def test_summary_requires_authentication_and_invalid_history_period_is_rejected(case):
     path = health_path(case)
-    # Sem cabeçalhos, a API usa um administrador global, que não acessa dados clínicos.
+    # Without headers, the API uses a global administrator, who cannot access clinical data.
     case['call'](None, 'GET', path + '/summary', expected=403)
     case['call']('astronaut', 'GET', path + '/history?indicator=unknown', expected=422)
     case['call']('astronaut', 'GET', path + '/history?indicator=heart_rate&start=2026-01-02T00:00:00Z&end=2026-01-01T00:00:00Z', expected=422)

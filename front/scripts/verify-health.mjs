@@ -4,7 +4,7 @@ import { chromium, request as playwrightRequest } from "playwright";
 
 const baseURL = process.env.HEALTH_TEST_URL || "http://127.0.0.1:5174";
 if (!["localhost", "127.0.0.1"].includes(new URL(baseURL).hostname))
-  throw Error("Use um ambiente local dedicado para este teste");
+  throw Error("Use a dedicated local environment for this test");
 const artifacts = process.env.HEALTH_TEST_ARTIFACTS || "/tmp/nasa-health-e2e";
 await mkdir(artifacts, { recursive: true });
 const api = await playwrightRequest.newContext({ baseURL });
@@ -24,7 +24,7 @@ async function person(role, isAstronaut, isPhysician) {
   const user = await call("/users/", {
     method: "POST",
     body: {
-      name: `Teste ${role}`,
+      name: `Test ${role}`,
       email,
       password,
       password_confirmation: password,
@@ -47,7 +47,7 @@ const mission = await call("/missions", {
   token: admin.token,
   status: 201,
   body: {
-    name: `Teste monitoramento ${stamp}`,
+    name: `Monitoring test ${stamp}`,
     planned_launch_at: new Date(Date.now() + 30 * 86400000).toISOString(),
   },
 });
@@ -82,7 +82,7 @@ async function waitUntil(predicate) {
     if (await predicate()) return;
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  throw Error("Tempo esgotado ao aguardar atualização");
+  throw Error("Timed out waiting for the update");
 }
 const card = (name) =>
   page.locator(".health-card").filter({
@@ -97,7 +97,7 @@ async function saveHeartRate(value, collectedAt) {
   await dialog.getByLabel("Value (bpm)").fill(String(value));
   await dialog
     .getByLabel("Note (optional)")
-    .fill("Medição fictícia de teste");
+    .fill("Fictional test measurement");
   await dialog
     .getByRole("button", { name: "Save measurement", exact: true })
     .click();
@@ -160,7 +160,7 @@ try {
   await page
     .getByRole("dialog")
     .getByLabel("Note (optional)")
-    .fill("Atenção habitual em teste");
+    .fill("Usual attention in test");
   await page
     .getByRole("dialog")
     .getByRole("button", { name: "Save measurement", exact: true })

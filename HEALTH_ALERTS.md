@@ -1,26 +1,26 @@
-# Alertas de saúde
+# Health alerts
 
-A avaliação é determinística e não usa IA, diagnóstico, prescrição ou recomendação de medicamentos. As faixas são um perfil de simulação, e não regras clínicas universais.
+The evaluation is deterministic and does not use AI, diagnosis, prescription or medication recommendations. The ranges are a simulation profile, not universal clinical rules.
 
-## Configuração
+## Configuration
 
-O arquivo `NASA/app/config/health_alert_profiles.json` contém os perfis `simulation-v1` e `simulation-v2`, as faixas, as sequências de dias/noites e as janelas de atualização das medições. Para alterar faixas de simulação, crie uma nova versão no arquivo e atualize os perfis aceitos no schema. Não substitua a definição de uma versão já utilizada. Cada medição avaliada e cada alerta guardam uma cópia do perfil usado; os eventos guardam a versão.
+The file `back/app/config/health_alert_profiles.json` contains the `simulation-v1` and `simulation-v2` profiles, the ranges, the day/night sequences and the measurement freshness windows. To change simulation ranges, create a new version in the file and update the profiles accepted in the schema. Do not replace the definition of a version already in use. Each evaluated measurement and each alert keep a copy of the profile used; events keep the version.
 
-No monitoramento, selecione uma missão e use **Configurar perfil da missão**. Médicos vinculados como `flight_surgeon` ou `mission_admin` podem configurar:
+In health monitoring, select a mission and use **Configure alert profile**. Physicians assigned as `flight_surgeon` or `mission_admin` can configure:
 
-- Fuso IANA da missão, como `America/Bahia`.
-- Canal de emergência.
-- Limites de SpO₂ aprovados pela equipe médica.
-- Limites opcionais de glicemia alta por contexto: jejum, após refeição ou contexto desconhecido.
-- Registro da aprovação médica.
+- The mission IANA time zone, such as `America/Bahia`.
+- The emergency channel.
+- SpO₂ limits approved by the medical team.
+- Optional high glucose limits per context: fasting, after a meal or unknown context.
+- The record of the medical approval.
 
-Cada alteração gera uma nova revisão. Alterações concorrentes exigem recarregar a configuração pela revisão esperada. O padrão atual é `simulation-v2`, em UTC, com alerta urgente de glicemia ≥300 mg/dL nos contextos jejum, após refeição e desconhecido. Esses limites estão explicitamente configurados para a simulação. O perfil `simulation-v1` é preservado sem regra padrão de glicemia alta; configurações de missão já aprovadas não são substituídas. Sem missão selecionada, usa-se o perfil padrão em UTC.
+Each change creates a new revision. Concurrent changes require reloading the configuration through the expected revision. The current default is `simulation-v2`, in UTC, with an urgent alert for glucose ≥300 mg/dL in the fasting, after-meal and unknown contexts. These limits are explicitly configured for the simulation. The `simulation-v1` profile is kept without a default high glucose rule; mission configurations already approved are not replaced. Without a selected mission, the default profile in UTC is used.
 
-## Medições
+## Measurements
 
-O formulário apresenta apenas os campos pertinentes ao indicador. Glicemia pede valor, contexto alimentar e qualidade da leitura; oxigênio suplementar aparece apenas em saturação e frequência respiratória. Sono e escalas subjetivas não pedem qualidade de sensor. O POST de medições existente aceita os seguintes campos adicionais:
+The form shows only the fields relevant to the indicator. Glucose asks for the value, meal context and reading quality; supplemental oxygen appears only for saturation and respiratory rate. Sleep and subjective scales do not ask for sensor quality. The existing measurements POST accepts the following additional fields:
 
-| Campo | Valores |
+| Field | Values |
 | --- | --- |
 | `activity` | `rest`, `exercise`, `unknown` |
 | `signal_quality` | `good`, `poor`, `unknown` |
@@ -28,83 +28,84 @@ O formulário apresenta apenas os campos pertinentes ao indicador. Glicemia pede
 | `glucose_context` | `fasting`, `after_meal`, `unknown` |
 | `symptoms_status` | `present`, `absent`, `unknown` |
 | `symptoms` | `chest_pain`, `shortness_of_breath`, `sudden_weakness`, `visual_changes`, `speech_difficulty` |
-| `acute_confusion` | `true`, `false`, `null`; apenas em atenção/consciência |
-| `unit` | Unidade do indicador ou uma alternativa suportada |
-| `client_request_id` | UUID de reenvio |
+| `acute_confusion` | `true`, `false`, `null`; only for attention/consciousness |
+| `unit` | The indicator unit or a supported alternative |
+| `client_request_id` | Retry UUID |
 
-As unidades alternativas são °F para temperatura, mmol/L para glicemia, kPa para pressão, `fraction` para SpO₂ e `h` para duração do sono. Os valores normalizados são usados nas regras e no histórico; `original_values` preserva os valores e a unidade enviados.
+The alternative units are °F for temperature, mmol/L for glucose, kPa for blood pressure, `fraction` for SpO₂ and `h` for sleep duration. Normalized values are used in the rules and the history; `original_values` keeps the values and unit that were sent. The canonical respiratory rate unit is `breaths/min`; the earlier `respirações/min` is still accepted and is converted by migration `4a2b3c4d5e61`.
 
-A ausência de registro de sintomas continua sendo desconhecida. Sintomas estruturados presentes elevam pressão muito alta a crítico. O texto livre não é interpretado como confusão aguda ou presença/ausência de sintomas.
+When no symptoms are recorded, symptoms remain unknown. Structured present symptoms raise very high blood pressure to critical. Free text is not interpreted as acute confusion or as the presence or absence of symptoms.
 
-As faixas de frequência cardíaca/respiratória em repouso só são aplicadas com `activity=rest`. Em atividade desconhecida, faixas críticas de repouso geram um alerta operacional urgente de verificação imediata, sem classificar a leitura como confirmada em repouso. Exercício preserva seu contexto; uma leitura extrema com sinal ruim também gera verificação imediata. SpO₂, temperatura, pressão, glicemia baixa e consciência usam as regras configuradas independentemente da atividade, preservando o contexto.
+Resting heart rate and respiratory rate ranges are only applied with `activity=rest`. With unknown activity, critical resting ranges create an urgent operational alert for immediate verification, without classifying the reading as confirmed at rest. Exercise keeps its context; an extreme reading with a poor signal also requires immediate verification. SpO₂, temperature, blood pressure, low glucose and consciousness use the configured rules regardless of activity, keeping the context.
 
-Uma leitura com sinal ruim permanece com qualidade insuficiente. Se atingir uma faixa de alerta, o alerta é emitido imediatamente com necessidade explícita de verificação. Nenhuma leitura de sinal ruim encerra ou reduz um alerta aberto.
+A reading with a poor signal keeps insufficient quality. If it reaches an alert range, the alert is raised immediately with an explicit verification requirement. No poor-signal reading closes or lowers an open alert.
 
-O resumo distingue `no_measurement`, `stale`, `insufficient_quality`, `evaluated` e `not_evaluated`. Medições anteriores à migration ficam como não avaliadas; não há geração retroativa automática de alertas. Uma leitura antiga recebe o estado desatualizada e mantém o contexto e a qualidade no histórico.
+The summary distinguishes `no_measurement`, `stale`, `insufficient_quality`, `evaluated` and `not_evaluated`. Measurements from before the migration stay not evaluated; alerts are not generated retroactively. An old reading is marked as outdated and keeps its context and quality in the history.
 
-## Tendências
+## Trends
 
-Usa-se o registro válido mais recente por dia ou noite, com desempate por horário de registro e ID. Registros de qualidade insuficiente não entram nas tendências. O fuso é o da missão. Para sessões de sono, a noite é identificada pela data local do fim da sessão; sem sessão, pela data local da coleta. Várias leituras no mesmo dia/noite não completam uma sequência. Um dia/noite sem registro válido interrompe a sequência. Uma gravação atrasada pode completar a sequência, mas uma leitura fora dela não reabre uma tendência já resolvida.
+The latest valid record per day or night is used, with ties broken by recording time and ID. Records with insufficient quality do not enter trends. The time zone is the mission's. For sleep sessions, the night is identified by the local date of the session end; without a session, by the local collection date. Several readings in the same day or night do not complete a sequence. A day or night without a valid record breaks the sequence. A late recording can complete the sequence, but a reading outside it does not reopen a trend that was already resolved.
 
-## Ciclo de vida e acesso
+## Lifecycle and access
 
-Os estados são `open`, `acknowledged` e `resolved`. Reconhecer registra que o alerta foi visto. Uma escalada reabre o alerta e preserva o reconhecimento anterior no histórico. Alertas de atenção e urgentes são encerrados automaticamente por uma nova leitura válida, recente e fora da faixa da regra. Uma leitura antiga, com sinal ruim ou sem o contexto necessário não encerra o alerta. Em tendências, uma lacuna isolada não significa normalização. Alertas críticos continuam exigindo resolução explícita pelo médico de voo autorizado. Quando a leitura atual já saiu da faixa, a interface distingue o evento crítico anterior e a revisão médica pendente. Uma nova ocorrência após resolução cria outro alerta, preservando o anterior.
+The states are `open`, `acknowledged` and `resolved`. Acknowledging records that the alert was seen. An escalation reopens the alert and keeps the earlier acknowledgment in the history. Attention and urgent alerts close automatically after a new valid, recent reading outside the rule range. An old reading, a poor signal or a reading without the necessary context does not close the alert. In trends, a single gap does not mean normalization. Critical alerts still require explicit resolution by the authorized flight surgeon. When the current reading is already outside the range, the interface distinguishes the earlier critical event from the pending medical review. A new occurrence after resolution creates another alert and keeps the earlier one.
 
-Há um único alerta ativo por regra e tripulante, independentemente da missão de origem. Os alertas são dados do prontuário do tripulante, como as alergias: o próprio tripulante pode consultar e reconhecer; o médico de voo vinculado à missão informada pode consultar, reconhecer e resolver. Outros tripulantes, médicos sem vínculo e administradores sem papel clínico não acessam os alertas. A lista e o histórico mostram as medições de origem do tripulante, inclusive quando originadas em outra missão.
+There is a single active alert per rule and crew member, regardless of the source mission. Alerts are part of the crew member's medical record, like allergies: the crew member can view and acknowledge them; the flight surgeon assigned to the given mission can view, acknowledge and resolve them. Other crew members, unassigned physicians and administrators without a clinical role cannot access the alerts. The list and history show the crew member's source measurements, including those recorded in another mission.
 
-O servidor serializa gravações e ações por tripulante com bloqueio de linha. Restrições únicas protegem a chave de reenvio, o conteúdo da medição e a combinação tripulante/regra ativa. Uma chave reutilizada com outro conteúdo retorna 409. Formulários mantêm o UUID durante reenvios.
+The server serializes writes and actions per crew member with a row lock. Unique constraints protect the retry key, the measurement content and the crew member/active rule combination. A key reused with different content returns 409. Forms keep the UUID during resubmissions.
 
-## Rotas
+## Routes
 
-Todas têm prefixo `/v1/health` e exigem autenticação.
+All routes use the `/v1/health` prefix and require authentication.
 
-| Rota | Método |
+| Route | Method |
 | --- | --- |
-| `/astronauts/{astronaut_id}/observations` | POST existente, agora avalia alertas na mesma transação |
-| `/astronauts/{astronaut_id}/summary` | GET existente, agora retorna estado e contexto da avaliação |
-| `/astronauts/{astronaut_id}/history` | GET existente, agora inclui unidade original e contexto |
+| `/astronauts/{astronaut_id}/observations` | Existing POST, now evaluates alerts in the same transaction |
+| `/astronauts/{astronaut_id}/summary` | Existing GET, now returns the evaluation state and context |
+| `/astronauts/{astronaut_id}/history` | Existing GET, now includes the original unit and context |
 | `/astronauts/{astronaut_id}/alerts` | GET, `status=active/all/open/acknowledged/resolved`, `indicator`, `page`, `per_page` |
 | `/astronauts/{astronaut_id}/alerts/{alert_id}` | GET |
-| `/astronauts/{astronaut_id}/alerts/{alert_id}/history` | GET paginado com eventos e medições de origem |
+| `/astronauts/{astronaut_id}/alerts/{alert_id}/history` | Paginated GET with events and source measurements |
 | `/astronauts/{astronaut_id}/alerts/{alert_id}/acknowledge` | POST |
-| `/astronauts/{astronaut_id}/alerts/{alert_id}/resolve` | POST com `{"note":"Avaliação registrada"}` |
+| `/astronauts/{astronaut_id}/alerts/{alert_id}/resolve` | POST with `{"note":"Assessment recorded"}` |
 | `/missions/{mission_id}/alert-settings` | GET, PUT |
 
-Informe `mission_id` nas consultas e ações do médico de voo. O próprio tripulante também pode consultar seus alertas sem missão.
+Provide `mission_id` in the flight surgeon's queries and actions. Crew members can also view their own alerts without a mission.
 
-## Tela
+## Screen
 
-O monitoramento mostra os alertas ativos dentro do cartão do respectivo indicador, com os mais graves primeiro em cada cartão. O cartão recebe destaque com texto, ícone e cor. O histórico acessado pelo cartão é filtrado pelo indicador. Há ações para registrar nova medição/sintomas, abrir o histórico do indicador, reconhecer, consultar os eventos do alerta e registrar resolução autorizada. As colunas de cards são independentes; a expansão de um card não estica o card vizinho. Os históricos de alertas e de eventos têm seleção de itens por página, total de registros e navegação Anterior/Próxima. Alertas críticos exibem o protocolo de emergência e o canal atual da missão. Quando o canal está ausente, isso é explicitado. O snapshot histórico do canal original é preservado.
+Health monitoring shows active alerts inside the card of each indicator, most severe first in each card. The card is highlighted with text, an icon and color. The history opened from the card is filtered by the indicator. There are actions to record a new measurement or symptoms, open the indicator history, acknowledge, view the alert events and record an authorized resolution. Card columns are independent; expanding a card does not stretch the neighboring card. The alert and event histories have a page size selector, the total number of records and Previous/Next navigation. Critical alerts show the emergency protocol and the current mission channel. When the channel is missing, that is stated explicitly. The historical snapshot of the original channel is preserved.
 
-## Migration e verificações
+## Migration and checks
 
-Dentro de `NASA`:
+From `back/`:
 
 ```sh
 docker compose exec -T api alembic upgrade head
 ```
 
-A revisão é `d15c6e7f8091`. Ela adiciona contexto às medições e as tabelas `health_alert_settings`, `health_alerts`, `health_alert_observations` e `health_alert_events`. A reversão é bloqueada quando há alertas, para preservar histórico.
+The revision is `d15c6e7f8091`. It adds context to measurements and the `health_alert_settings`, `health_alerts`, `health_alert_observations` and `health_alert_events` tables. Reverting is blocked when alerts exist, to preserve history.
 
-Com pytest disponível no ambiente do backend:
+With pytest available in the backend environment:
 
 ```sh
 python -m pytest -q
 python -m scripts.verify_health_alerts
 ```
 
-O segundo comando cria um banco PostgreSQL temporário, aplica todas as migrations, executa a suíte com os testes PostgreSQL e concorrentes habilitados e remove o banco ao terminar. Requer permissão para criar e remover esse banco isolado. O teste concorrente faz quatro reenvios simultâneos e duas medições simultâneas com escalada.
+The second command creates a temporary PostgreSQL database, applies all migrations, runs the suite with the PostgreSQL and concurrency tests enabled and removes the database at the end. It requires permission to create and drop that isolated database. The concurrency test sends four simultaneous resubmissions and two simultaneous measurements with an escalation.
 
-Dentro de `front`:
+From `front/`:
 
 ```sh
 npm test
 npm run build
 ```
 
+## High glucose in the simulation profile
 
-## Glicemia alta no perfil de simulação
+Version `simulation-v2` adds an urgent operational limit of 300 mg/dL for high glucose, with confirmation of the reading. The profile does not diagnose ketoacidosis or determine treatment. The reference consulted was the CDC guidance on glucose persistently ≥300 mg/dL, which must not be read as a universal rule for a single reading: https://www.cdc.gov/diabetes/about/diabetic-ketoacidosis.html . Choosing a single value as the initial trigger is a product decision for the prototype and requires specific clinical configuration for use outside the simulation.
 
-A versão `simulation-v2` adiciona um limite operacional urgente de 300 mg/dL para glicemia alta, com confirmação da leitura. O perfil não diagnostica cetoacidose nem determina tratamento. A referência consultada foi a orientação do CDC sobre glicemia persistentemente ≥300 mg/dL, que não deve ser interpretada como regra universal para uma leitura isolada: https://www.cdc.gov/diabetes/about/diabetic-ketoacidosis.html . A seleção de um único valor como gatilho inicial é uma decisão de produto para o protótipo e requer configuração clínica específica para uso fora da simulação.
+An explicit re-evaluation can keep the earlier profile and state in `evaluation_profile.previous_evaluation`, keeping the measurement ID, time and original value. Changing the default profile does not automatically reprocess all old records.
 
-Uma reavaliação explícita pode preservar o perfil e o estado anteriores em `evaluation_profile.previous_evaluation`, mantendo o ID, o horário e o valor original da medição. A troca do perfil padrão não reprocessa automaticamente todos os registros antigos.
+Alert reasons and notes are stored with the alert when it is created. Alerts created before the English translation keep their original text.

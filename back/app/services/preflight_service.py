@@ -39,7 +39,7 @@ def transactional(method):
             return result
         except IntegrityError as exc:
             self.session.rollback()
-            raise HTTPException(409, "A operação conflita com registros existentes ou com um histórico protegido") from exc
+            raise HTTPException(409, "The operation conflicts with existing records or a protected history") from exc
         except Exception:
             self.session.rollback()
             raise
@@ -62,7 +62,7 @@ class PreflightService:
 
     def _require_physician(self):
         if not self.user.is_physician:
-            raise HTTPException(403, "Somente médicos podem alterar exames")
+            raise HTTPException(403, "Only physicians can change exams")
 
     def _get(self, model, record_id):
         record = self.session.get(model, record_id)
@@ -483,13 +483,13 @@ class PreflightService:
     def _validate_definition(self, definition_id, type_id):
         exam_type = self._get(ExamType, type_id)
         if not exam_type.is_active:
-            raise HTTPException(409, "O tipo de exame está inativo")
+            raise HTTPException(409, "The exam type is inactive")
         if definition_id:
             definition = self._get(ExamDefinition, definition_id)
             if definition.exam_type_id != type_id:
-                raise HTTPException(422, "O exame não pertence ao tipo informado")
+                raise HTTPException(422, "The exam does not belong to the given type")
             if not definition.is_active:
-                raise HTTPException(409, "O exame está inativo")
+                raise HTTPException(409, "The exam is inactive")
 
     def list_exams(self, page, per_page, search=None, exam_type_id=None, is_active=None):
         statement = select(ExamDefinition)
@@ -518,12 +518,12 @@ class PreflightService:
         self._catalog_writer()
         exam = self.session.exec(select(ExamDefinition).where(ExamDefinition.id == exam_id).with_for_update()).first()
         if exam is None:
-            raise HTTPException(404, "Exame não encontrado")
+            raise HTTPException(404, "Exam not found")
         if exam.revision != payload.expected_revision:
-            raise HTTPException(409, "Este exame foi alterado. Atualize a página antes de salvar")
+            raise HTTPException(409, "This exam was changed. Refresh the page before saving")
         linked = self.session.exec(select(MissionExamRequirement).where(MissionExamRequirement.exam_definition_id == exam_id)).first()
         if linked and (payload.exam_type_id != exam.exam_type_id or payload.code != exam.code):
-            raise HTTPException(409, "O código e o tipo de um exame em uso não podem ser alterados")
+            raise HTTPException(409, "The code and type of an exam in use cannot be changed")
         self._get(ExamType, payload.exam_type_id)
         for key, value in payload.model_dump(mode="json", exclude={"expected_revision"}).items():
             setattr(exam, key, value)
@@ -537,7 +537,7 @@ class PreflightService:
         self._catalog_writer()
         exam = self._get(ExamDefinition, exam_id)
         if self.session.exec(select(MissionExamRequirement).where(MissionExamRequirement.exam_definition_id == exam_id)).first():
-            raise HTTPException(409, "Este exame está vinculado a uma missão. Inative-o para preservar o histórico")
+            raise HTTPException(409, "This exam is linked to a mission. Deactivate it to preserve the history")
         self.session.delete(exam)
 
     def list_requirements(self, mission_id, page, per_page):
@@ -584,7 +584,7 @@ class PreflightService:
         if changed_definition:
             self._validate_definition(values.get("exam_definition_id", requirement.exam_definition_id), values.get("exam_type_id", requirement.exam_type_id))
             if any(self._latest_result(exam.id) is not None for exam in exams):
-                raise HTTPException(409, "Um requisito com resultados não pode trocar de exame")
+                raise HTTPException(409, "A requirement with results cannot change its exam")
             for exam in exams:
                 exam.definition_snapshot = self._definition_snapshot(values.get("exam_definition_id", requirement.exam_definition_id))
                 self.session.add(exam)
@@ -719,7 +719,7 @@ class PreflightService:
             statement = statement.where(AstronautExam.id == exam_id)
         matches = self.session.exec(statement).all()
         if len(matches) > 1:
-            raise HTTPException(409, "Informe o exame para consultar o resultado aceito deste tipo")
+            raise HTTPException(409, "Provide the exam to look up the accepted result of this type")
         exam = matches[0] if matches else None
         if exam is None:
             raise HTTPException(404, "Astronaut exam not found")

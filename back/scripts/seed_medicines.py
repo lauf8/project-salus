@@ -25,13 +25,13 @@ def load_catalog(path=CATALOG_PATH):
         name = identity(entry['name'])
         ingredients = [identity(value) for value in entry['active_ingredients']]
         if not name or name in names or not ingredients or not all(ingredients) or len(ingredients) != len(set(ingredients)):
-            raise ValueError('O catálogo contém nomes ou composições inválidos ou duplicados')
+            raise ValueError('The catalog contains invalid or duplicate names or compositions')
         if not entry['main_indications'].strip() or not set(entry['markets']) <= {'US', 'BR'}:
-            raise ValueError('O catálogo contém indicações ou países inválidos')
+            raise ValueError('The catalog contains invalid indications or countries')
         names.add(name)
     for market in ('US', 'BR'):
         if sum(market in entry['markets'] for entry in entries) != 100:
-            raise ValueError(f'O catálogo deve conter exatamente 100 medicamentos para {market}')
+            raise ValueError(f'The catalog must contain exactly 100 medications for {market}')
     return payload
 
 
@@ -42,7 +42,7 @@ def seed_catalog(session, catalog):
         for row in session.exec(select(model)).all():
             key = identity(row.name)
             if key in index:
-                raise ValueError(f'O cadastro existente contém nomes duplicados: {row.name}')
+                raise ValueError(f'The existing records contain duplicate names: {row.name}')
             index[key] = row
     counts = {'medicines_created': 0, 'ingredients_created': 0, 'medicines_reused': 0, 'indications_filled': 0}
     for entry in catalog['medicines']:
@@ -69,7 +69,7 @@ def seed_catalog(session, catalog):
         else:
             links = session.exec(select(MedicineActiveIngredient).where(MedicineActiveIngredient.medicine_id == medicine.id)).all()
             if {link.active_ingredient_id for link in links} != set(ingredient_ids):
-                raise ValueError(f'Composição existente divergente para {medicine.name}; nenhum dado foi importado')
+                raise ValueError(f'Existing composition differs for {medicine.name}; no data was imported')
             if not medicine.main_indications:
                 medicine.main_indications = entry['main_indications']
                 session.add(medicine)
@@ -80,7 +80,7 @@ def seed_catalog(session, catalog):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Importar catálogo de medicamentos comuns nos EUA e no Brasil')
+    parser = argparse.ArgumentParser(description='Import the catalog of common medications in the United States and Brazil')
     parser.add_argument('--path', type=Path, default=CATALOG_PATH)
     parser.add_argument('--dry-run', action='store_true')
     args = parser.parse_args()
