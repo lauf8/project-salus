@@ -17,7 +17,8 @@
     "test:profiles:e2e": "node scripts/verify-user-profiles.mjs",
     "test:risks:e2e": "node scripts/verify-mission-risks.mjs",
     "test:clinical:e2e": "node scripts/verify-clinical-records.mjs",
-    "test:predictive:e2e": "node scripts/verify-predictive.mjs"
+    "test:predictive:e2e": "node scripts/verify-predictive.mjs",
+    "test:overview:e2e": "node scripts/verify-overview.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
